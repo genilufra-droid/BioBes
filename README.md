@@ -1,40 +1,77 @@
 # BioBes — Sistemi Genit Cloud
 
-BioBes është source code-i i Sistemi Genit Cloud, një ERP cloud multi-user dhe multi-company për menaxhimin e klientëve, shitjeve, blerjeve, magazinës, arkës, bankës, kontabilitetit, raporteve dhe konfigurimeve. Projekti përdor React 19, TypeScript, Vite, Express, tRPC, Drizzle ORM dhe MySQL/TiDB. Pamja Alpha Classic dhe formulari i faturës së shitjes janë pjesë e source-it aktual.
+BioBes është source code-i i Sistemi Genit Cloud: një ERP cloud multi-user dhe multi-company me React 19, TypeScript, Vite, Express, tRPC 11, Drizzle ORM dhe MySQL/TiDB. Repository përfshin frontend-in, backend-in, schema/migrimet, formularët, raportet, testet, modulin Pagat, CI, Docker dhe wrapper-in Windows.
 
-> **Gjendja e eksportit:** Ky repository përmban source code-in dhe konfigurimet e projektit aktual, jo secrets, `.env` real, `node_modules`, `dist`, log-e ose të dhëna reale të klientëve. Moduli Pagat mbahet jashtë eksportit të BioBes sipas kufizimit të projektit dhe nuk duhet aktivizuar pa autorizim të veçantë.
+> **Shënim transparence:** Repository përmban source code-in e aplikacionit dhe mjeteve të tij. Nuk përmban secrets, `.env` reale, `node_modules`, `dist`, log-e, dump-e database ose të dhëna personale reale. Këto nuk janë heqje modulesh; janë materiale që nuk duhet të publikohen.
 
 ## Quick start
 
-1. Klono repository-n dhe instalo Node.js 22+ dhe pnpm 10+.
-2. Ekzekuto `pnpm install`.
-3. Kopjo `.env.example` në `.env` dhe plotëso vetëm vlerat e ambientit tënd.
-4. Ekzekuto `pnpm check`, `pnpm test` dhe `pnpm build`.
-5. Për zhvillim përdor `pnpm dev`; aplikacioni hapet në portin e dhënë nga ambienti.
+Kërkohen Node.js 22+ dhe pnpm. Ekzekuto `pnpm install`, konfiguro variables sipas [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md), pastaj përdor `pnpm check`, `pnpm test`, `pnpm build` dhe `pnpm dev`. Për deployment përdor [docs/INSTALL.md](docs/INSTALL.md), [docs/DEPLOY-CLOUD.md](docs/DEPLOY-CLOUD.md), `Dockerfile` ose `docker-compose.yml`.
 
-Për Docker, prodhim, migrime, Windows dhe zhvillim modulesh shih [docs/INSTALL.md](docs/INSTALL.md), [docs/DEPLOY-CLOUD.md](docs/DEPLOY-CLOUD.md) dhe [docs/BUILD-WINDOWS.md](docs/BUILD-WINDOWS.md).
+## Lista e plotë e moduleve
 
-## Struktura
+| Modul | Faqe/source kryesor | Backend/API |
+|---|---|---|
+| Auth dhe RBAC | `client/src/_core`, `DashboardLayout` | `server/_core`, auth/company roles |
+| Multi-company | company settings dhe workspace | `company`, `userCompanies`, settings |
+| Klientë/Partnerë | customer/partner pages | `customer`, `supplier`, `issuer` |
+| Artikuj dhe katalogë | product/category/unit pages | `product`, `category`, `unit`, `costCenter` |
+| Shitje | `SalesInvoices.tsx` dhe sales pages | `salesInvoice`, `salesQuotation`, `salesOrder`, `delivery`, `salesReturn`, `salesReport` |
+| Blerje | purchase pages | `purchaseInvoice`, `purchaseOrder`, `purchaseReceipt`, `purchaseReturn`, `purchaseReport` |
+| Magazina dhe stok | inventory/warehouse pages | `warehouse`, `stockLocation`, `stockMovement`, `stockBalance`, `stockTransfer`, `inventoryAdjustment`, `stockReport` |
+| Arka dhe pagesa | payment/cash flows | `payment` |
+| Banka | banking pages | `bankAccount`, `bankStatement`, `bankTransfer`, `bankTransaction`, `bankReport` |
+| Kontabilitet | accounting pages | `chartOfAccount`, `journal`, `journalEntry`, `accountingReport`, `taxRate` |
+| CRM | lead/activity pages | `crmLead`, `crmActivity`, `crmReport` |
+| Transport dhe peshore | cargo/weight pages | `cargoLoad`, `weightForm`, `agent`, `vehicle` |
+| Raporte dhe kërkim | report center, PDF/Excel | `reportCenter`, `globalSearch`, `salesReport`, audit/report routers |
+| Konfigurime | configuration/settings pages | reference catalog procedures |
+| Audit dhe dokumente | audit/document flows | `auditLog`, `creditNotes`, `employeeDocuments` |
+| **Pagat** | `client/src/pages/Payroll.tsx`, `client/src/lib/payroll*` | `server/payroll.ts`, `payroll` router |
+| Windows desktop | `desktop/main.cjs`, `desktop/preload.cjs` | përdor të njëjtin frontend web |
 
-| Dosja | Përmbajtja |
+## Struktura e databazës
+
+Schema autoritative është `drizzle/schema.ts`, marrëdhëniet janë në `drizzle/relations.ts` dhe migrimet janë në `drizzle/0000_*.sql` deri `drizzle/0040_*.sql`.
+
+| Fusha | Tabelat |
 |---|---|
-| `client/` | React pages, components, formularë, raporte dhe stile |
-| `server/` | tRPC routers, shërbime, database helpers dhe teste |
-| `shared/` | tipe dhe konstanta të përbashkëta |
-| `drizzle/` | schema, relations dhe migrime kronologjike |
-| `desktop/` | wrapper Electron për përdorim lokal/Windows |
-| `docs/` | udhëzime për instalim, arkitekturë, module, raporte dhe forma |
-| `.github/` | CI, template issue dhe pull request |
-| `scripts/` | mjete ndihmëse të zhvillimit dhe backup-it |
+| Identitet/multi-company | `users`, `companies`, `userCompanies`, `settings` |
+| Partnerë/katalog | `customers`, `suppliers`, `categories`, `issuers`, `documentGroups`, `costCenters`, `units`, `products`, `agents`, `vehicles` |
+| Magazinë/stok | `warehouses`, `stockLocations`, `stockMovements`, `stockBalances`, `stockTransfers`, `stockTransferItems`, `inventoryAdjustments`, `inventoryAdjustmentItems` |
+| Kontabilitet | `chartOfAccounts`, `journals`, `journalEntries`, `journalEntryLines`, `taxRates` |
+| Bankë/likuiditet | `payments`, `bankAccounts`, `bankStatements`, `bankTransfers`, `bankTransactions` |
+| CRM | `crmLeads`, `crmActivities` |
+| Blerje | `purchaseInvoices`, `purchaseItems`, `purchaseOrders`, `purchaseOrderItems`, `purchaseOrderAttachments`, `purchaseReceipts`, `purchaseReceiptItems`, `purchaseReturns`, `purchaseReturnItems` |
+| Shitje | `salesInvoices`, `salesItems`, `salesQuotations`, `salesQuotationItems`, `salesOrders`, `salesOrderItems`, `deliveryNotes`, `deliveryItems`, `salesReturns`, `salesReturnItems`, `creditNotes` |
+| Transport/dokumente | `cargoLoads`, `cargoLoadDocuments`, `weightForms`, `weightFormLines`, `employeeDocuments` |
+| **Pagat** | `payrollEmployees`, `payrollLeaveAbsences`, `payrollDeviceMappings`, `payrollSettings`, `payrollPeriods`, `payrollPeriodBonuses`, `payrollAttendance`, `payrollEntries` |
+| Audit | `auditLogs` |
 
-## Module të përfshira
+Lidhjet multi-company përdorin `companyId`; rreshtat e dokumenteve lidhen me dokumentin prind dhe produktin; lëvizjet e stokut lidhen me magazinën; entries e Pagave lidhen me punonjësin dhe periudhën. Shih [docs/DATABASE.md](docs/DATABASE.md) për rregullat, migrimet dhe sigurinë.
 
-Klientë dhe partnerë, shitje, blerje, magazinë dhe stok, arka dhe banka, kontabilitet, transport/dokumente, konfigurime, raporte, autentikim/role, multi-company dhe import/export Excel/PDF janë të përfshira në source. Lista e detajuar ndodhet te [docs/MODULES.md](docs/MODULES.md).
+## API
 
-## Zhvillimi
+API-ja serviret nën `/api/trpc`. Router-at kryesorë dhe kontratat dokumentohen te [docs/API.md](docs/API.md). Input-et validohen me Zod, procedurat protected kërkojnë session dhe operacionet multi-company duhet të kufizohen sipas kompanisë aktive.
 
-Kontratat backend janë tRPC-first. Frontend-i përdor `trpc.*` hooks; database schema mbahet te `drizzle/schema.ts`; çdo ndryshim i rëndësishëm duhet të ketë test Vitest. Për module të reja ndiq [docs/ADD-MODULE.md](docs/ADD-MODULE.md), ndërsa për raporte dhe forma ndiq [docs/ADD-REPORT.md](docs/ADD-REPORT.md) dhe [docs/ADD-FORM.md](docs/ADD-FORM.md).
+## Pagat
 
-## Licenca dhe siguria
+Moduli Pagat është i përfshirë në source dhe dokumentohet te [docs/PAYROLL.md](docs/PAYROLL.md). Ai mbulon punonjës, dokumente, mapping pajisjesh, settings, periudha, frekuentim, leje/mungesa, bonuse, gjenerim dhe entries.
 
-Kodi licencohet me MIT. Mos commit-o secrets, `.env`, tokena, certifikata private, dump-e të bazës së të dhënave ose të dhëna personale. Raporto dobësitë privatisht te administratori i repository-t.
+## Verifikimi i integritetit
+
+Skripti `scripts/verify_biobes_integrity.py` krahason listën dhe SHA-256 hash-et e source project-it me tree-n lokale të export-it:
+
+```bash
+python3 scripts/verify_biobes_integrity.py --source /path/to/sistemi-genit-cloud --export /path/to/biobes
+```
+
+Ai raporton skedarët `MISSING`, `REMOTE_ONLY` dhe `HASH_MISMATCH`; përjashton vetëm direktoritë e gjeneruara/lokale të specifikuara në dokumentacion. Për auditin e fundit shih [docs/EXPORT-AUDIT.md](docs/EXPORT-AUDIT.md).
+
+## Udhëzime zhvillimi
+
+Për module, raporte dhe forma shih [docs/ADD-MODULE.md](docs/ADD-MODULE.md), [docs/ADD-REPORT.md](docs/ADD-REPORT.md) dhe [docs/ADD-FORM.md](docs/ADD-FORM.md). Çdo ndryshim i database-s kërkon schema, migration, helper, procedure dhe test. Para pull request ekzekuto `pnpm check`, `pnpm test` dhe `pnpm build`.
+
+## Siguria dhe licenca
+
+Kodi licencohet me MIT. Mos commit-o password, tokena, certifikata private, connection strings, dump-e, backup-e ose të dhëna personale. Raporto dobësitë privatisht te administratori i repository-t.
