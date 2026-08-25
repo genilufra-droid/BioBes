@@ -1,0 +1,293 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1784675267516,
+      "tag": "0000_bizarre_zzzax",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1784675364441,
+      "tag": "0001_condemned_iron_fist",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1786882763593,
+      "tag": "0002_charming_marvex",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1786883431460,
+      "tag": "0003_funny_william_stryker",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1786883795518,
+      "tag": "0004_motionless_logan",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1786884098772,
+      "tag": "0005_stale_iron_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1786884542719,
+      "tag": "0006_sloppy_kinsey_walden",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1786884831913,
+      "tag": "0007_happy_bastion",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1786885015446,
+      "tag": "0008_absurd_starbolt",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1786962001965,
+      "tag": "0009_secret_bill_hollister",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1786962435955,
+      "tag": "0010_solid_wallflower",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1787045061937,
+      "tag": "0011_mixed_bloodstrike",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "5",
+      "when": 1787047785332,
+      "tag": "0012_bent_jasper_sitwell",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "5",
+      "when": 1787050270424,
+      "tag": "0013_talented_the_executioner",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "5",
+      "when": 1787053628939,
+      "tag": "0014_bumpy_swordsman",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "5",
+      "when": 1787054354271,
+      "tag": "0015_wild_sersi",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "5",
+      "when": 1787113140779,
+      "tag": "0016_big_jocasta",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "5",
+      "when": 1787114683176,
+      "tag": "0017_daffy_aqueduct",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "5",
+      "when": 1787206134586,
+      "tag": "0018_rare_hellfire_club",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "5",
+      "when": 1787208396701,
+      "tag": "0019_silly_tempest",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "5",
+      "when": 1787371578894,
+      "tag": "0020_blue_carnage",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "5",
+      "when": 1787389409806,
+      "tag": "0021_watery_black_knight",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "5",
+      "when": 1787390144836,
+      "tag": "0022_curly_ghost_rider",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "5",
+      "when": 1787390435071,
+      "tag": "0023_material_morgan_stark",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "5",
+      "when": 1787394613252,
+      "tag": "0024_tired_blackheart",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "5",
+      "when": 1787478664970,
+      "tag": "0025_flawless_white_tiger",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "5",
+      "when": 1787478947466,
+      "tag": "0026_magical_rafael_vega",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "5",
+      "when": 1787484251734,
+      "tag": "0027_normal_johnny_blaze",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "5",
+      "when": 1787497030527,
+      "tag": "0028_medical_boomer",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "5",
+      "when": 1787500103232,
+      "tag": "0029_peaceful_spiral",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "5",
+      "when": 1787502488617,
+      "tag": "0030_friendly_gideon",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "5",
+      "when": 1787577361443,
+      "tag": "0031_massive_kingpin",
+      "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "5",
+      "when": 1787595388201,
+      "tag": "0032_sparkling_raza",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "5",
+      "when": 1787634503554,
+      "tag": "0033_skinny_dracula",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "5",
+      "when": 1787634742173,
+      "tag": "0034_warm_bloodaxe",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "5",
+      "when": 1787639631016,
+      "tag": "0035_fuzzy_taskmaster",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "5",
+      "when": 1787644780746,
+      "tag": "0036_yellow_the_liberteens",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "5",
+      "when": 1787645091935,
+      "tag": "0037_powerful_texas_twister",
+      "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "5",
+      "when": 1787646660754,
+      "tag": "0038_gray_maria_hill",
+      "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "5",
+      "when": 1787647480253,
+      "tag": "0039_woozy_scorpion",
+      "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "5",
+      "when": 1787649197370,
+      "tag": "0040_handy_millenium_guard",
+      "breakpoints": true
+    }
+  ]
+}

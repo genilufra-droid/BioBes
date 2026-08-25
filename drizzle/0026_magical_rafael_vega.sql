@@ -1,0 +1,1 @@
+ALTER TABLE `cargoLoads` ADD `purchaseOrderId` int;

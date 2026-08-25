@@ -1,0 +1,1 @@
+ALTER TABLE `cost_centers` ADD `mainProduction` int DEFAULT 0 NOT NULL;

@@ -1,0 +1,1 @@
+ALTER TABLE `purchaseInvoices` ADD `paymentStatus` enum('UNPAID','PAID','LATER') DEFAULT 'UNPAID' NOT NULL;

@@ -1,0 +1,17 @@
+from pathlib import Path
+source = Path('/home/ubuntu/sistemi-genit-cloud/client/src/pages/SalesInvoices.tsx').read_text()
+start = source.index('<TabsContent value="invoices"')
+end = source.index('<TabsContent value="report"', start)
+Path('/tmp/sales_invoice_tab.txt').write_text(source[start:end])
+print('start', start, 'end', end, 'chars', end-start)
+print(source[start:start+900])
+print('--- tail ---')
+tab = source[start:end]
+dialog_start = tab.index('<Dialog open={invoiceOpen}')
+dialog_end = tab.index('</Dialog>', dialog_start) + len('</Dialog>')
+print('dialog', dialog_start, dialog_end, 'chars', dialog_end-dialog_start)
+print(tab[dialog_start:dialog_start+500])
+print('dialog tail')
+print(tab[dialog_end-500:dialog_end])
+print('error fragment')
+print(tab[2300:2500])

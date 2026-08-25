@@ -1,0 +1,1177 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+:root {
+  --primary: oklch(0.41 0.068 337.8);
+  --primary-foreground: oklch(0.99 0 0);
+  --background: oklch(0.976 0.002 300);
+  --foreground: oklch(0.27 0.006 285);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.27 0.006 285);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.27 0.006 285);
+  --secondary: oklch(0.95 0.006 330);
+  --secondary-foreground: oklch(0.34 0.01 310);
+  --muted: oklch(0.96 0.002 300);
+  --muted-foreground: oklch(0.53 0.007 290);
+  --accent: oklch(0.95 0.015 335);
+  --accent-foreground: oklch(0.34 0.05 335);
+  --destructive: oklch(0.58 0.19 25);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.9 0.004 300);
+  --input: oklch(0.88 0.005 300);
+  --ring: oklch(0.41 0.068 337.8);
+  --radius: 0.4rem;
+}
+
+@layer components {
+  .alpha-form-tool { @apply inline-flex min-w-[54px] flex-col items-center justify-center gap-0.5 border border-transparent px-1.5 py-0.5 text-[10px] text-[#315a75] transition-colors hover:border-[#9ab2c4] hover:bg-white disabled:cursor-default disabled:opacity-45; }
+}
+
+@layer base {
+  * { @apply border-border outline-ring/50; }
+  body { @apply bg-background text-foreground; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+  button:not(:disabled), [role="button"]:not([aria-disabled="true"]), [type="button"]:not(:disabled), [type="submit"]:not(:disabled), [type="reset"]:not(:disabled), a[href], select:not(:disabled), input[type="checkbox"]:not(:disabled), input[type="radio"]:not(:disabled) { @apply cursor-pointer; }
+}
+
+/* Menutë e Skedar përdorin kromin klasik të Alpha, jo stilin modern të kartave. */
+.alpha-file-menu {
+  border: 1px solid #65717a;
+  background: #f3f3f2;
+  box-shadow: 2px 3px 6px rgba(33, 45, 55, .28);
+  padding: 2px;
+  font-family: Tahoma, "Segoe UI", Arial, sans-serif;
+}
+.alpha-file-menu-row {
+  display: flex;
+  width: 100%;
+  min-height: 23px;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid transparent;
+  padding: 2px 5px 2px 4px;
+  color: #111;
+  font-size: 12px;
+  line-height: 16px;
+  text-align: left;
+}
+.alpha-file-menu-row:hover,
+.alpha-file-menu-row:focus-visible {
+  border-color: #4f84aa;
+  background: linear-gradient(90deg, #d5ebf8 0%, #edf7fc 100%);
+  color: #111;
+  outline: none;
+}
+.alpha-file-menu-icon {
+  display: grid;
+  width: 18px;
+  flex: 0 0 18px;
+  place-items: center;
+  filter: drop-shadow(0 1px 0 rgba(255,255,255,.8));
+}
+.alpha-file-separator { margin-top: 3px; padding-top: 3px; border-top: 1px solid #b7b7b7; }
+
+/* Lista e Arka/Banka, e derivuar nga dritarja klasike e videos Alpha. */
+.alpha-classic-window {
+  overflow: hidden;
+  border: 1px solid #748d9d;
+  background: #edf1f3;
+  box-shadow: 2px 3px 8px rgba(31, 55, 71, .28);
+  font-family: Tahoma, "Segoe UI", Arial, sans-serif;
+}
+.alpha-classic-titlebar {
+  display: flex;
+  min-height: 27px;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #6f98b7;
+  background: linear-gradient(#e8f4fb, #b8d2e4);
+  padding: 3px 5px 3px 8px;
+  color: #183f5d;
+  font-size: 13px;
+  font-weight: 700;
+}
+.alpha-classic-close {
+  display: grid;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  border: 1px solid #99484b;
+  background: linear-gradient(#e67878, #ba4648);
+  color: white;
+  font-size: 15px;
+  line-height: 1;
+}
+.alpha-classic-toolbar { display: flex; min-height: 53px; align-items: stretch; border-bottom: 1px solid #9caeb9; background: #e1e6e9; padding: 2px 4px; }
+.alpha-file-toolbar-button { display: flex; min-width: 52px; flex-direction: column; align-items: center; justify-content: center; gap: 1px; border: 1px solid transparent; padding: 2px 5px; color: #263e50; font-size: 10px; line-height: 12px; }
+.alpha-file-toolbar-button:hover { border-color: #98aab6; background: linear-gradient(#fff, #d7e1e6); }
+.alpha-file-toolbar-button:disabled { cursor: not-allowed; opacity: .45; }
+.alpha-file-toolbar-danger { color: #983638; }
+.alpha-classic-grid-header th { border: 1px solid #9dadb8; background: linear-gradient(#f4f7f8, #cbd7de); padding: 4px 6px; color: #284b62; font-weight: 700; text-align: left; }
+.alpha-classic-grid-header th.text-right { text-align: right; }
+.alpha-classic-row td, .alpha-classic-selected td { border: 1px solid #c3cdd3; padding: 4px 6px; }
+.alpha-classic-row { cursor: pointer; background: #fff; }
+.alpha-classic-row:hover { background: #edf6fb; }
+.alpha-classic-selected { cursor: pointer; background: #badcf0; color: #183f5d; }
+.alpha-classic-empty { border: 1px solid #c3cdd3; padding: 24px; color: #657783; text-align: center; }
+.alpha-classic-statusbar { border-top: 1px solid #b4c1cb; background: #e8eef2; padding: 3px 8px; color: #536c7d; font-size: 11px; }
+.alpha-classic-action-button, .alpha-classic-primary-button { height: 29px; border: 1px solid #93a5b1; padding: 0 14px; font-size: 12px; }
+.alpha-classic-action-button { background: linear-gradient(#fff, #d9e2e7); color: #334d60; }
+.alpha-classic-primary-button { border-color: #2d6e9b; background: linear-gradient(#5d9ccc, #286991); color: #fff; }
+.alpha-classic-primary-button:disabled { opacity: .55; }
+
+/* Lista e Arka/Banka është dritare e klasike në kanavacën e punës, jo kartë e faqes cloud. */
+.alpha-liquidity-canvas { min-height: calc(100vh - 94px); padding: 22px 18px; background: #e7ecef; font-family: Tahoma, "Segoe UI", Arial, sans-serif; }
+.alpha-liquidity-window { width: min(790px, 100%); min-height: 335px; overflow: hidden; border: 1px solid #6c8ca2; background: #f0f3f4; box-shadow: 2px 3px 7px rgba(29,50,66,.32); }
+.alpha-liquidity-titlebar { display: flex; min-height: 24px; align-items: center; justify-content: space-between; border-bottom: 1px solid #6f99b9; background: linear-gradient(#ddecF8, #9fc1db); padding: 2px 4px 2px 7px; color: #153d59; font-size: 12px; font-weight: 700; }
+.alpha-liquidity-titlebar h1 { font: inherit; }
+.alpha-liquidity-close { display: grid; width: 16px; height: 16px; place-items: center; border: 1px solid #944242; background: linear-gradient(#e47777, #b74447); color: #fff; font-size: 13px; line-height: 1; }
+.alpha-liquidity-toolbar { display: flex; min-height: 50px; align-items: stretch; border-bottom: 1px solid #a7b5be; background: linear-gradient(#f3f5f6, #d6dfe4); padding: 2px 4px; }
+.alpha-liquidity-toolbar-button { display: flex; min-width: 53px; flex-direction: column; align-items: center; justify-content: center; gap: 1px; border: 1px solid transparent; padding: 2px 5px; color: #2e4d61; }
+.alpha-liquidity-toolbar-button span { display: grid; place-items: center; }
+.alpha-liquidity-toolbar-button svg { width: 18px; height: 18px; color: #2d739f; }
+.alpha-liquidity-toolbar-button small { font-size: 10px; line-height: 11px; }
+.alpha-liquidity-toolbar-button:hover:not(:disabled) { border-color: #9aaeba; background: linear-gradient(#fff, #d8e3e9); }
+.alpha-liquidity-toolbar-button:disabled { opacity: .38; cursor: not-allowed; }
+.alpha-liquidity-toolbar-button.is-danger, .alpha-liquidity-toolbar-button.is-danger svg { color: #9b4141; }
+.alpha-liquidity-search { display: flex; align-items: end; gap: 5px; border-bottom: 1px solid #b0bdc6; background: #e8edef; padding: 5px 7px; }
+.alpha-liquidity-search label { display: flex; align-items: center; gap: 5px; color: #293f50; font-size: 11px; font-weight: 700; }
+.alpha-liquidity-search input { width: 235px; }
+.alpha-liquidity-search button { display: inline-flex; height: 25px; align-items: center; gap: 3px; border: 1px solid #93a3af; background: linear-gradient(#fff, #d6e0e5); padding: 0 8px; color: #2e5068; font-size: 11px; }
+.alpha-liquidity-grid-wrap { min-height: 202px; overflow: auto; background: #fff; padding: 4px; }
+.alpha-liquidity-grid { width: 100%; min-width: 650px; border-collapse: collapse; color: #202d35; font-size: 11px; }
+.alpha-liquidity-grid th { border: 1px solid #9eacb5; background: linear-gradient(#f5f7f8, #c8d4da); padding: 3px 5px; color: #253f51; font-weight: 700; text-align: left; }
+.alpha-liquidity-grid td { height: 23px; border: 1px solid #c3ccd1; padding: 3px 5px; }
+.alpha-liquidity-grid tbody tr { cursor: pointer; background: #fff; }
+.alpha-liquidity-grid tbody tr:hover { background: #ebf6fc; }
+.alpha-liquidity-grid tbody tr.is-selected { background: #a9d2e9; color: #133b58; }
+.alpha-liquidity-empty { padding: 25px !important; color: #667883; text-align: center; }
+.alpha-liquidity-statusbar { border-top: 1px solid #b4c1c9; background: #e1e7ea; padding: 3px 7px; color: #566e7c; font-size: 10px; }
+.alpha-liquidity-editor { width: min(560px, calc(100vw - 24px)) !important; max-width: none !important; overflow: hidden; border: 1px solid #6c8ca2; border-radius: 0; font-family: Tahoma, "Segoe UI", Arial, sans-serif; }
+.alpha-liquidity-fieldset { border: 1px solid #a5b2ba; background: #edf1f3; padding: 9px; }
+.alpha-liquidity-fieldset legend { padding: 0 4px; color: #334f61; font-size: 11px; font-weight: 700; }
+.alpha-liquidity-label { display: grid; gap: 2px; color: #344d5e; font-size: 11px; font-weight: 700; }
+.alpha-liquidity-label select { height: 28px; width: 100%; border: 1px solid #8d9da8; border-radius: 0; background: #fff; padding: 0 5px; font-size: 12px; }
+.alpha-liquidity-check { display: flex; align-items: center; gap: 5px; color: #334f61; font-size: 11px; font-weight: 700; }
+.alpha-liquidity-action, .alpha-liquidity-save { height: 28px; min-width: 82px; border: 1px solid #8d9da8; padding: 0 10px; font-size: 11px; }
+.alpha-liquidity-action { background: linear-gradient(#fff, #d7e1e6); color: #314d5e; }
+.alpha-liquidity-save { border-color: #286b97; background: linear-gradient(#5b9dcd, #27678f); color: #fff; }
+@media (max-width: 700px) { .alpha-liquidity-canvas { padding: 8px; } .alpha-liquidity-window { width: 100%; } .alpha-liquidity-toolbar-button { min-width: 45px; padding-inline: 2px; } .alpha-liquidity-search { align-items: stretch; flex-direction: column; } .alpha-liquidity-search label { align-items: stretch; flex-direction: column; } .alpha-liquidity-search input { width: 100%; } }
+
+@layer components {
+  .flex { min-height: 0; min-width: 0; }
+  .container { width: 100%; margin-inline: auto; padding-inline: 1rem; }
+  @media (min-width: 1024px) { .container { max-width: 1440px; padding-inline: 1.5rem; } }
+  .alpha-side-link { display: flex; width: 100%; align-items: center; gap: 0.45rem; padding: 0.28rem 0.75rem; color: #4a6172; text-align: left; }
+  .alpha-side-link:hover { background: #e1edf5; color: #194d75; }
+  .alpha-label { display: block; margin-bottom: 0.15rem; color: #4e6170; font-size: 10px; font-weight: 700; line-height: 1.1; text-transform: uppercase; }
+  .alpha-input { display: block; height: 2rem; width: 100%; border: 1px solid #aebbc6; border-radius: 0; background: #fff; padding: 0.25rem 0.45rem; color: #243a4a; font-size: 12px; outline: none; }
+  .alpha-input:focus { border-color: #2b78b5; box-shadow: inset 0 0 0 1px #b6d5e9; }
+  .alpha-main-dashboard { display: flex; flex-direction: column; gap: 0.5rem; font-family: Arial, Helvetica, sans-serif; color: #263b4b; }
+  .alpha-main-title { display: flex; align-items: end; justify-content: space-between; border: 1px solid #aab7c2; background: linear-gradient(#f9fbfc, #e2ebf1); padding: 0.45rem 0.65rem; }
+  .alpha-main-title p { color: #567083; font-size: 10px; font-weight: 700; letter-spacing: .04em; }
+  .alpha-main-title h1 { margin-top: 0.15rem; color: #294b63; font-size: 15px; font-weight: 700; }
+  .alpha-company-chip { border-left: 1px solid #bdc9d2; padding-left: .75rem; text-align: right; font-size: 10px; color: #5d7383; }
+  .alpha-company-chip b { display: block; max-width: 240px; overflow: hidden; color: #294b63; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+  .alpha-dashboard-grid { display: grid; grid-template-columns: minmax(420px, .9fr) minmax(0, 1.45fr); gap: .5rem; }
+  .alpha-dashboard-bottom { display: grid; grid-template-columns: minmax(280px, .75fr) minmax(0, 1.25fr); gap: .5rem; }
+  .alpha-process-panel, .alpha-register-panel, .alpha-quick-reports, .alpha-chart-panel { overflow: hidden; border: 1px solid #aab7c2; background: #fff; box-shadow: 0 1px 1px rgba(46,67,83,.1); }
+  .alpha-panel-heading { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #aab7c2; background: linear-gradient(#edf4f8, #d5e2ea); padding: .28rem .5rem; color: #2d526c; font-size: 11px; font-weight: 700; }
+  .alpha-panel-heading small { color: #667a89; font-size: 10px; font-weight: 400; }
+  .alpha-process-map { min-height: 350px; padding: 1rem .8rem .6rem; background-image: linear-gradient(rgba(222,233,240,.36) 1px, transparent 1px), linear-gradient(90deg, rgba(222,233,240,.36) 1px, transparent 1px); background-size: 20px 20px; }
+  .alpha-process-row, .alpha-process-subrow { display: flex; align-items: center; justify-content: center; gap: .42rem; }
+  .alpha-process-row { min-height: 160px; }
+  .alpha-process-node { display: flex; width: 88px; flex-direction: column; align-items: center; gap: .42rem; color: #2b4b60; font-size: 11px; font-weight: 700; text-align: center; }
+  .alpha-process-node > span { display: grid; height: 55px; width: 55px; place-items: center; border: 3px solid #fff; border-radius: 12px; color: #fff; box-shadow: 0 2px 5px rgba(40,70,92,.27); transition: transform .16s ease; }
+  .alpha-process-node:hover > span { transform: translateY(-2px); }
+  .alpha-process-arrow { flex: 0 0 auto; height: 17px; width: 17px; color: #7593a6; }
+  .alpha-process-subrow { margin: .9rem 0; border-top: 1px dashed #a6b8c5; border-bottom: 1px dashed #a6b8c5; padding: .65rem 0; }
+  .alpha-process-small { display: flex; width: 76px; flex-direction: column; align-items: center; gap: .3rem; color: #426176; font-size: 10px; font-weight: 700; text-align: center; }
+  .alpha-process-small span { display: grid; height: 30px; width: 30px; place-items: center; border: 1px solid #8eabc1; border-radius: 4px; background: #e7f1f7; color: #2a6f99; }
+  .alpha-process-footer { display: flex; gap: .5rem; border-top: 1px solid #c4d0d9; padding-top: .6rem; }
+  .alpha-process-footer button { display: inline-flex; align-items: center; gap: .28rem; border: 1px solid #b6c5d1; background: linear-gradient(#fff, #e5edf2); padding: .27rem .4rem; color: #405f73; font-size: 10px; }
+  .alpha-filter-strip { display: grid; grid-template-columns: 1.35fr repeat(4, minmax(90px, .75fr)) auto; gap: .3rem; border-bottom: 1px solid #c2ced7; background: #f1f5f8; padding: .35rem .45rem; }
+  .alpha-filter-strip label { color: #536b7c; font-size: 9px; font-weight: 700; }
+  .alpha-filter-strip input, .alpha-filter-strip select { display: block; height: 24px; width: 100%; border: 1px solid #acbbc7; background: #fff; padding: 1px 4px; color: #304b5e; font-size: 10px; outline: none; }
+  .alpha-filter-strip button { align-self: end; height: 24px; border: 1px solid #aebcc7; background: linear-gradient(#fff, #dbe6ed); padding: 0 .45rem; color: #415f73; font-size: 10px; }
+  .alpha-register-table-wrap { overflow: auto; max-height: 355px; }
+  .alpha-register-table { width: 100%; min-width: 780px; border-collapse: collapse; font-size: 10px; }
+  .alpha-register-table th { position: sticky; top: 0; z-index: 1; border: 1px solid #b5c2cc; background: #dce8ef; padding: .3rem; color: #344f62; font-weight: 700; text-align: center; }
+  .alpha-register-table td { border: 1px solid #d4dde4; padding: .28rem .35rem; white-space: nowrap; }
+  .alpha-register-table tbody tr:nth-child(even) { background: #f5f8fa; }
+  .alpha-register-table tbody tr:hover { background: #e7f2f9; }
+  .alpha-register-table a { color: #135a91; font-weight: 700; text-decoration: underline; }
+  .alpha-register-table tfoot td { border-top: 2px solid #8399a9; background: #e1ebf1; font-weight: 700; }
+  .alpha-empty { padding: 2rem !important; color: #6f808d; text-align: center; }
+  .alpha-report-list { display: grid; gap: 1px; background: #d4dfe6; }
+  .alpha-report-list button { background: #fff; padding: .43rem .55rem; color: #285d82; font-size: 10px; font-weight: 700; text-align: left; text-decoration: underline; }
+  .alpha-report-list button:hover { background: #edf5fa; }
+  .alpha-bars { display: flex; height: 160px; align-items: end; gap: .65rem; padding: .65rem .9rem .35rem; }
+  .alpha-bar-column { display: grid; min-width: 0; flex: 1; grid-template-rows: 16px 1fr 14px; align-items: end; color: #5e7383; font-size: 9px; text-align: center; }
+  .alpha-bar-value { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .alpha-bar-track { display: flex; height: 105px; align-items: end; justify-content: center; border-bottom: 1px solid #9dacb7; }
+  .alpha-bar { width: min(28px, 70%); min-height: 2px; background: linear-gradient(#58a8d5, #2873a4); }
+  @media (max-width: 1100px) { .alpha-dashboard-grid, .alpha-dashboard-bottom { grid-template-columns: 1fr; } }
+  @media (max-width: 720px) { .alpha-main-title { align-items: start; flex-direction: column; gap: .35rem; } .alpha-company-chip { border-left: 0; padding-left: 0; text-align: left; } .alpha-process-row, .alpha-process-subrow { justify-content: flex-start; overflow-x: auto; padding-inline: .25rem; } .alpha-filter-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); } .alpha-filter-strip button { grid-column: span 2; } }
+  @media (max-width: 1023px) { .alpha-app-sidebar { display: none; } }
+}
+
+/* Qendra e Raporteve: katalog i dendur, si një menu profesionale ERP. */
+[data-report-catalog] .space-y-5 { gap: 0.85rem; }
+[data-report-catalog] button.group { min-height: 0; flex-direction: row; align-items: center; gap: 0.75rem; padding: 0.58rem 0.7rem; }
+[data-report-catalog] button.group p { display: none; }
+[data-report-catalog] button.group span { margin-top: 0; margin-left: auto; white-space: nowrap; }
+[data-report-catalog] button.group h2 { line-height: 1.2; }
+
+/* Regjistri i porosive: kolona Veprime qëndron e dukshme edhe kur tabela ka scroll horizontal. */
+@media (min-width: 768px) {
+  .min-w-\[1180px\] th:last-child,
+  .min-w-\[1180px\] td:last-child {
+    position: sticky;
+    right: 0;
+    z-index: 1;
+    background: white;
+    box-shadow: -8px 0 12px -12px rgba(43, 30, 43, 0.55);
+  }
+
+  .min-w-\[1180px\] thead th:last-child {
+    z-index: 2;
+    background: #f8f7f8;
+  }
+}
+
+/* Reference report sheets: print like the supplied A4 landscape PDFs without affecting other modules. */
+@media print {
+  @page { size: A4 landscape; margin: 8mm; }
+  body { background: #fff !important; }
+  .reference-report-sheet { max-width: none !important; box-shadow: none !important; border: 0 !important; ring: 0 !important; padding: 0 !important; }
+  .reference-report-sheet table { width: 100% !important; min-width: 0 !important; font-size: 8px !important; }
+  .reference-report-sheet th, .reference-report-sheet td { padding: 3px 4px !important; }
+  .reference-report-sheet button { color: inherit !important; }
+}
+
+@media print {
+  .reference-report-sheet thead { display: table-header-group; }
+  .reference-report-sheet tfoot { display: table-footer-group; }
+  .reference-report-sheet tr { break-inside: avoid; page-break-inside: avoid; }
+  .reference-report-sheet footer { break-inside: avoid; page-break-inside: avoid; }
+}
+
+/* Legacy report window: preserve the compact grey form, not the modern card treatment. */
+.reference-report-dialog {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #efefef;
+  color: #222;
+}
+.reference-report-dialog fieldset {
+  border: 1px solid #a9a9a9;
+  border-radius: 2px;
+  background: #dedede;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.45);
+}
+.reference-report-dialog input,
+.reference-report-dialog select {
+  border-radius: 1px;
+  border-color: #a9a9a9;
+  font-size: 12px;
+  height: 28px;
+}
+.reference-report-dialog button {
+  border-radius: 2px;
+  font-size: 12px;
+}
+.reference-report-dialog aside {
+  background: #f1f1f1;
+  border-color: #9d9d9d;
+}
+.reference-report-dialog aside button {
+  border-radius: 0;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+.reference-report-dialog main > div:first-child {
+  background: #e9e9e9;
+}
+
+@media (min-width: 1024px) {
+  .reference-report-dialog > div:first-of-type {
+    position: relative;
+    min-height: 72px;
+    padding-left: 12px;
+    padding-top: 6px;
+  }
+  .reference-report-dialog > div:first-of-type > div:last-child {
+    position: absolute;
+    left: 10px;
+    top: 8px;
+    z-index: 2;
+    max-width: calc(100% - 20px);
+  }
+  .reference-report-dialog > div:first-of-type > div:first-child {
+    position: absolute;
+    left: 12px;
+    bottom: 5px;
+    z-index: 1;
+    width: auto;
+  }
+  .reference-report-dialog > div:first-of-type > div:first-child > div {
+    justify-content: flex-start;
+  }
+}
+
+@media (min-width: 1024px) {
+  .reference-report-dialog > div:first-of-type {
+    display: flex !important;
+    position: relative !important;
+    min-height: 68px !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+  }
+  .reference-report-dialog > div:first-of-type > div:last-child {
+    position: absolute !important;
+    left: 10px !important;
+    right: auto !important;
+    top: 7px !important;
+    margin: 0 !important;
+    z-index: 4 !important;
+  }
+  .reference-report-dialog > div:first-of-type > div:last-child > button:nth-child(5),
+  .reference-report-dialog > div:first-of-type > div:last-child > button:nth-child(6) {
+    display: none !important;
+  }
+  .reference-report-dialog > div:first-of-type > div:first-child {
+    position: absolute !important;
+    left: 10px !important;
+    bottom: 5px !important;
+    margin: 0 !important;
+    z-index: 3 !important;
+    width: auto !important;
+    text-align: left !important;
+  }
+  .reference-report-dialog > div:first-of-type > div:first-child > div {
+    justify-content: flex-start !important;
+  }
+  .reference-report-dialog aside > div:first-child > button {
+    display: none !important;
+  }
+}
+
+/* Literal legacy window chrome: title strip + icon toolbar like the reference screenshot. */
+@media (min-width: 1024px) {
+  .reference-report-dialog > div:first-of-type {
+    height: 78px !important;
+    min-height: 78px !important;
+    padding: 0 !important;
+    background: #e9e9e9 !important;
+    color: #202020 !important;
+    border-bottom: 1px solid #9b9b9b !important;
+  }
+  .reference-report-dialog > div:first-of-type > div:first-child {
+    left: 8px !important;
+    top: 4px !important;
+    bottom: auto !important;
+    width: auto !important;
+    height: 20px !important;
+    color: #202020 !important;
+  }
+  .reference-report-dialog > div:first-of-type > div:first-child > div {
+    justify-content: flex-start !important;
+    gap: 5px !important;
+  }
+  .reference-report-dialog > div:first-of-type > div:first-child h2,
+  .reference-report-dialog > div:first-of-type > div:first-child [role="heading"] {
+    color: #202020 !important;
+    font-size: 14px !important;
+    line-height: 18px !important;
+    font-weight: 600 !important;
+  }
+  .reference-report-dialog > div:first-of-type > div:first-child p {
+    display: none !important;
+  }
+  .reference-report-dialog > div:first-of-type > div:first-child [data-slot="badge"] {
+    padding: 0 4px !important;
+    font-size: 10px !important;
+    line-height: 16px !important;
+    background: #d6d6d6 !important;
+    color: #303030 !important;
+  }
+  .reference-report-dialog > div:first-of-type > div:last-child {
+    left: 8px !important;
+    top: 25px !important;
+    right: auto !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 3px !important;
+    max-width: none !important;
+  }
+  .reference-report-dialog > div:first-of-type > div:last-child > button {
+    display: inline-flex !important;
+    width: 68px !important;
+    min-width: 68px !important;
+    height: 46px !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 2px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: #303030 !important;
+    font-size: 11px !important;
+    line-height: 13px !important;
+    padding: 2px !important;
+  }
+  .reference-report-dialog > div:first-of-type > div:last-child > button:hover {
+    background: #d5d5d5 !important;
+  }
+  .reference-report-dialog > div:first-of-type > div:last-child > button svg {
+    width: 20px !important;
+    height: 20px !important;
+    margin: 0 !important;
+    color: #202020 !important;
+  }
+  .reference-report-dialog > div:first-of-type > div:last-child > button:nth-child(5),
+  .reference-report-dialog > div:first-of-type > div:last-child > button:nth-child(6) {
+    display: none !important;
+  }
+  .reference-report-dialog > div:first-of-type > button {
+    top: 5px !important;
+    right: 5px !important;
+    color: #303030 !important;
+  }
+  .reference-report-dialog > div:nth-of-type(2) {
+    grid-template-columns: 32% minmax(0, 1fr) !important;
+  }
+  .reference-report-dialog aside {
+    background: #f1f1f1 !important;
+    border-right: 1px solid #8f8f8f !important;
+    border-radius: 0 !important;
+  }
+  .reference-report-dialog aside > div:first-child h2 {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #303030 !important;
+  }
+  .reference-report-dialog aside button:not(:first-child) {
+    border-radius: 0 !important;
+    padding: 3px 5px !important;
+    min-height: 22px !important;
+    font-size: 11px !important;
+    line-height: 14px !important;
+  }
+  .reference-report-dialog main > div:first-child {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: 5px !important;
+    padding: 7px !important;
+    background: #eeeeee !important;
+  }
+  .reference-report-dialog main > div:first-child fieldset {
+    border-color: #9c9c9c !important;
+    border-radius: 0 !important;
+    background: #dedede !important;
+    padding: 5px !important;
+  }
+  .reference-report-dialog main > div:first-child legend,
+  .reference-report-dialog main > div:first-child label {
+    font-size: 10px !important;
+    color: #333 !important;
+  }
+  .reference-report-dialog main > div:first-child input,
+  .reference-report-dialog main > div:first-child select {
+    height: 27px !important;
+    min-height: 27px !important;
+    border-radius: 0 !important;
+    border-color: #999 !important;
+    padding: 2px 6px !important;
+    font-size: 11px !important;
+  }
+  .reference-report-dialog main > div:first-child > div:last-of-type {
+    border-top: 1px solid #9c9c9c !important;
+    padding-top: 5px !important;
+  }
+  .reference-report-dialog main > div:first-child > div:last-of-type button {
+    border-radius: 0 !important;
+    font-size: 11px !important;
+  }
+}
+
+/* Photo-matched legacy form proportions: the left report list stays above the two lower groups. */
+@media (min-width: 1024px) {
+  .reference-report-dialog > div:nth-of-type(2) > aside {
+    display: flex !important;
+    min-height: 0 !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+    padding: 8px !important;
+  }
+  .reference-report-dialog > div:nth-of-type(2) > aside > div:nth-child(2) {
+    min-height: 0 !important;
+    flex: 1 1 auto !important;
+    overflow-y: auto !important;
+  }
+  .reference-report-dialog > div:nth-of-type(2) > aside > .legacy-side-panels {
+    flex: 0 0 auto !important;
+    overflow: visible !important;
+    padding: 5px 0 0 !important;
+    border-top: 1px solid #9d9d9d !important;
+  }
+  .reference-report-dialog > div:nth-of-type(2) > aside > .legacy-side-panels fieldset {
+    padding: 4px !important;
+  }
+  .reference-report-dialog > div:nth-of-type(2) > aside > .legacy-side-panels select {
+    height: 23px !important;
+  }
+  .reference-report-dialog > div:nth-of-type(2) > main > div:first-child > fieldset:nth-of-type(4) {
+    display: none !important;
+  }
+  .reference-report-dialog > div:nth-of-type(2) > main > div:first-child {
+    align-content: start !important;
+    grid-auto-rows: min-content !important;
+  }
+}
+
+/* Exact report-form canvas: the working form occupies the same three-column composition as the reference image. */
+.reference-report-dialog > div:nth-of-type(2) > main > div:nth-child(2) {
+  display: none !important;
+}
+.legacy-report-canvas {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  grid-template-rows: minmax(0, 1fr) auto !important;
+  gap: 5px !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  align-content: stretch !important;
+  padding: 6px !important;
+  background: #eeeeee !important;
+  font-family: Arial, Helvetica, sans-serif !important;
+  color: #333 !important;
+}
+.legacy-report-middle,
+.legacy-right-panel {
+  display: flex !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  overflow: hidden !important;
+}
+.legacy-report-middle > fieldset,
+.legacy-right-panel > fieldset {
+  position: relative !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 5px !important;
+  border: 1px solid #a0a0a0 !important;
+  border-radius: 0 !important;
+  background: #dedede !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.55) !important;
+}
+.legacy-report-middle > fieldset:first-child { flex: 0 0 250px !important; }
+.legacy-report-middle > fieldset:nth-child(2) { flex: 1 1 auto !important; min-height: 0 !important; }
+.legacy-report-middle > .legacy-date-panel { flex: 0 0 76px !important; }
+.legacy-report-middle > .legacy-printer-panel { flex: 0 0 44px !important; }
+.legacy-right-panel > fieldset:first-child { flex: 1 1 auto !important; min-height: 0 !important; }
+.legacy-right-panel > fieldset:nth-child(2) { flex: 0 0 112px !important; }
+.legacy-right-panel > fieldset:nth-child(3) { flex: 0 0 102px !important; }
+.legacy-right-panel > .legacy-date-panel { flex: 0 0 76px !important; }
+.legacy-report-canvas legend {
+  padding: 0 3px !important;
+  color: #4b4b4b !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+}
+.legacy-report-canvas .hidden,
+.legacy-report-canvas fieldset.hidden,
+.legacy-report-canvas label.hidden,
+.legacy-report-canvas label.hidden.legacy-check {
+  display: none !important;
+}
+.legacy-report-canvas label {
+  position: relative !important;
+  display: block !important;
+  min-width: 0 !important;
+  padding-right: 0 !important;
+  color: #555 !important;
+  font-size: 10px !important;
+  line-height: 15px !important;
+}
+.legacy-report-canvas label > input:not([type="radio"]):not([type="checkbox"]),
+.legacy-report-canvas label > select {
+  display: inline-block !important;
+  width: 100% !important;
+  height: 24px !important;
+  min-height: 24px !important;
+  margin-top: 1px !important;
+  padding: 1px 5px !important;
+  border: 1px solid #999 !important;
+  border-radius: 0 !important;
+  background: #fff !important;
+  color: #333 !important;
+  font-size: 11px !important;
+}
+.legacy-report-canvas .legacy-range {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+.legacy-report-canvas .legacy-range > input,
+.legacy-report-canvas .legacy-range > select {
+  width: 100% !important;
+  height: 24px !important;
+  min-height: 24px !important;
+  border: 1px solid #999 !important;
+  border-radius: 0 !important;
+  background: #fff !important;
+  font-size: 11px !important;
+}
+.legacy-report-canvas .legacy-range > span {
+  color: #6d6d6d !important;
+  font-size: 10px !important;
+  white-space: nowrap !important;
+}
+.legacy-report-canvas .legacy-report-middle > fieldset:first-child,
+.legacy-report-canvas .legacy-report-middle > fieldset:nth-child(2),
+.legacy-report-canvas .legacy-right-panel > fieldset:first-child {
+  display: grid !important;
+  align-content: start !important;
+  gap: 3px !important;
+}
+.legacy-report-canvas .legacy-report-middle > fieldset:first-child .legacy-check {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  margin-top: 2px !important;
+  line-height: 13px !important;
+}
+.legacy-report-canvas .legacy-report-middle > fieldset:first-child .legacy-check input,
+.legacy-report-canvas .legacy-radio-row input {
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+}
+.legacy-report-canvas .legacy-search-button {
+  position: absolute !important;
+  right: 2px !important;
+  bottom: 3px !important;
+  display: inline-flex !important;
+  width: 22px !important;
+  height: 22px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  border: 1px solid #999 !important;
+  border-radius: 0 !important;
+  background: linear-gradient(#fff, #d6d6d6) !important;
+  color: #577b99 !important;
+}
+.legacy-report-canvas .legacy-search-button svg { width: 13px !important; height: 13px !important; }
+.legacy-report-canvas .legacy-radio-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 18px !important;
+  min-height: 20px !important;
+}
+.legacy-report-canvas .legacy-radio-row label {
+  display: flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+  white-space: nowrap !important;
+}
+.legacy-report-canvas .legacy-bottom-actions {
+  grid-column: 1 / -1 !important;
+  display: flex !important;
+  min-height: 36px !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 4px !important;
+  padding: 0 !important;
+}
+.legacy-report-canvas .legacy-bottom-actions button {
+  min-width: 128px !important;
+  height: 32px !important;
+  border: 1px solid #9b9b9b !important;
+  border-radius: 0 !important;
+  background: linear-gradient(#fdfdfd, #d7d7d7) !important;
+  color: #333 !important;
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 12px !important;
+}
+@media (max-width: 1023px) {
+  .legacy-report-canvas {
+    height: auto !important;
+    min-height: 100% !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto !important;
+    overflow: auto !important;
+  }
+  .legacy-report-middle,
+  .legacy-right-panel { overflow: visible !important; }
+  .legacy-report-canvas .legacy-bottom-actions { grid-column: 1 !important; }
+}
+
+/* The legacy report window is a paper-sized portrait sheet, not a full-screen dashboard. */
+@media (min-width: 768px) {
+  .reference-report-dialog {
+    width: min(794px, calc((100vh - 24px) * 0.707), calc(100vw - 24px)) !important;
+    height: min(1123px, calc(100vh - 24px)) !important;
+    max-width: none !important;
+    max-height: none !important;
+    left: 50% !important;
+    top: 50% !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: translate(-50%, -50%) !important;
+    aspect-ratio: 210 / 297 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  .reference-report-dialog > div:nth-of-type(2) {
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .reference-report-dialog > div:nth-of-type(2) > main {
+    min-width: 0 !important;
+    min-height: 0 !important;
+    overflow: hidden auto !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .reference-report-dialog {
+    width: calc(100vw - 12px) !important;
+    height: calc(100vh - 12px) !important;
+    max-width: none !important;
+    max-height: none !important;
+    left: 6px !important;
+    top: 6px !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    overflow: hidden !important;
+  }
+}
+
+/* Radix zoom animation applies a second transform to a paper-sized dialog; the legacy window opens statically. */
+.reference-report-dialog {
+  animation: none !important;
+  inset: auto !important;
+}
+@media (min-width: 768px) {
+  .reference-report-dialog {
+    position: fixed !important;
+    left: 50vw !important;
+    top: 50vh !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: min(794px, calc((100vh - 24px) * 0.707), calc(100vw - 24px)) !important;
+    height: min(1123px, calc(100vh - 24px)) !important;
+    transform: translate(-50%, -50%) !important;
+  }
+}
+
+/* When the A4 report window is open, the application behind it must not be visible. */
+.reference-report-dialog ~ [data-slot="dialog-overlay"],
+[data-slot="dialog-overlay"]:has(+ .reference-report-dialog),
+body:has(.reference-report-dialog) [data-slot="dialog-overlay"] {
+  background: #d6d6d6 !important;
+  opacity: 1 !important;
+  animation: none !important;
+}
+body:has(.reference-report-dialog) {
+  overflow: hidden !important;
+}
+
+/* Tailwind v4 emits translate as an individual property; reset it or the -50% offset is applied twice. */
+.reference-report-dialog {
+  translate: none !important;
+}
+
+/* Report names in the legacy window use the original uppercase, large-row list treatment. */
+.reference-report-dialog > div:nth-of-type(2) > aside > div:nth-child(2) {
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  border: 1px solid #a7a7a7 !important;
+  background: #f8f8f8 !important;
+  scrollbar-color: #999 #dedede !important;
+}
+.reference-report-dialog > div:nth-of-type(2) > aside > div:nth-child(2) > button {
+  min-height: 29px !important;
+  width: max-content !important;
+  min-width: 100% !important;
+  border: 0 !important;
+  border-bottom: 1px solid #d4d4d4 !important;
+  border-radius: 0 !important;
+  background: #fff !important;
+  color: #222 !important;
+  padding: 4px 9px !important;
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  line-height: 19px !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+}
+.reference-report-dialog > div:nth-of-type(2) > aside > div:nth-child(2) > button:hover {
+  background: #e9e9e9 !important;
+}
+.reference-report-dialog > div:nth-of-type(2) > aside > div:nth-child(2) > button[class*="bg-[#1296db]"] {
+  background: #12a9e8 !important;
+  color: #fff !important;
+}
+
+/* Supplier card — simple reference document from the AnyDesk/PDF screenshot. */
+.supplier-card-simple-sheet {
+  width: min(1079px, calc(100vw - 24px));
+  min-height: 308px;
+  box-sizing: border-box;
+  padding: 24px 36px 32px;
+  overflow: hidden;
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 10px;
+  line-height: 1.2;
+  background: #fff !important;
+  color: #191919 !important;
+}
+.supplier-card-simple-header {
+  position: relative;
+  height: 82px;
+  text-align: center;
+  white-space: nowrap;
+}
+.supplier-card-simple-year {
+  position: absolute;
+  top: 4px;
+  left: -8px;
+  font-size: 10px;
+  font-weight: 700;
+}
+.supplier-card-simple-header h2 {
+  margin: 37px 0 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .06em;
+}
+.supplier-card-simple-header p {
+  margin: 0;
+  font-size: 10px;
+  font-weight: 700;
+}
+.supplier-card-simple-identification {
+  display: grid;
+  grid-template-columns: 2.15fr 1.55fr .65fr 1.15fr 1.05fr;
+  align-items: center;
+  gap: 14px;
+  min-height: 30px;
+  padding: 0 2px 7px;
+  white-space: nowrap;
+}
+.supplier-card-simple-identification strong {
+  font-weight: 400;
+}
+.supplier-card-simple-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  border-top: 1px solid #b8b8b8;
+  border-bottom: 1px solid #b8b8b8;
+  padding: 3px 4px;
+  margin-bottom: 5px;
+  font-size: 9px;
+}
+.supplier-card-simple-filters strong {
+  font-weight: 700;
+}
+.supplier-card-simple-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  background: #fffedc;
+  color: #191919;
+  font-size: 9px;
+}
+.supplier-card-simple-table th,
+.supplier-card-simple-table td {
+  border: 1px solid #151515;
+  padding: 3px 4px;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: clip;
+}
+.supplier-card-simple-table th {
+  height: 22px;
+  background: #fffedc;
+  text-align: center;
+  font-weight: 700;
+}
+.supplier-card-simple-table th button {
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  white-space: normal;
+  cursor: pointer;
+}
+.supplier-card-simple-table th:nth-child(1) { width: 5%; }
+.supplier-card-simple-table th:nth-child(2) { width: 8%; }
+.supplier-card-simple-table th:nth-child(3) { width: 5%; }
+.supplier-card-simple-table th:nth-child(4) { width: 12%; }
+.supplier-card-simple-table th:nth-child(5) { width: 9%; }
+.supplier-card-simple-table th:nth-child(6) { width: 33%; }
+.supplier-card-simple-table th:nth-child(7),
+.supplier-card-simple-table th:nth-child(8),
+.supplier-card-simple-table th:nth-child(9) { width: 9.33%; }
+.supplier-card-simple-table thead tr:first-child th[colspan="3"] {
+  height: 22px;
+}
+.supplier-card-simple-table tbody td {
+  height: 20px;
+  background: #fffef1;
+}
+.supplier-card-simple-table tbody tr.supplier-card-simple-balance td {
+  height: 21px;
+  background: #fffedc;
+  font-weight: 400;
+}
+.supplier-card-simple-table tbody tr.supplier-card-simple-balance td:nth-child(6) {
+  text-align: left;
+}
+.supplier-card-simple-table tfoot td {
+  height: 43px;
+  background: #fffedc;
+  font-weight: 700;
+}
+.supplier-card-simple-table tfoot td:last-child {
+  padding: 5px 16px;
+  text-align: left;
+}
+.supplier-card-simple-table tfoot div + div {
+  margin-top: 6px;
+}
+.supplier-card-simple-link {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #191919;
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+.supplier-card-simple-link:hover,
+.supplier-card-simple-link:focus-visible {
+  color: #0645ad;
+  text-decoration: underline;
+}
+@media print {
+  .supplier-card-simple-sheet {
+    width: 100%;
+    min-height: 0;
+    padding: 12mm 10mm;
+    box-shadow: none !important;
+  }
+}
+
+/* The executed report is a standalone document view: do not reveal the reports page through Radix's translucent overlay. */
+body:has(.report-result-dialog) {
+  overflow: hidden !important;
+}
+body:has(.report-result-dialog) [data-slot="dialog-overlay"] {
+  background: #ffffff !important;
+  opacity: 1 !important;
+  animation: none !important;
+}
+.report-result-dialog {
+  z-index: 60 !important;
+  background: #ffffff !important;
+}
+.report-result-dialog > div:first-child,
+.report-result-dialog > div:last-child {
+  background: #ffffff !important;
+}
+
+.sales-summary-reference-sheet {
+  width: min(1200px, calc(100vw - 24px));
+  min-height: 595px;
+  box-sizing: border-box;
+  padding: 26px 34px 22px;
+  overflow-x: auto;
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 9px;
+  line-height: 1.15;
+  background: #fff !important;
+  color: #191919 !important;
+}
+.sales-summary-reference-header { position: relative; height: 78px; text-align: center; white-space: nowrap; }
+.sales-summary-reference-header > span { position: absolute; top: 3px; left: 0; font-weight: 700; }
+.sales-summary-reference-header h2 { margin: 38px 0 5px; font-size: 11px; letter-spacing: .08em; font-weight: 700; }
+.sales-summary-reference-header p { margin: 0; font-size: 9px; font-weight: 700; }
+.sales-summary-reference-meta { border-top: 1px solid #4a4a36; border-bottom: 1px solid #4a4a36; padding: 3px 4px; margin-bottom: 4px; font-size: 9px; }
+.sales-summary-reconciliation-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; margin: 6px 0 8px; }
+.sales-summary-reconciliation-grid > div { min-height: 34px; border: 1px solid #151515; background: #fffedc; padding: 4px 6px; display: flex; flex-direction: column; justify-content: center; }
+.sales-summary-reconciliation-grid span { color: #4a4a36; font-size: 8px; text-transform: uppercase; }
+.sales-summary-reconciliation-grid strong { color: #191919; font-size: 10px; line-height: 1.15; }
+.sales-summary-reconciliation-grid .is-reconciled { background: #e4f4e8; border-color: #2d7042; }
+.sales-summary-reconciliation-grid .is-reconciled strong { color: #1c6230; }
+.sales-summary-reconciliation-grid .is-not-reconciled { background: #fde8e8; border-color: #a33a3a; }
+.sales-summary-reconciliation-grid .is-not-reconciled strong { color: #8d2020; }
+@media (max-width: 900px) { .sales-summary-reconciliation-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.sales-summary-reference-table { width: 100%; min-width: 1120px; table-layout: fixed; border-collapse: collapse; background: #fffef1; color: #191919; font-size: 8px; }
+.sales-summary-reference-table th, .sales-summary-reference-table td { border: 1px solid #151515; padding: 3px 3px; vertical-align: middle; overflow: hidden; text-overflow: clip; }
+.sales-summary-reference-table th { background: #fffedc; text-align: center; font-weight: 700; }
+.sales-summary-reference-table th button { width: 100%; border: 0; padding: 0; background: transparent; color: inherit; font: inherit; white-space: normal; cursor: pointer; }
+.sales-summary-reference-table thead tr:first-child th { height: 25px; }
+.sales-summary-reference-table thead tr:nth-child(2) th { height: 28px; }
+.sales-summary-reference-table .sales-summary-reference-numbers th { height: 17px; font-weight: 400; }
+.sales-summary-reference-table tbody td { height: 20px; background: #fffef1; }
+.sales-summary-reference-table tbody tr:nth-child(even) td { background: #fffedc; }
+.sales-summary-reference-table tbody td:nth-child(1), .sales-summary-reference-table tbody td:nth-child(2), .sales-summary-reference-table tbody td:nth-child(3), .sales-summary-reference-table tbody td:nth-child(4), .sales-summary-reference-table tbody td:nth-child(5) { text-align: center; }
+.sales-summary-reference-table tfoot td { height: 30px; background: #fffedc; font-weight: 700; }
+.sales-summary-reference-table tfoot td:not(:first-child) { text-align: right; }
+.sales-summary-reference-footer { display: flex; justify-content: space-between; border-top: 1px solid #4a4a36; margin-top: 12px; padding-top: 4px; font-size: 8px; }
+@media print {
+  .sales-summary-reference-sheet { width: 100%; min-height: 0; padding: 10mm 8mm; box-shadow: none !important; }
+  .sales-summary-reference-table { min-width: 0; font-size: 7px; }
+  .sales-summary-reference-table th, .sales-summary-reference-table td { padding: 2px 2px; }
+}
+
+.sales-quantity-total-reference-stack { display: flex; flex-direction: column; gap: 18px; }
+.sales-quantity-total-reference-sheet { width: min(1200px, calc(100vw - 24px)); min-height: 204px; box-sizing: border-box; padding: 20px 34px 15px; overflow: hidden; background: #fff; color: #191919; font-family: Arial, Helvetica, sans-serif !important; font-size: 8px; line-height: 1.1; }
+.sales-quantity-total-reference-header { position: relative; height: 52px; text-align: center; white-space: nowrap; }
+.sales-quantity-total-reference-header > span { position: absolute; top: 1px; left: 0; font-weight: 700; }
+.sales-quantity-total-reference-header h2 { margin: 25px 0 3px; font-size: 10px; font-weight: 700; }
+.sales-quantity-total-reference-header p { margin: 0; font-size: 8px; font-weight: 700; }
+.sales-quantity-total-reference-table { width: 100%; table-layout: fixed; border-collapse: collapse; background: #fff; font-size: 8px; }
+.sales-quantity-total-reference-table th, .sales-quantity-total-reference-table td { border: 0; padding: 2px 3px; overflow: hidden; text-overflow: clip; white-space: nowrap; }
+.sales-quantity-total-reference-table th { text-align: center; font-weight: 700; }
+.sales-quantity-total-reference-table th:first-child, .sales-quantity-total-reference-table td:first-child { width: 23%; text-align: left; }
+.sales-quantity-total-reference-table th:not(:first-child), .sales-quantity-total-reference-table td:not(:first-child) { width: 6.41%; text-align: right; }
+.sales-quantity-total-reference-table th button { border: 0; padding: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; }
+.sales-quantity-total-reference-table tbody td { height: 18px; }
+.sales-quantity-total-reference-footer { display: flex; justify-content: space-between; margin-top: 8px; border-top: 0; padding-top: 2px; font-size: 7px; }
+@media print { .sales-quantity-total-reference-stack { gap: 0; } .sales-quantity-total-reference-sheet { width: 100%; min-height: 204pt; page-break-after: always; padding: 8mm 10mm; } .sales-quantity-total-reference-table { font-size: 7px; } }
+
+.sales-quantity-reference-stack { display: flex; flex-direction: column; gap: 18px; }
+.sales-quantity-reference-sheet { width: min(1200px, calc(100vw - 24px)); min-height: 204px; box-sizing: border-box; padding: 20px 34px 15px; overflow: hidden; background: #fff; color: #191919; font-family: Arial, Helvetica, sans-serif !important; font-size: 8px; line-height: 1.1; }
+.sales-quantity-reference-header { position: relative; height: 52px; text-align: center; white-space: nowrap; }
+.sales-quantity-reference-header > span { position: absolute; top: 1px; left: 0; font-weight: 700; }
+.sales-quantity-reference-header h2 { margin: 25px 0 3px; font-size: 10px; font-weight: 700; }
+.sales-quantity-reference-header p { margin: 0; font-size: 8px; font-weight: 700; }
+.sales-quantity-reference-segment { height: 15px; font-size: 8px; white-space: nowrap; }
+.sales-quantity-reference-table { width: 100%; table-layout: fixed; border-collapse: collapse; background: #fff; font-size: 8px; }
+.sales-quantity-reference-table th, .sales-quantity-reference-table td { border: 0; padding: 2px 3px; overflow: hidden; text-overflow: clip; white-space: nowrap; }
+.sales-quantity-reference-table th { text-align: center; font-weight: 700; }
+.sales-quantity-reference-table th:first-child, .sales-quantity-reference-table td:first-child { width: 23%; text-align: left; }
+.sales-quantity-reference-table th:not(:first-child), .sales-quantity-reference-table td:not(:first-child) { width: 6.41%; text-align: right; }
+.sales-quantity-reference-table th button { border: 0; padding: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; }
+.sales-quantity-reference-table tbody td { height: 18px; }
+.sales-quantity-reference-table tfoot td { font-weight: 700; }
+.sales-quantity-reference-footer { display: flex; justify-content: space-between; margin-top: 8px; border-top: 0; padding-top: 2px; font-size: 7px; }
+@media print { .sales-quantity-reference-stack { gap: 0; } .sales-quantity-reference-sheet { width: 100%; min-height: 204pt; page-break-after: always; padding: 8mm 10mm; } .sales-quantity-reference-table { font-size: 7px; } }
+
+/* The report window needs a usable work area around the A4 document: the legacy list and filters must remain readable. */
+@media (min-width: 1024px) {
+  .reference-report-dialog {
+    width: min(1540px, calc(100vw - 28px)) !important;
+    height: min(900px, calc(100vh - 32px)) !important;
+    aspect-ratio: auto !important;
+  }
+  .reference-report-dialog > div:nth-of-type(2) {
+    display: grid !important;
+    grid-template-columns: minmax(360px, 30%) minmax(0, 1fr) !important;
+  }
+  .reference-report-dialog > div:nth-of-type(2) > aside {
+    min-width: 0 !important;
+  }
+  .reference-report-dialog > div:nth-of-type(2) > aside > div:nth-child(2) {
+    max-height: 470px !important;
+  }
+  .reference-report-dialog > div:nth-of-type(2) > main {
+    min-width: 0 !important;
+    overflow: hidden auto !important;
+  }
+}
+
+/* Global report cleanup: this rule intentionally comes last so legacy layout selectors cannot re-show unsupported fields. */
+.reference-report-dialog .legacy-report-canvas .hidden,
+.reference-report-dialog .legacy-report-canvas fieldset.hidden,
+.reference-report-dialog .legacy-report-canvas label.hidden {
+  display: none !important;
+}
+.reference-report-dialog .legacy-report-canvas .legacy-report-middle > fieldset:first-child label.hidden.legacy-check {
+  display: none !important;
+}
+
+/* Supplier-card balance emphasis: the final status sits directly above the report total. */
+.supplier-card-simple-balance-summary td {
+  height: 28px;
+  padding: 5px 6px;
+  font-weight: 700;
+  border-top: 2px solid #151515;
+  border-bottom: 1px solid #151515;
+}
+.supplier-card-simple-balance-summary strong {
+  font-size: 10px;
+  letter-spacing: .08em;
+}
+.supplier-card-simple-debitor td {
+  background: #ffe1df !important;
+  color: #8d1515 !important;
+}
+.supplier-card-simple-kreditor td {
+  background: #dcecff !important;
+  color: #0b458c !important;
+}
+.supplier-card-simple-balanc td {
+  background: #e7f4df !important;
+  color: #24631f !important;
+}
+.supplier-card-simple-total-row td {
+  height: 38px;
+  background: #e6e5b5 !important;
+  color: #191919 !important;
+  font-weight: 800;
+  border-top: 2px solid #151515;
+}
+.supplier-card-simple-last-row td {
+  border-bottom: 2px solid #151515;
+}
+
+/* Inventory reports use warehouse/product/date filters; the generic amount/grouping sidebar is not a real inventory filter. */
+.reference-report-dialog.inventory-report-dialog .legacy-side-panels {
+  display: none !important;
+}

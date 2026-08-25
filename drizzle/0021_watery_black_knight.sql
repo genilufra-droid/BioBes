@@ -1,0 +1,1 @@
+ALTER TABLE `payrollAttendance` ADD CONSTRAINT `payrollAttendance_period_employee_day_unique` UNIQUE(`payrollPeriodId`,`payrollEmployeeId`,`day`);

@@ -1,0 +1,1 @@
+ALTER TABLE `payrollPeriods` MODIFY COLUMN `currency` varchar(10) NOT NULL DEFAULT 'ALL';

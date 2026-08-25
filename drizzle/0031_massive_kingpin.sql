@@ -1,0 +1,1 @@
+ALTER TABLE `salesInvoices` ADD `vatAmount` int DEFAULT 0 NOT NULL;
