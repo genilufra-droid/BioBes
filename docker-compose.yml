@@ -40,6 +40,7 @@ services:
       LOCAL_AUTH_USERS_JSON: ${LOCAL_AUTH_USERS_JSON:-[]}
       STORAGE_PROVIDER: ${STORAGE_PROVIDER:-local}
       LOCAL_STORAGE_DIR: /var/lib/biobes/storage
+      AUTO_MIGRATE: ${AUTO_MIGRATE:-true}
     volumes:
       - biobes_storage:/var/lib/biobes/storage
     ports:

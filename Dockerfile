@@ -15,6 +15,7 @@ COPY package.json pnpm-lock.yaml ./
 COPY patches ./patches
 RUN npm install -g corepack@latest && corepack pnpm install --prod --frozen-lockfile && groupadd --system biobes && useradd --system --gid biobes biobes
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/drizzle ./drizzle
 RUN mkdir -p /var/lib/biobes/storage && chown -R biobes:biobes /app /var/lib/biobes
 USER biobes
 EXPOSE 3000

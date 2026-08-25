@@ -1,7 +1,13 @@
 import "dotenv/config";
 import express from "express";
+import { sql } from "drizzle-orm";
+import { readdirSync } from "node:fs";
+import { resolve } from "node:path";
 import { createServer } from "http";
 import net from "net";
+import mysql from "mysql2/promise";
+import { drizzle } from "drizzle-orm/mysql2";
+import { migrate } from "drizzle-orm/mysql2/migrator";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { registerLocalAuthRoutes } from "./localAuth";
@@ -28,7 +34,21 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
   throw new Error(`No available port found starting from ${startPort}`);
 }
 
+async function runAutoMigrations() {
+  if (process.env.AUTO_MIGRATE !== "true") return;
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) throw new Error("AUTO_MIGRATE=true kërkon DATABASE_URL");
+  const pool = mysql.createPool(connectionString);
+  try {
+    await migrate(drizzle(pool), { migrationsFolder: "./drizzle" });
+    console.log("Database migrations applied successfully");
+  } finally {
+    await pool.end();
+  }
+}
+
 async function startServer() {
+  await runAutoMigrations();
   const app = express();
   const server = createServer(app);
   app.use(express.json({ limit: "50mb" }));
@@ -39,9 +59,14 @@ async function startServer() {
   app.get("/healthz", async (_req, res) => {
     try {
       const database = await getDb();
-      if (!database) { res.status(503).json({ ok: false, database: false }); return; }
-      res.json({ ok: true, database: true });
-    } catch { res.status(503).json({ ok: false, database: false }); }
+      if (!database) { res.status(503).json({ ok: false, database: false, migrations: false }); return; }
+      await database.execute(sql`SELECT 1 AS ok`);
+      const migrationRows = await database.execute(sql`SELECT COUNT(*) AS count FROM __drizzle_migrations`);
+      const applied = Number((migrationRows as any)[0]?.[0]?.count ?? 0);
+      const expected = readdirSync(resolve(process.cwd(), "drizzle")).filter(file => file.endsWith(".sql")).length;
+      const migrationsReady = expected > 0 && applied >= expected;
+      res.status(migrationsReady ? 200 : 503).json({ ok: migrationsReady, database: true, migrations: { applied, expected } });
+    } catch { res.status(503).json({ ok: false, database: false, migrations: false }); }
   });
   app.use(
     "/api/trpc",

@@ -4677,6 +4677,17 @@ export async function getEmployeeDocuments(companyId: number, employeeId: number
   return db.select().from(employeeDocuments).where(and(eq(employeeDocuments.companyId, companyId), eq(employeeDocuments.employeeId, employeeId)));
 }
 
+export async function getStorageObjectCompanyId(fileKey: string): Promise<number | null> {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+  const cargo = await database.select({ companyId: cargoLoadDocuments.companyId }).from(cargoLoadDocuments).where(eq(cargoLoadDocuments.fileKey, fileKey)).limit(1);
+  if (cargo[0]?.companyId) return cargo[0].companyId;
+  const purchase = await database.select({ companyId: purchaseOrders.companyId }).from(purchaseOrderAttachments).innerJoin(purchaseOrders, eq(purchaseOrderAttachments.purchaseOrderId, purchaseOrders.id)).where(eq(purchaseOrderAttachments.fileKey, fileKey)).limit(1);
+  if (purchase[0]?.companyId) return purchase[0].companyId;
+  const employee = await database.select({ companyId: employeeDocuments.companyId }).from(employeeDocuments).where(eq(employeeDocuments.fileKey, fileKey)).limit(1);
+  return employee[0]?.companyId ?? null;
+}
+
 export async function createEmployeeDocument(data: { companyId: number; employeeId: number; documentType: string; documentName: string; fileUrl: string; fileKey: string }) {
   const db = await getDb();
   if (!db) throw new Error("Database not initialized");
