@@ -1844,3 +1844,5 @@
 - [x] Database integrity: shto migration 0042 me FK për core multi-company/master-data dhe unique `(userId, companyId)`; kontrollo zero orphans/duplicates dhe aplikoje në DB.
 
 - [x] Deployment verification: pas lazy Vite import fix, Cloud Run log-et konfirmuan server running në portën 3000 pa ERR_MODULE_NOT_FOUND; domain-i publik u përgjigj HTTP 200.
+
+- [x] RBAC hardening: adminProcedure trashëgon requireUser dhe requireCompanyScope; TypeScript dhe 5 teste të targetuara kaluan.

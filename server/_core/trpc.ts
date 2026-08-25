@@ -44,7 +44,7 @@ const requireCompanyScope = t.middleware(async opts => {
 
 export const protectedProcedure = t.procedure.use(requireUser).use(requireCompanyScope);
 
-export const adminProcedure = t.procedure.use(
+export const adminProcedure = t.procedure.use(requireUser).use(requireCompanyScope).use(
   t.middleware(async opts => {
     const { ctx, next } = opts;
 
