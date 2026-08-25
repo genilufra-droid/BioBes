@@ -288,6 +288,13 @@
       "when": 1787649197370,
       "tag": "0040_handy_millenium_guard",
       "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "5",
+      "when": 1787684134272,
+      "tag": "0041_short_amphibian",
+      "breakpoints": true
     }
   ]
 }
