@@ -1900,3 +1900,14 @@
 - [ ] P0: shto assertCompanyAccess/Write për issuer, documentGroup, costCenter, product.list dhe Payroll employees/settings/periods/leave.
 - [ ] P0: rakordo me backup bl-01/BL-01 dhe apliko unique purchaseInvoices(companyId, docNumber) vetëm pas verifikimit të të dhënave.
 - [ ] P0: ruaj log provash për docker compose up, /healthz 200, POST /api/local-auth/bootstrap dhe login.
+- [ ] Audit handoff: riparo Drizzle meta/snapshots 0041–0043 në mënyrë që checkout i pastër të japë `pnpm db:generate` me “No schema changes”; mos commit-o migration të dyfishtë 0044.
+- [ ] Audit handoff: shto test route-level/integration për storage me DB dhe local storage real, jo vetëm mocks.
+- [ ] Audit handoff: ekzekuto Docker fresh-start pa cache me MySQL bosh, AUTO_MIGRATE, /healthz 200 me applied/expected, restart, local auth dhe storage anonymous/cross-company/member.
+- [ ] Audit handoff: audit production dependencies deri në zero critical dhe dokumento reachability të high vulnerabilities; bëj analytics conditional kur env mungon.
+- [ ] Audit handoff: ruaj output të plotë për check/test/local build/db:generate/audit/Docker/status përpara çdo tag-u ose deklarimi pranimi.
+- [ ] P0 IDOR: refaktoro të gjitha payroll routes me vetëm payrollPeriodId (generate, entries, attendance, bonuses, upsertBonuses, addAttendance, addAttendanceBulk, upsertAttendanceBulk, clearManualAttendance) që të autorizojnë company scope para çdo DB operation.
+- [ ] P0 ID-only audit: audito dhe mbyll weightForm.get, purchaseInvoice.get dhe çdo route tjetër që merr vetëm ID.
+- [ ] P0 cross-tenant regression: shto prova që kompania A nuk lexon ose ndryshon të dhënat e kompanisë B dhe viewer nuk kryen mutation; DB mutation nuk thirret para dështimit të authorization.
+- [ ] P0 runtime acceptance: verifiko duplicate query para migration, Docker fresh-start 45/45, healthz 200, restart, local auth login/logout, storage 401/404/200 dhe persistence.
+- [ ] P0 self-host hardening: shto .env.example, bootstrap secret njëpërdorimësh, race-safety dhe rate limiting për bootstrap/login.
+- [ ] P0 dependency/build: rregullo critical vulnerabilities dhe analytics build warnings, me analizë reachability për high vulnerabilities të mbetura.

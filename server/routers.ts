@@ -61,7 +61,13 @@ async function assertCompanyWriteAccess(user: { id: number; role: "admin" | "use
   const membership = await db.getCompanyMembership(companyId, user.id);
   if (!canWriteCompany(user.role, membership?.role)) throw new TRPCError({ code: "FORBIDDEN", message: "Roli Lexues ka vetëm akses për lexim." });
 }
-
+export async function authorizePayrollPeriod(user: { id: number; role: "admin" | "user" }, payrollPeriodId: number, write = false) {
+  const period = await db.getPayrollPeriodAccess(payrollPeriodId);
+  if (!period) throw new TRPCError({ code: "NOT_FOUND", message: "Periudha e pagave nuk u gjet." });
+  if (write) await assertCompanyWriteAccess(user, period.companyId);
+  else await assertCompanyAccess(user.id, period.companyId);
+  return period;
+}
 export const appRouter = router({
   creditNotes: router({
     list: protectedProcedure.input(z.object({ companyId: z.number().int().positive() })).query(async ({ ctx, input }) => { await assertCompanyAccess(ctx.user.id, input.companyId); return db.getCreditNotes(input.companyId); }),
@@ -637,20 +643,22 @@ export const appRouter = router({
       list: protectedProcedure.input(z.object({ companyId: z.number().int().positive() })).query(async ({ ctx, input }) => { await assertCompanyAccess(ctx.user.id, input.companyId); return db.getPayrollPeriods(input.companyId); }),
       history: protectedProcedure.input(z.object({ companyId: z.number().int().positive() })).query(async ({ ctx, input }) => { await assertCompanyAccess(ctx.user.id, input.companyId); return db.getPayrollPeriodHistory(input.companyId); }),
       create: protectedProcedure.input(z.object({ companyId: z.number().int().positive(), year: z.number().int().min(2020).max(2100), month: z.number().int().min(1).max(12), currency: z.string().min(1).max(10).default("ALL"), taxRulesJson: z.string().max(10000).optional(), socialEmployeeRateBp: z.number().int().nonnegative().default(0), socialEmployerRateBp: z.number().int().nonnegative().default(0), notes: z.string().max(5000).optional() })).mutation(async ({ ctx, input }) => { await assertCompanyWriteAccess(ctx.user, input.companyId); return db.createPayrollPeriod(input); }),
-      generate: protectedProcedure.input(z.object({ payrollPeriodId: z.number().int().positive() })).mutation(async ({ ctx, input }) => db.generatePayrollPeriod(input.payrollPeriodId, ctx.user.id)),
-      entries: protectedProcedure.input(z.object({ payrollPeriodId: z.number().int().positive() })).query(async ({ input }) => db.getPayrollEntries(input.payrollPeriodId)),
+      generate: protectedProcedure.input(z.object({ payrollPeriodId: z.number().int().positive() })).mutation(async ({ ctx, input }) => { await authorizePayrollPeriod(ctx.user, input.payrollPeriodId, true); return db.generatePayrollPeriod(input.payrollPeriodId, ctx.user.id); }),
+      entries: protectedProcedure.input(z.object({ payrollPeriodId: z.number().int().positive() })).query(async ({ ctx, input }) => { await authorizePayrollPeriod(ctx.user, input.payrollPeriodId); return db.getPayrollEntries(input.payrollPeriodId); }),
       contributionHistory: protectedProcedure.input(z.object({ companyId: z.number().int().positive() })).query(async ({ ctx, input }) => { await assertCompanyAccess(ctx.user.id, input.companyId); return db.getPayrollContributionHistory(input.companyId); }),
-      attendance: protectedProcedure.input(z.object({ payrollPeriodId: z.number().int().positive() })).query(async ({ input }) => db.getPayrollAttendance(input.payrollPeriodId)),
-      bonuses: protectedProcedure.input(z.object({ payrollPeriodId: z.number().int().positive() })).query(async ({ input }) => db.getPayrollPeriodBonuses(input.payrollPeriodId)),
-      upsertBonuses: protectedProcedure.input(z.object({ payrollPeriodId: z.number().int().positive(), rows: z.array(z.object({ payrollEmployeeId: z.number().int().positive(), bonusCents: z.number().int().nonnegative() })).min(1).max(1000) })).mutation(async ({ input }) => db.upsertPayrollPeriodBonuses(input.payrollPeriodId, input.rows)),
-      addAttendance: protectedProcedure.input(z.object({ payrollPeriodId: z.number().int().positive(), payrollEmployeeId: z.number().int().positive(), day: z.number().int().min(1).max(31), attendanceCode: z.string().min(1).max(10).default("8"), normalMinutes: z.number().int().nonnegative().default(0), overtimeMinutes: z.number().int().nonnegative().default(0), note: z.string().max(500).optional() })).mutation(async ({ input }) => db.createPayrollAttendance(input)),
-      addAttendanceBulk: protectedProcedure.input(z.object({ payrollPeriodId: z.number().int().positive(), rows: z.array(z.object({ payrollEmployeeId: z.number().int().positive(), day: z.number().int().min(1).max(31), attendanceCode: z.string().min(1).max(10).default("8"), normalMinutes: z.number().int().nonnegative().default(0), overtimeMinutes: z.number().int().nonnegative().default(0), note: z.string().max(500).optional() })).min(1).max(2000) })).mutation(async ({ input }) => {
+      attendance: protectedProcedure.input(z.object({ payrollPeriodId: z.number().int().positive() })).query(async ({ ctx, input }) => { await authorizePayrollPeriod(ctx.user, input.payrollPeriodId); return db.getPayrollAttendance(input.payrollPeriodId); }),
+      bonuses: protectedProcedure.input(z.object({ payrollPeriodId: z.number().int().positive() })).query(async ({ ctx, input }) => { await authorizePayrollPeriod(ctx.user, input.payrollPeriodId); return db.getPayrollPeriodBonuses(input.payrollPeriodId); }),
+      upsertBonuses: protectedProcedure.input(z.object({ payrollPeriodId: z.number().int().positive(), rows: z.array(z.object({ payrollEmployeeId: z.number().int().positive(), bonusCents: z.number().int().nonnegative() })).min(1).max(1000) })).mutation(async ({ ctx, input }) => { await authorizePayrollPeriod(ctx.user, input.payrollPeriodId, true); return db.upsertPayrollPeriodBonuses(input.payrollPeriodId, input.rows); }),
+      addAttendance: protectedProcedure.input(z.object({ payrollPeriodId: z.number().int().positive(), payrollEmployeeId: z.number().int().positive(), day: z.number().int().min(1).max(31), attendanceCode: z.string().min(1).max(10).default("8"), normalMinutes: z.number().int().nonnegative().default(0), overtimeMinutes: z.number().int().nonnegative().default(0), note: z.string().max(500).optional() })).mutation(async ({ ctx, input }) => { await authorizePayrollPeriod(ctx.user, input.payrollPeriodId, true); return db.createPayrollAttendance(input); }),
+      addAttendanceBulk: protectedProcedure.input(z.object({ payrollPeriodId: z.number().int().positive(), rows: z.array(z.object({ payrollEmployeeId: z.number().int().positive(), day: z.number().int().min(1).max(31), attendanceCode: z.string().min(1).max(10).default("8"), normalMinutes: z.number().int().nonnegative().default(0), overtimeMinutes: z.number().int().nonnegative().default(0), note: z.string().max(500).optional() })).min(1).max(2000) })).mutation(async ({ ctx, input }) => {
+        await authorizePayrollPeriod(ctx.user, input.payrollPeriodId, true);
         return db.createPayrollAttendanceBulk(input.rows.map(row => ({ ...row, payrollPeriodId: input.payrollPeriodId })));
       }),
-      upsertAttendanceBulk: protectedProcedure.input(z.object({ payrollPeriodId: z.number().int().positive(), rows: z.array(z.object({ payrollEmployeeId: z.number().int().positive(), day: z.number().int().min(1).max(31), attendanceCode: z.string().min(1).max(10).default("8"), normalMinutes: z.number().int().nonnegative().default(0), overtimeMinutes: z.number().int().nonnegative().default(0), note: z.string().max(500).optional() })).min(1).max(2000) })).mutation(async ({ input }) => {
+      upsertAttendanceBulk: protectedProcedure.input(z.object({ payrollPeriodId: z.number().int().positive(), rows: z.array(z.object({ payrollEmployeeId: z.number().int().positive(), day: z.number().int().min(1).max(31), attendanceCode: z.string().min(1).max(10).default("8"), normalMinutes: z.number().int().nonnegative().default(0), overtimeMinutes: z.number().int().nonnegative().default(0), note: z.string().max(500).optional() })).min(1).max(2000) })).mutation(async ({ ctx, input }) => {
+        await authorizePayrollPeriod(ctx.user, input.payrollPeriodId, true);
         return db.upsertPayrollAttendanceBulk(input.rows.map(row => ({ ...row, payrollPeriodId: input.payrollPeriodId })));
       }),
-      clearManualAttendance: protectedProcedure.input(z.object({ payrollPeriodId: z.number().int().positive() })).mutation(async ({ input }) => db.clearPayrollManualAttendance(input.payrollPeriodId)),
+      clearManualAttendance: protectedProcedure.input(z.object({ payrollPeriodId: z.number().int().positive() })).mutation(async ({ ctx, input }) => { await authorizePayrollPeriod(ctx.user, input.payrollPeriodId, true); return db.clearPayrollManualAttendance(input.payrollPeriodId); }),
     }),
     leaveAbsences: router({
       list: protectedProcedure.input(z.object({ companyId: z.number().int().positive() })).query(async ({ ctx, input }) => { await assertCompanyAccess(ctx.user.id, input.companyId); return db.getPayrollLeaveAbsences(input.companyId); }),
@@ -681,9 +689,12 @@ export const appRouter = router({
       }),
 
     get: protectedProcedure
-      .input(z.object({ id: z.number() }))
-      .query(async ({ input }) => {
-        return db.getWeightFormById(input.id);
+      .input(z.object({ id: z.number(), companyId: z.number().int().positive() }))
+      .query(async ({ ctx, input }) => {
+        await assertCompanyAccess(ctx.user.id, input.companyId);
+        const form = await db.getWeightFormById(input.id);
+        if (form && form.companyId !== input.companyId) throw new TRPCError({ code: "NOT_FOUND", message: "Formulari nuk u gjet." });
+        return form;
       }),
 
     create: protectedProcedure
@@ -716,10 +727,11 @@ export const appRouter = router({
       }),
 
     get: protectedProcedure
-      .input(z.object({ id: z.number() }))
-      .query(async ({ input }) => {
+      .input(z.object({ id: z.number(), companyId: z.number().int().positive() }))
+      .query(async ({ ctx, input }) => {
+        await assertCompanyAccess(ctx.user.id, input.companyId);
         const invoice = await db.getPurchaseInvoiceById(input.id);
-        if (!invoice) return undefined;
+        if (!invoice || invoice.companyId !== input.companyId) return undefined;
         const items = await db.getPurchaseItems(invoice.id);
         return { ...invoice, items };
       }),
@@ -1065,10 +1077,11 @@ export const appRouter = router({
       }),
 
     get: protectedProcedure
-      .input(z.object({ id: z.number() }))
-      .query(async ({ input }) => {
+      .input(z.object({ id: z.number(), companyId: z.number().int().positive() }))
+      .query(async ({ ctx, input }) => {
+        await assertCompanyAccess(ctx.user.id, input.companyId);
         const invoice = await db.getSalesInvoiceById(input.id);
-        if (!invoice) return undefined;
+        if (!invoice || invoice.companyId !== input.companyId) return undefined;
         const items = await db.getSalesItems(invoice.id);
         return { ...invoice, items };
       }),

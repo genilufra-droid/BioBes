@@ -285,16 +285,16 @@ function SalesInvoiceFormView({ invoice, warehouseName, customerName }: { invoic
 function SalesInvoiceDocumentDialog({ companyId, invoiceId, onOpenChange }: { companyId: number; invoiceId: number | null; onOpenChange: (open: boolean) => void }) {
   const utils = trpc.useUtils();
   const [showExportInvoice, setShowExportInvoice] = useState(false);
-  const { data: invoice } = trpc.salesInvoice.get.useQuery({ id: invoiceId ?? 1 }, { enabled: invoiceId !== null });
+  const { data: invoice } = trpc.salesInvoice.get.useQuery({ id: invoiceId ?? 1, companyId }, { enabled: invoiceId !== null });
   useEffect(() => {
     setShowExportInvoice(shouldUseExportInvoiceTemplate(invoice?.invoiceFormat, invoice?.currency));
   }, [invoice?.id, invoice?.invoiceFormat, invoice?.currency]);
   const { data: company } = trpc.company.get.useQuery({ companyId }, { enabled: invoiceId !== null });
   const { data: customers = [] } = trpc.customer.list.useQuery({ companyId }, { enabled: invoiceId !== null });
   const { data: warehouses = [] } = trpc.warehouse.list.useQuery({ companyId }, { enabled: invoiceId !== null });
-  const postInvoice = trpc.salesInvoice.post.useMutation({ onSuccess: async () => { await utils.salesInvoice.list.invalidate({ companyId }); await utils.salesInvoice.get.invalidate({ id: invoiceId ?? 1 }); toast.success("Fatura u postua."); }, onError: error => toast.error(error.message) });
-  const payInvoice = trpc.salesInvoice.pay.useMutation({ onSuccess: async () => { await utils.salesInvoice.list.invalidate({ companyId }); await utils.salesInvoice.get.invalidate({ id: invoiceId ?? 1 }); toast.success("Pagesa u postua."); }, onError: error => toast.error(error.message) });
-  const markLater = trpc.salesInvoice.setPaymentStatus.useMutation({ onSuccess: async () => { await utils.salesInvoice.list.invalidate({ companyId }); await utils.salesInvoice.get.invalidate({ id: invoiceId ?? 1 }); toast.success("Fatura u vendos për pagesë të mëvonshme."); }, onError: error => toast.error(error.message) });
+  const postInvoice = trpc.salesInvoice.post.useMutation({ onSuccess: async () => { await utils.salesInvoice.list.invalidate({ companyId }); await utils.salesInvoice.get.invalidate({ id: invoiceId ?? 1, companyId }); toast.success("Fatura u postua."); }, onError: error => toast.error(error.message) });
+  const payInvoice = trpc.salesInvoice.pay.useMutation({ onSuccess: async () => { await utils.salesInvoice.list.invalidate({ companyId }); await utils.salesInvoice.get.invalidate({ id: invoiceId ?? 1, companyId }); toast.success("Pagesa u postua."); }, onError: error => toast.error(error.message) });
+  const markLater = trpc.salesInvoice.setPaymentStatus.useMutation({ onSuccess: async () => { await utils.salesInvoice.list.invalidate({ companyId }); await utils.salesInvoice.get.invalidate({ id: invoiceId ?? 1, companyId }); toast.success("Fatura u vendos për pagesë të mëvonshme."); }, onError: error => toast.error(error.message) });
   const rows = (invoice?.items ?? []).map(item => ({ Artikulli: item.productName || "—", Sasia: item.quantity?.toLocaleString("sq-AL") ?? "0", Njësia: item.unit || "—", Çmimi: currencyMoney(item.unitPrice, invoice?.currency), Vlera: currencyMoney(item.totalPrice, invoice?.currency) }));
   const columns = ["Artikulli", "Sasia", "Njësia", "Çmimi", "Vlera"] as const;
   const referenceInvoice = invoice ? buildSalesReferenceInvoiceSource({ ...invoice, vatAmount: 0, items: invoice.items, warehouseName: warehouses.find(warehouse => warehouse.id === invoice.warehouseId)?.name }, company, customers.find(customer => customer.id === invoice.customerId)) : null;

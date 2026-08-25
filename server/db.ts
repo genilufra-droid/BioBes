@@ -2973,6 +2973,13 @@ export async function restorePayrollBackup(companyId: number, payload: any) {
   });
 }
 
+export async function getPayrollPeriodAccess(payrollPeriodId: number) {
+  const database = await getDb();
+  if (!database) return null;
+  const [period] = await database.select({ id: payrollPeriods.id, companyId: payrollPeriods.companyId, status: payrollPeriods.status }).from(payrollPeriods).where(eq(payrollPeriods.id, payrollPeriodId)).limit(1);
+  return period ?? null;
+}
+
 export async function createPayrollPeriod(data: typeof payrollPeriods.$inferInsert) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");

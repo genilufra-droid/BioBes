@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { hashLocalPassword, isValidLocalBootstrapInput, verifyLocalPassword } from "./_core/localAuth";
+import { consumeLocalAuthRateLimit, hashLocalPassword, hasValidSetupSecret, isValidLocalBootstrapInput, verifyLocalPassword } from "./_core/localAuth";
+import { ENV } from "./_core/env";
 
 describe("local auth password adapter", () => {
   it("hashes and verifies the correct password without storing plaintext", async () => {
@@ -21,5 +22,24 @@ describe("local auth first-run bootstrap validation", () => {
     expect(isValidLocalBootstrapInput({ email: "owner@example.com", password: "short", name: "Owner", companyName: "Company" })).toBe(false);
     expect(isValidLocalBootstrapInput({ email: "owner@example.com", password: "correct-horse", name: "", companyName: "Company" })).toBe(false);
     expect(isValidLocalBootstrapInput({ email: "owner@example.com", password: "correct-horse", name: "Owner", companyName: "" })).toBe(false);
+  });
+
+  it("requires the configured setup secret and compares it without plaintext equality", () => {
+    expect(hasValidSetupSecret("setup-secret", "setup-secret")).toBe(true);
+    expect(hasValidSetupSecret("wrong-secret", "setup-secret")).toBe(false);
+    expect(hasValidSetupSecret(undefined, "setup-secret")).toBe(false);
+    expect(hasValidSetupSecret("setup-secret", "")).toBe(false);
+  });
+
+  it("limits repeated attempts and resets after the window", () => {
+    const key = `local-auth-test-${Date.now()}`;
+    for (let index = 0; index < 10; index += 1) expect(consumeLocalAuthRateLimit(key, 1_000)).toBe(true);
+    expect(consumeLocalAuthRateLimit(key, 1_000)).toBe(false);
+    expect(consumeLocalAuthRateLimit(key, 1_000 + 15 * 60 * 1000)).toBe(true);
+  });
+
+  it("validates the configured setup secret when supplied by the runtime", () => {
+    if (!ENV.localAuthSetupSecret) return;
+    expect(hasValidSetupSecret(ENV.localAuthSetupSecret, ENV.localAuthSetupSecret)).toBe(true);
   });
 });
