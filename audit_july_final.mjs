@@ -1,0 +1,16 @@
+import fs from "node:fs/promises";
+import * as XLSX from "xlsx";
+import * as db from "./server/db.ts";
+const norm = value => String(value ?? "").trim().toLocaleLowerCase("sq-AL").replace(/[^a-z0-9ëç]/gi, "");
+const buffer = await fs.readFile("/home/ubuntu/upload/07.PAGATMUAJIKORRIK2026.xlsx");
+const workbook = XLSX.read(buffer, { type: "buffer", raw: false });
+const sheet = workbook.Sheets[workbook.SheetNames.find(name => norm(name).replace(/ë/g, "e").includes("pagatkorrik"))];
+const sourceRows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false, defval: "" }).slice(2).filter(row => row?.[0] && !/total/i.test(String(row?.[0]))).map(row => ({ number: norm(row[0]), name: `${row[1] ?? ""} ${row[2] ?? ""}`.trim(), key: norm(`${row[1] ?? ""} ${row[2] ?? ""}`) }));
+const employees = await db.getPayrollEmployees(1);
+const entries = await db.getPayrollEntries(270001);
+const entryByName = new Map(entries.map(entry => [norm(entry.employeeName), entry]));
+const entryByNumber = new Map(entries.map(entry => [norm(entry.employeeNumber), entry]));
+const matched = sourceRows.map(row => ({ source: row, entry: entryByName.get(row.key) || entryByNumber.get(row.number) })).map(row => ({ ...row, found: Boolean(row.entry) }));
+const result = { sourceCount: sourceRows.length, entryCount: entries.length, activeEmployees: employees.filter(e => e.active === 1).length, missing: matched.filter(row => !row.found), matchedByNumberOnly: matched.filter(row => row.found && !entryByName.has(row.source.key)).map(row => ({ source: row.source, entry: { id: row.entry.id, number: row.entry.employeeNumber, name: row.entry.employeeName } })), entryNames: entries.map(entry => ({ id: entry.id, number: entry.employeeNumber, name: entry.employeeName, foreign: employees.find(employee => employee.id === entry.payrollEmployeeId)?.isForeign === 1 })).filter(entry => !sourceRows.some(row => row.key === norm(entry.name) || row.number === norm(entry.number))) };
+console.log(JSON.stringify(result, null, 2));
+process.exit(0);

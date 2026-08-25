@@ -1,0 +1,14 @@
+import fs from "node:fs";
+import http from "node:http";
+const target = await new Promise((resolve, reject) => http.get("http://127.0.0.1:9222/json/list", response => { let data = ""; response.on("data", chunk => data += chunk); response.on("end", () => resolve(JSON.parse(data).find(page => page.type === "page" && page.url.includes("/payroll")))); }).on("error", reject));
+const ws = new WebSocket(target.webSocketDebuggerUrl);
+let id = 0;
+const pending = new Map();
+ws.addEventListener("message", event => { const message = JSON.parse(String(event.data)); if (message.id && pending.has(message.id)) { pending.get(message.id)(message); pending.delete(message.id); } });
+await new Promise((resolve, reject) => { ws.addEventListener("open", resolve, { once: true }); ws.addEventListener("error", reject, { once: true }); });
+const command = (method, params = {}) => new Promise((resolve, reject) => { const callId = ++id; pending.set(callId, response => response.error ? reject(new Error(JSON.stringify(response.error))) : resolve(response.result)); ws.send(JSON.stringify({ id: callId, method, params })); });
+await command("Page.bringToFront");
+const result = await command("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+fs.writeFileSync("/home/ubuntu/payroll_logs_preview.png", Buffer.from(result.data, "base64"));
+console.log("Saved /home/ubuntu/payroll_logs_preview.png");
+ws.close();

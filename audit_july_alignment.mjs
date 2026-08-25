@@ -1,0 +1,17 @@
+import fs from "node:fs/promises";
+import * as XLSX from "xlsx";
+import * as db from "./server/db.ts";
+const normalize = value => String(value ?? "").trim().toLocaleLowerCase("sq-AL").replace(/[^a-z0-9ëç]/gi, "");
+const buffer = await fs.readFile("/home/ubuntu/upload/07.PAGATMUAJIKORRIK2026.xlsx");
+const workbook = XLSX.read(buffer, { type: "buffer", raw: false });
+const sheet = workbook.Sheets[workbook.SheetNames.find(name => normalize(name).replace(/ë/g, "e").includes("pagatkorrik"))];
+const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false, defval: "" }).slice(2).filter(row => row?.[0] && !/total/i.test(String(row?.[0])));
+const source = rows.map(row => ({ number: String(row[0]).trim(), name: `${String(row[1] ?? "").trim()} ${String(row[2] ?? "").trim()}`.trim(), key: normalize(`${row[1] ?? ""} ${row[2] ?? ""}`) }));
+const entries = await db.getPayrollEntries(270001);
+const entryNames = entries.map(entry => ({ id: entry.id, number: entry.employeeNumber, name: entry.employeeName, key: normalize(entry.employeeName) }));
+const sourceKeys = new Set(source.map(row => row.key));
+const entryKeys = new Set(entryNames.map(row => row.key));
+const result = { sourceCount: source.length, entryCount: entries.length, sourceOnly: source.filter(row => !entryKeys.has(row.key)), entryOnly: entryNames.filter(row => !sourceKeys.has(row.key)), duplicateSourceNames: source.filter((row, index) => source.findIndex(other => other.key === row.key) !== index) };
+await fs.writeFile("audit_july_alignment.json", JSON.stringify(result, null, 2));
+console.log(JSON.stringify(result, null, 2));
+process.exit(0);

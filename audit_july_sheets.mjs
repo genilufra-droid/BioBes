@@ -1,0 +1,16 @@
+import fs from "node:fs/promises";
+import * as XLSX from "xlsx";
+const normalize = value => String(value ?? "").trim().toLocaleLowerCase("sq-AL").replace(/[^a-z0-9ëç]/gi, "");
+const buffer = await fs.readFile("/home/ubuntu/upload/07.PAGATMUAJIKORRIK2026.xlsx");
+const workbook = XLSX.read(buffer, { type: "buffer", raw: false });
+const hoursSheet = workbook.Sheets[workbook.SheetNames.find(name => normalize(name).replace(/ë/g, "e").includes("oretepunes"))];
+const payrollSheet = workbook.Sheets[workbook.SheetNames.find(name => normalize(name).replace(/ë/g, "e").includes("pagatkorrik"))];
+const hoursRows = XLSX.utils.sheet_to_json(hoursSheet, { header: 1, raw: false, defval: "" });
+const payrollRows = XLSX.utils.sheet_to_json(payrollSheet, { header: 1, raw: false, defval: "" });
+const hoursHeader = hoursRows.findIndex(row => String(row?.[0] ?? "").toUpperCase().startsWith("NR"));
+const payrollData = payrollRows.slice(2).filter(row => row?.[0] && !/total|punetoret/i.test(`${row?.[0]} ${row?.[1]} ${row?.[2]}`)).map(row => ({ number: String(row[0]).trim(), name: `${row[1] ?? ""} ${row[2] ?? ""}`.trim(), key: normalize(`${row[1] ?? ""} ${row[2] ?? ""}`) }));
+const hoursData = hoursRows.slice(hoursHeader + 1).filter(row => row?.[0] || row?.[1] || row?.[2]).map(row => ({ number: String(row[0] ?? "").trim(), name: `${row[1] ?? ""} ${row[2] ?? ""}`.trim(), key: normalize(`${row[1] ?? ""} ${row[2] ?? ""}`) }));
+const payrollKeys = new Set(payrollData.map(row => row.key));
+const payrollNumbers = new Set(payrollData.map(row => row.number));
+console.log(JSON.stringify({ hoursCount: hoursData.length, payrollCount: payrollData.length, hoursOnlyByName: hoursData.filter(row => !payrollKeys.has(row.key)), hoursOnlyByNumber: hoursData.filter(row => !payrollNumbers.has(row.number)), payrollOnly: payrollData.filter(row => !new Set(hoursData.map(item => item.key)).has(row.key)) }, null, 2));
+process.exit(0);
