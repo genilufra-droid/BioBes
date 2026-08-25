@@ -1975,7 +1975,7 @@
     {
       "path": "package.json",
       "bytes": 4312,
-      "sha256": "9c6dabc9269777e52e20b652bb2094cb3bd7a18561290e5284ad0161e152d6e3"
+      "sha256": "b7d0dad12b857a67b408e6abcf8497c28eca0b77627ec0ab06d2083ba3aa1adc"
     },
     {
       "path": "patches/wouter@3.7.1.patch",
@@ -1985,7 +1985,7 @@
     {
       "path": "pnpm-lock.yaml",
       "bytes": 348988,
-      "sha256": "844a538b7f705dc469834c28f951473b8744221b136c69681ec97e3eeafbc9aa"
+      "sha256": "5a98fcfce83abcec54e90362749ae5852748a0d1ea54da435d43c3ae9ce3e896"
     },
     {
       "path": "scripts/audit_biobes_export.py",
