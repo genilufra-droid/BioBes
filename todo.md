@@ -1864,3 +1864,5 @@
 - [x] Integrity verification: 616 skedarë lokalë kundrejt 519 në export; 0 source-code missing, 0 hash mismatch, 99 non-source artifacts të dokumentuara dhe vetëm `todo.md` remote-only.
 
 - [x] Stock audit finding: query read-only gjeti dublikatë reale në `stockMovements` për invoice 540/referenceId 30068/productId 90028; katër dalje në të njëjtin timestamp, pa fshirje ose ndryshim të të dhënave.
+
+- [x] Idempotency hardening: `ensurePurchaseInvoiceStock` dhe `ensureSalesInvoiceStock` tani marrin row-level `FOR UPDATE` lock mbi faturën burimore përpara kontrollit të lëvizjeve; TypeScript, 14 teste targetuara dhe production build kaluan. Auditimi i workflow-ve të tjera të stokut mbetet i hapur.
