@@ -54,8 +54,8 @@
     },
     {
       "path": "Dockerfile",
-      "bytes": 881,
-      "sha256": "df59c54992f06713ab0033801ede8f1b5b23428753c6b4d131010a3652449cdf"
+      "bytes": 927,
+      "sha256": "b9d55189ec533c50e05937ee31ca7766ebae428d00cb6eeafd23bfba27b94fbb"
     },
     {
       "path": "LICENSE",
@@ -1439,8 +1439,8 @@
     },
     {
       "path": "docs/FINAL_ACCEPTANCE_REPORT.md",
-      "bytes": 2241,
-      "sha256": "5b36b8f7c1c9caf8d5f90698c485399d2061580f8be145ff57ff01fbe5d57368"
+      "bytes": 2736,
+      "sha256": "49d5807d092246ae5351abf993406a8ba53e339d3fc22068b2165c1d808645f1"
     },
     {
       "path": "docs/INSTALL.md",
@@ -1974,8 +1974,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 4309,
-      "sha256": "55500c38dcf1ba86a1ffd0f41d0fa79fc02c503e1d94d7939d9f30ecf037ffb7"
+      "bytes": 4312,
+      "sha256": "3744208ce2281c068fe1df4e71981e6127a28432d77e86f1764f532d6af263a1"
     },
     {
       "path": "patches/wouter@3.7.1.patch",
@@ -1984,8 +1984,8 @@
     },
     {
       "path": "pnpm-lock.yaml",
-      "bytes": 349045,
-      "sha256": "753fc888214b7901b7fc1cee75e925332c93fa4c9637a23fade7542d03f56d3a"
+      "bytes": 348976,
+      "sha256": "7cf8181f78f95d28ea7a83668b0c9bd7fe97f4d8297edd176b4dbe5e35cde0c8"
     },
     {
       "path": "scripts/audit_biobes_export.py",
