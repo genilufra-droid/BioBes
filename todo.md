@@ -1860,3 +1860,5 @@
 - [x] Clean-clone acceptance: BioBes public u klonua me depth 1; `pnpm install --frozen-lockfile`, `pnpm check`, 5 teste RBAC dhe `pnpm build` kaluan.
 
 - [x] Full clean-clone test suite: në clone të freskët të BioBes kaluan 88 test files dhe 309 teste, pas instalimit frozen, check dhe build.
+
+- [x] Integrity verification: 616 skedarë lokalë kundrejt 519 në export; 0 source-code missing, 0 hash mismatch, 99 non-source artifacts të dokumentuara dhe vetëm `todo.md` remote-only.
