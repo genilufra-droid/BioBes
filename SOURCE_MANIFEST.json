@@ -2224,8 +2224,8 @@
     },
     {
       "path": "server/_core/vite.ts",
-      "bytes": 2273,
-      "sha256": "cf8fc1dab389541bd6189b7b300ce01fa3d2f4756891a730fbeb78b88e622a12"
+      "bytes": 2404,
+      "sha256": "e800b6eb7cef66e4cac2c3bf167aa87a24f442c4d109749ef11bad4851b5ae08"
     },
     {
       "path": "server/_core/voiceTranscription.ts",
