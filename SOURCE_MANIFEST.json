@@ -2119,8 +2119,8 @@
     },
     {
       "path": "scripts/verify_biobes_integrity.py",
-      "bytes": 3289,
-      "sha256": "0b782b10d19e04a0099c24bb97ecea8c038fedd1a5d02a65c678e99f15d5b014"
+      "bytes": 3680,
+      "sha256": "051b13c0d609bddcd66cb743010ec6c2805aad89ff70737320e6c64ca2c7453a"
     },
     {
       "path": "scripts/verify_sales_parser_real.ts",

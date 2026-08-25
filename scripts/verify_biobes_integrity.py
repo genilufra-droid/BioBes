@@ -4,7 +4,7 @@ from __future__ import annotations
 import argparse, hashlib, subprocess
 from pathlib import Path
 
-DEFAULT_IGNORE = {'.git', 'node_modules', 'dist', '.manus', '.manus-logs', 'todo.md'}
+DEFAULT_IGNORE = {'.git', 'node_modules', 'dist', '.manus', '.manus-logs', 'todo.md', 'SOURCE_MANIFEST.json'}
 SOURCE_EXTENSIONS = {'.ts', '.tsx', '.mts', '.cts', '.mjs', '.cjs', '.js', '.jsx', '.py', '.sh', '.css', '.html'}
 
 def local_files(root: Path, ignores: set[str]) -> set[str]:
@@ -23,12 +23,21 @@ def sha256(path: Path) -> str:
             digest.update(chunk)
     return digest.hexdigest()
 
+def remote_ref(repo: Path, branch: str) -> str:
+    for remote in ('origin', 'github'):
+        candidate = f'refs/remotes/{remote}/{branch}'
+        if subprocess.run(['git', '-C', str(repo), 'show-ref', '--verify', '--quiet', candidate]).returncode == 0:
+            return f'{remote}/{branch}'
+    return branch
+
 def remote_sha256(repo: Path, branch: str, item: str) -> str:
-    process = subprocess.run(['git', '-C', str(repo), 'show', f'github/{branch}:{item}'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True)
+    ref = remote_ref(repo, branch)
+    process = subprocess.run(['git', '-C', str(repo), 'show', f'{ref}:{item}'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True)
     return hashlib.sha256(process.stdout).hexdigest()
 
 def remote_files(repo: str, branch: str) -> set[str]:
-    output = subprocess.check_output(['git', '-C', repo, 'ls-tree', '-r', '--name-only', f'github/{branch}'], text=True)
+    ref = remote_ref(Path(repo), branch)
+    output = subprocess.check_output(['git', '-C', repo, 'ls-tree', '-r', '--name-only', ref], text=True)
     return {line.strip() for line in output.splitlines() if line.strip()}
 
 def main() -> int:
