@@ -1871,7 +1871,7 @@
 
 - [ ] Docker bootstrap: aplikoni migrimet automatikisht në DB bosh me një entrypoint të verifikueshëm dhe dokumento rrjedhën pa ndryshuar të dhëna reale.
 
-- [x] Docker bootstrap wiring: entrypoint-i ekzekuton Drizzle migrations kur `AUTO_MIGRATE=true`, compose e aktivizon pas DB health, dhe runtime image kopjon `drizzle/`; `pnpm check`, 10 teste targetuara dhe production build kaluan. Docker/MySQL empty-DB smoke test mbetet i hapur sepse CLI nuk është i disponueshëm në sandbox.
+- [ ] Docker bootstrap wiring: wiring-u i `AUTO_MIGRATE=true` dhe kopjimi i `drizzle/` ekzistojnë në kodin aktual, por kjo nuk konsiderohet e kryer pa smoke test real `docker compose up --build -d` me MySQL bosh, migrime dhe login.
 
 - [ ] Self-host auth: shto bootstrap DB-first për owner lokal me email/password, në mënyrë që instalimi bosh të mos varet vetëm nga `LOCAL_AUTH_USERS_JSON=[]`; ruaj first-run setup të kontrolluar.
 - [ ] Storage security: kërko session valid dhe verifiko pronësinë/company scope për `/local-storage/*` dhe `/s3-storage/*`; mos lejo download vetëm nga path-i.
@@ -1879,7 +1879,7 @@
 - [ ] Health readiness: zgjero `/healthz` që të kontrollojë DB, migrimet dhe storage konfigurimin real, jo vetëm ekzistencën e connection pool-it.
 - [ ] Auth/storage regression tests: shto teste negative për anonymous storage access, cross-company object access dhe first-run owner bootstrap.
 
-- [x] Storage auth gate: `/local-storage/*`, `/s3-storage/*` dhe `/manus-storage/*` kërkojnë session të autentikuar dhe kthejnë 401 për anonymous requests; `pnpm check` dhe 5 teste targetuara kaluan. Company/object ownership authorization mbetet i hapur dhe nuk pretendohet i mbyllur.
+- [ ] Storage auth gate: routes aktuale kanë helper autentikimi në kod, por statusi mbetet i pambyllur derisa të provohen runtime me request anonymous, session valid dhe company/object ownership; company/object authorization është ende e hapur.
 - [x] P0 audit priority: testi RBAC për rolin viewer dhe procedurat write u verifikuan; `server/rbac.reader.test.ts` kaloi dhe suite e plotë u ekzekutua pa krijuar tag/checkpoint të ri.
 - [ ] Audit handoff 2026-08-25: ndalo tag-et/raportet për ndryshime të vogla dhe mos deklaro teste pa output real.
 - [x] Audit handoff 2026-08-25: `payment.cancel` dhe `payment.deleteDraft` tani ekzekutojnë `assertCompanyWriteAccess(ctx.user, input.companyId)` para çdo leximi DB; target test kaloi me FORBIDDEN dhe lookup nuk u thirr për viewer.
@@ -1890,3 +1890,5 @@
 - [ ] Audit handoff 2026-08-25: provo Docker first-run real me MySQL bosh, owner/company/membership, login, storage dhe readiness me SELECT 1/status migrimesh.
 - [ ] Audit handoff 2026-08-25: forco storage company/object scope, rate limiting login, dependency hardening dhe dokumento mitigimet pa pretenduar mbyllje të 2 critical/38 high/61 moderate/11 low.
 - [ ] Audit handoff 2026-08-25: dorëzimi final kërkon clean clone të BioBes, pnpm install/check/test/build, Docker smoke test dhe E2E me DB bosh; tag vetëm pas milestone-it të provuar.
+- [ ] Audit correction: rikthe “Docker bootstrap wiring” dhe “Storage auth gate” si të pambyllura derisa Dockerfile/compose/routes të verifikohen realisht me prova.
+- [ ] Audit correction: mos shëno komponentë infrastrukture si të kryer vetëm nga wiring-u; kërko test runtime për migrime, session authorization dhe healthcheck.
