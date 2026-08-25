@@ -1846,3 +1846,5 @@
 - [x] Deployment verification: pas lazy Vite import fix, Cloud Run log-et konfirmuan server running në portën 3000 pa ERR_MODULE_NOT_FOUND; domain-i publik u përgjigj HTTP 200.
 
 - [x] RBAC hardening: adminProcedure trashëgon requireUser dhe requireCompanyScope; TypeScript dhe 5 teste të targetuara kaluan.
+
+- [x] Numbering audit finding: u identifikuan 2 fatura blerjeje reale me `bl-01`/`BL-01` në të njëjtën kompani; nuk u ndryshuan pa konfirmim, ndaj unique constraint i plotë për purchaseInvoices mbetet i hapur.
