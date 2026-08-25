@@ -54,8 +54,8 @@
     },
     {
       "path": "Dockerfile",
-      "bytes": 897,
-      "sha256": "50b33e880a9a8f28d20ff6a480695054103412dce4671366d16b5fa31945af7e"
+      "bytes": 881,
+      "sha256": "df59c54992f06713ab0033801ede8f1b5b23428753c6b4d131010a3652449cdf"
     },
     {
       "path": "LICENSE",
@@ -1429,8 +1429,8 @@
     },
     {
       "path": "docs/ENVIRONMENT.md",
-      "bytes": 1801,
-      "sha256": "a181df5ae8b6094f7e8c31ebc4718d6ee68485f0f2481c1f21fae1d225a5637d"
+      "bytes": 2415,
+      "sha256": "13173259e12239fe6fc315b862e36ae13e617f79d17f1cd7578596ea0cd0f1e6"
     },
     {
       "path": "docs/EXPORT-AUDIT.md",
@@ -2119,8 +2119,8 @@
     },
     {
       "path": "scripts/verify_biobes_integrity.py",
-      "bytes": 3680,
-      "sha256": "051b13c0d609bddcd66cb743010ec6c2805aad89ff70737320e6c64ca2c7453a"
+      "bytes": 3709,
+      "sha256": "427ea7852b91f952cfa16075f0b1982cccc2e4b3af782e366e5b8dcda5ddf8db"
     },
     {
       "path": "scripts/verify_sales_parser_real.ts",
@@ -2204,8 +2204,8 @@
     },
     {
       "path": "server/_core/trpc.ts",
-      "bytes": 1033,
-      "sha256": "95679492e0478938f9bab6e3388ba6a95d3ab3329e6ff2eb9686e638cd07d98e"
+      "bytes": 2056,
+      "sha256": "d2cedf06a4e2d0c1b850519e8652da1ca670edef3fe10a3912870204530802dd"
     },
     {
       "path": "server/_core/types/cookie.d.ts",
