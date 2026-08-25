@@ -53,7 +53,7 @@ def main() -> int:
     local = local_files(source, ignores)
     remote = remote_files(str(export), args.branch)
     missing = sorted(local - remote)
-    extra = sorted(remote - local)
+    extra = sorted((remote - local) - {'SOURCE_MANIFEST.json'})
     print(f'LOCAL_FILES={len(local)}')
     print(f'REMOTE_FILES={len(remote)}')
     missing_source = [item for item in missing if Path(item).suffix in SOURCE_EXTENSIONS]
