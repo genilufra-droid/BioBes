@@ -1,6 +1,6 @@
 {
   "root": ".",
-  "fileCount": 516,
+  "fileCount": 517,
   "files": [
     {
       "path": ".dockerignore",
@@ -1718,6 +1718,11 @@
       "sha256": "a237cc58232bc2bf5b916e4bfb220420c0871b9c3b1536aca04bef283562b56e"
     },
     {
+      "path": "drizzle/0043_jittery_doctor_spectrum.sql",
+      "bytes": 951,
+      "sha256": "0b820ae4b7fb78071c679d6c85bca40c91afedf4f1658485908f538c717041d5"
+    },
+    {
       "path": "drizzle/meta/0000_snapshot.json",
       "bytes": 2593,
       "sha256": "bcb0f9fe1cf4d88d60ea25ef38162ec5d5625380a3a117aeaac7c14a8f4b366f"
@@ -1924,8 +1929,8 @@
     },
     {
       "path": "drizzle/meta/_journal.json",
-      "bytes": 6308,
-      "sha256": "7e7e35b22623dbe0844e5d0f327b9e4f1307fc9a5cb01feebea75339d866a17f"
+      "bytes": 6460,
+      "sha256": "ef0cbf38b97af8be80dada9c61497a8f5e7df1f972ff3eeb2c7ca26acb764239"
     },
     {
       "path": "drizzle/migrations/.gitkeep",
@@ -1939,8 +1944,8 @@
     },
     {
       "path": "drizzle/schema.ts",
-      "bytes": 59145,
-      "sha256": "1786706ea0d41a963c33d0f51dee9b71689063d0d4812d32af33f2ed00b97638"
+      "bytes": 59850,
+      "sha256": "195c163f6ffd38b97a252dfc85fd5b21bdbf68b30e9177b678d8c9748a0538cf"
     },
     {
       "path": "drizzle.config.ts",

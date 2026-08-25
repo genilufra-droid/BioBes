@@ -1848,3 +1848,5 @@
 - [x] RBAC hardening: adminProcedure trashëgon requireUser dhe requireCompanyScope; TypeScript dhe 5 teste të targetuara kaluan.
 
 - [x] Numbering audit finding: u identifikuan 2 fatura blerjeje reale me `bl-01`/`BL-01` në të njëjtën kompani; nuk u ndryshuan pa konfirmim, ndaj unique constraint i plotë për purchaseInvoices mbetet i hapur.
+
+- [x] Numbering integrity: migration 0043 vendos unique `(companyId, docNumber)` për porosi, pranime, kthime, fatura shitje, oferta dhe porosi shitje; faturat blerje mbeten të hapura për shkak të konfliktit real `bl-01`/`BL-01`.

@@ -729,7 +729,7 @@ export const purchaseOrders = mysqlTable("purchaseOrders", {
   verifierName: varchar("verifierName", { length: 255 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, table => [uniqueIndex("purchaseOrders_company_number_unique").on(table.companyId, table.docNumber)]);
 
 export type PurchaseOrder = typeof purchaseOrders.$inferSelect;
 export type InsertPurchaseOrder = typeof purchaseOrders.$inferInsert;
@@ -784,7 +784,7 @@ export const purchaseReceipts = mysqlTable("purchaseReceipts", {
   notes: text("notes"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, table => [uniqueIndex("purchaseReceipts_company_number_unique").on(table.companyId, table.docNumber)]);
 
 export type PurchaseReceipt = typeof purchaseReceipts.$inferSelect;
 export type InsertPurchaseReceipt = typeof purchaseReceipts.$inferInsert;
@@ -814,7 +814,7 @@ export const purchaseReturns = mysqlTable("purchaseReturns", {
   reason: text("reason"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, table => [uniqueIndex("purchaseReturns_company_number_unique").on(table.companyId, table.docNumber)]);
 
 export type PurchaseReturn = typeof purchaseReturns.$inferSelect;
 export type InsertPurchaseReturn = typeof purchaseReturns.$inferInsert;
@@ -876,7 +876,7 @@ export const salesInvoices = mysqlTable("salesInvoices", {
   paymentStatus: mysqlEnum("paymentStatus", ["UNPAID", "PAID", "LATER"]).default("UNPAID").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, table => [uniqueIndex("salesInvoices_company_number_unique").on(table.companyId, table.docNumber)]);
 
 export type SalesInvoice = typeof salesInvoices.$inferSelect;
 export type InsertSalesInvoice = typeof salesInvoices.$inferInsert;
@@ -910,7 +910,7 @@ export const salesQuotations = mysqlTable("salesQuotations", {
   notes: text("notes"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, table => [uniqueIndex("salesQuotations_company_number_unique").on(table.companyId, table.docNumber)]);
 
 export type SalesQuotation = typeof salesQuotations.$inferSelect;
 export type InsertSalesQuotation = typeof salesQuotations.$inferInsert;
@@ -944,7 +944,7 @@ export const salesOrders = mysqlTable("salesOrders", {
   notes: text("notes"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, table => [uniqueIndex("salesOrders_company_number_unique").on(table.companyId, table.docNumber)]);
 
 export type SalesOrder = typeof salesOrders.$inferSelect;
 export type InsertSalesOrder = typeof salesOrders.$inferInsert;
@@ -1008,7 +1008,7 @@ export const salesReturns = mysqlTable("salesReturns", {
   reason: text("reason"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, table => [uniqueIndex("salesReturns_company_number_unique").on(table.companyId, table.docNumber)]);
 
 export type SalesReturn = typeof salesReturns.$inferSelect;
 export type InsertSalesReturn = typeof salesReturns.$inferInsert;
