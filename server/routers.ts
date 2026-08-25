@@ -240,22 +240,22 @@ export const appRouter = router({
   // CONFIGURATION CATALOGS
   // ============================================================
   issuer: router({
-    list: protectedProcedure.input(z.object({ companyId: z.number() })).query(async ({ input }) => db.getIssuers(input.companyId)),
-    create: protectedProcedure.input(z.object({ companyId: z.number(), code: z.string().min(1).max(50), name: z.string().min(1).max(255), active: z.number().int().min(0).max(1).default(1) })).mutation(async ({ input }) => db.createIssuer(input)),
-    update: protectedProcedure.input(z.object({ companyId: z.number(), id: z.number(), code: z.string().min(1).max(50), name: z.string().min(1).max(255), active: z.number().int().min(0).max(1) })).mutation(async ({ input }) => { const { companyId, id, ...data } = input; return db.updateIssuer(id, companyId, data); }),
-    delete: protectedProcedure.input(z.object({ companyId: z.number(), id: z.number() })).mutation(async ({ input }) => db.deleteIssuer(input.id, input.companyId)),
+    list: protectedProcedure.input(z.object({ companyId: z.number() })).query(async ({ ctx, input }) => { await assertCompanyAccess(ctx.user.id, input.companyId); return db.getIssuers(input.companyId); }),
+    create: protectedProcedure.input(z.object({ companyId: z.number(), code: z.string().min(1).max(50), name: z.string().min(1).max(255), active: z.number().int().min(0).max(1).default(1) })).mutation(async ({ ctx, input }) => { await assertCompanyWriteAccess(ctx.user, input.companyId); return db.createIssuer(input); }),
+    update: protectedProcedure.input(z.object({ companyId: z.number(), id: z.number(), code: z.string().min(1).max(50), name: z.string().min(1).max(255), active: z.number().int().min(0).max(1) })).mutation(async ({ ctx, input }) => { await assertCompanyWriteAccess(ctx.user, input.companyId); const { companyId, id, ...data } = input; return db.updateIssuer(id, companyId, data); }),
+    delete: protectedProcedure.input(z.object({ companyId: z.number(), id: z.number() })).mutation(async ({ ctx, input }) => { await assertCompanyWriteAccess(ctx.user, input.companyId); return db.deleteIssuer(input.id, input.companyId); }),
   }),
   documentGroup: router({
-    list: protectedProcedure.input(z.object({ companyId: z.number() })).query(async ({ input }) => db.getDocumentGroups(input.companyId)),
-    create: protectedProcedure.input(z.object({ companyId: z.number(), code: z.string().min(1).max(50), name: z.string().min(1).max(255), documentType: z.string().min(1).max(50) })).mutation(async ({ input }) => db.createDocumentGroup(input)),
-    update: protectedProcedure.input(z.object({ companyId: z.number(), id: z.number(), code: z.string().min(1).max(50), name: z.string().min(1).max(255), documentType: z.string().min(1).max(50) })).mutation(async ({ input }) => { const { companyId, id, ...data } = input; return db.updateDocumentGroup(id, companyId, data); }),
-    delete: protectedProcedure.input(z.object({ companyId: z.number(), id: z.number() })).mutation(async ({ input }) => db.deleteDocumentGroup(input.id, input.companyId)),
+    list: protectedProcedure.input(z.object({ companyId: z.number() })).query(async ({ ctx, input }) => { await assertCompanyAccess(ctx.user.id, input.companyId); return db.getDocumentGroups(input.companyId); }),
+    create: protectedProcedure.input(z.object({ companyId: z.number(), code: z.string().min(1).max(50), name: z.string().min(1).max(255), documentType: z.string().min(1).max(50) })).mutation(async ({ ctx, input }) => { await assertCompanyWriteAccess(ctx.user, input.companyId); return db.createDocumentGroup(input); }),
+    update: protectedProcedure.input(z.object({ companyId: z.number(), id: z.number(), code: z.string().min(1).max(50), name: z.string().min(1).max(255), documentType: z.string().min(1).max(50) })).mutation(async ({ ctx, input }) => { await assertCompanyWriteAccess(ctx.user, input.companyId); const { companyId, id, ...data } = input; return db.updateDocumentGroup(id, companyId, data); }),
+    delete: protectedProcedure.input(z.object({ companyId: z.number(), id: z.number() })).mutation(async ({ ctx, input }) => { await assertCompanyWriteAccess(ctx.user, input.companyId); return db.deleteDocumentGroup(input.id, input.companyId); }),
   }),
   costCenter: router({
-    list: protectedProcedure.input(z.object({ companyId: z.number() })).query(async ({ input }) => db.getCostCenters(input.companyId)),
-    create: protectedProcedure.input(z.object({ companyId: z.number(), code: z.string().min(1).max(50), name: z.string().min(1).max(255), active: z.number().int().min(0).max(1).default(1), mainProduction: z.number().int().min(0).max(1).default(0) })).mutation(async ({ input }) => db.createCostCenter(input)),
-    update: protectedProcedure.input(z.object({ companyId: z.number(), id: z.number(), code: z.string().min(1).max(50), name: z.string().min(1).max(255), active: z.number().int().min(0).max(1), mainProduction: z.number().int().min(0).max(1) })).mutation(async ({ input }) => { const { companyId, id, ...data } = input; return db.updateCostCenter(id, companyId, data); }),
-    delete: protectedProcedure.input(z.object({ companyId: z.number(), id: z.number() })).mutation(async ({ input }) => db.deleteCostCenter(input.id, input.companyId)),
+    list: protectedProcedure.input(z.object({ companyId: z.number() })).query(async ({ ctx, input }) => { await assertCompanyAccess(ctx.user.id, input.companyId); return db.getCostCenters(input.companyId); }),
+    create: protectedProcedure.input(z.object({ companyId: z.number(), code: z.string().min(1).max(50), name: z.string().min(1).max(255), active: z.number().int().min(0).max(1).default(1), mainProduction: z.number().int().min(0).max(1).default(0) })).mutation(async ({ ctx, input }) => { await assertCompanyWriteAccess(ctx.user, input.companyId); return db.createCostCenter(input); }),
+    update: protectedProcedure.input(z.object({ companyId: z.number(), id: z.number(), code: z.string().min(1).max(50), name: z.string().min(1).max(255), active: z.number().int().min(0).max(1), mainProduction: z.number().int().min(0).max(1) })).mutation(async ({ ctx, input }) => { await assertCompanyWriteAccess(ctx.user, input.companyId); const { companyId, id, ...data } = input; return db.updateCostCenter(id, companyId, data); }),
+    delete: protectedProcedure.input(z.object({ companyId: z.number(), id: z.number() })).mutation(async ({ ctx, input }) => { await assertCompanyWriteAccess(ctx.user, input.companyId); return db.deleteCostCenter(input.id, input.companyId); }),
   }),
 
   // ============================================================
@@ -264,7 +264,8 @@ export const appRouter = router({
   product: router({
     list: protectedProcedure
       .input(z.object({ companyId: z.number() }))
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        await assertCompanyAccess(ctx.user.id, input.companyId);
         return db.getProducts(input.companyId);
       }),
 
@@ -594,10 +595,10 @@ export const appRouter = router({
 
   payroll: router({
     employees: router({
-      list: protectedProcedure.input(z.object({ companyId: z.number().int().positive() })).query(async ({ input }) => db.getPayrollEmployees(input.companyId)),
-      create: protectedProcedure.input(z.object({ companyId: z.number().int().positive(), employeeNumber: z.string().min(1).max(50), firstName: z.string().min(1).max(100), lastName: z.string().max(100).optional(), position: z.string().max(150).optional(), regularRateCents: z.number().int().nonnegative().default(0), overtimeRateCents: z.number().int().nonnegative().default(0), baseSalaryCents: z.number().int().nonnegative().default(0), advanceCents: z.number().int().nonnegative().default(0), paymentMethod: z.enum(["BANK", "CASH"]).default("BANK"), bankName: z.string().max(150).optional(), bankAccount: z.string().max(100).optional(), isForeign: z.number().int().min(0).max(1).default(0), shiftCode: z.enum(["A", "B", "C"]).default("A"), dailyRateCents: z.number().int().nonnegative().default(0), active: z.number().int().min(0).max(1).default(1) })).mutation(async ({ input }) => db.createPayrollEmployee(input)),
+      list: protectedProcedure.input(z.object({ companyId: z.number().int().positive() })).query(async ({ ctx, input }) => { await assertCompanyAccess(ctx.user.id, input.companyId); return db.getPayrollEmployees(input.companyId); }),
+      create: protectedProcedure.input(z.object({ companyId: z.number().int().positive(), employeeNumber: z.string().min(1).max(50), firstName: z.string().min(1).max(100), lastName: z.string().max(100).optional(), position: z.string().max(150).optional(), regularRateCents: z.number().int().nonnegative().default(0), overtimeRateCents: z.number().int().nonnegative().default(0), baseSalaryCents: z.number().int().nonnegative().default(0), advanceCents: z.number().int().nonnegative().default(0), paymentMethod: z.enum(["BANK", "CASH"]).default("BANK"), bankName: z.string().max(150).optional(), bankAccount: z.string().max(100).optional(), isForeign: z.number().int().min(0).max(1).default(0), shiftCode: z.enum(["A", "B", "C"]).default("A"), dailyRateCents: z.number().int().nonnegative().default(0), active: z.number().int().min(0).max(1).default(1) })).mutation(async ({ ctx, input }) => { await assertCompanyWriteAccess(ctx.user, input.companyId); return db.createPayrollEmployee(input); }),
       createBulk: protectedProcedure.input(z.object({ companyId: z.number().int().positive(), rows: z.array(z.object({ employeeNumber: z.string().min(1).max(50), firstName: z.string().min(1).max(100), lastName: z.string().max(100).optional() })).max(500) })).mutation(async ({ ctx, input }) => { await assertCompanyWriteAccess(ctx.user, input.companyId); return db.createPayrollEmployeesBulk(input.companyId, input.rows); }),
-      update: protectedProcedure.input(z.object({ companyId: z.number().int().positive(), id: z.number().int().positive(), regularRateCents: z.number().int().nonnegative(), overtimeRateCents: z.number().int().nonnegative(), baseSalaryCents: z.number().int().nonnegative(), advanceCents: z.number().int().nonnegative(), dailyRateCents: z.number().int().nonnegative(), paymentMethod: z.enum(["BANK", "CASH"]), bankName: z.string().max(150).optional(), bankAccount: z.string().max(100).optional(), isForeign: z.number().int().min(0).max(1), shiftCode: z.enum(["A", "B", "C"]), active: z.number().int().min(0).max(1) })).mutation(async ({ input }) => { const employee = (await db.getPayrollEmployees(input.companyId)).find(item => item.id === input.id); if (!employee) throw new Error("Punonjësi nuk u gjet për kompaninë aktive."); return db.updatePayrollEmployeePayment(input.id, input); }),
+      update: protectedProcedure.input(z.object({ companyId: z.number().int().positive(), id: z.number().int().positive(), regularRateCents: z.number().int().nonnegative(), overtimeRateCents: z.number().int().nonnegative(), baseSalaryCents: z.number().int().nonnegative(), advanceCents: z.number().int().nonnegative(), dailyRateCents: z.number().int().nonnegative(), paymentMethod: z.enum(["BANK", "CASH"]), bankName: z.string().max(150).optional(), bankAccount: z.string().max(100).optional(), isForeign: z.number().int().min(0).max(1), shiftCode: z.enum(["A", "B", "C"]), active: z.number().int().min(0).max(1) })).mutation(async ({ ctx, input }) => { await assertCompanyWriteAccess(ctx.user, input.companyId); const employee = (await db.getPayrollEmployees(input.companyId)).find(item => item.id === input.id); if (!employee) throw new Error("Punonjësi nuk u gjet për kompaninë aktive."); return db.updatePayrollEmployeePayment(input.id, input); }),
       importData: protectedProcedure.input(z.object({ companyId: z.number().int().positive(), rows: z.array(z.object({ id: z.number().int().positive(), regularRateCents: z.number().int().nonnegative(), overtimeRateCents: z.number().int().nonnegative(), baseSalaryCents: z.number().int().nonnegative(), bankPaymentCents: z.number().int().nonnegative(), cashPaymentCents: z.number().int(), paymentMethod: z.enum(["BANK", "CASH"]), isForeign: z.number().int().min(0).max(1), dailyRateCents: z.number().int().nonnegative() })).max(500) })).mutation(async ({ ctx, input }) => { await assertCompanyWriteAccess(ctx.user, input.companyId); return db.updatePayrollEmployeeImportData(input.companyId, input.rows); }),
     }),
     documents: router({
@@ -629,16 +630,16 @@ export const appRouter = router({
       }),
     }),
     settings: router({
-      get: protectedProcedure.input(z.object({ companyId: z.number().int().positive() })).query(async ({ input }) => db.getPayrollSettings(input.companyId)),
-      save: protectedProcedure.input(z.object({ companyId: z.number().int().positive(), paramsJson: z.string().min(2).max(20000) })).mutation(async ({ input }) => db.savePayrollSettings(input)),
+      get: protectedProcedure.input(z.object({ companyId: z.number().int().positive() })).query(async ({ ctx, input }) => { await assertCompanyAccess(ctx.user.id, input.companyId); return db.getPayrollSettings(input.companyId); }),
+      save: protectedProcedure.input(z.object({ companyId: z.number().int().positive(), paramsJson: z.string().min(2).max(20000) })).mutation(async ({ ctx, input }) => { await assertCompanyWriteAccess(ctx.user, input.companyId); return db.savePayrollSettings(input); }),
     }),
     periods: router({
-      list: protectedProcedure.input(z.object({ companyId: z.number().int().positive() })).query(async ({ input }) => db.getPayrollPeriods(input.companyId)),
-      history: protectedProcedure.input(z.object({ companyId: z.number().int().positive() })).query(async ({ input }) => db.getPayrollPeriodHistory(input.companyId)),
-      create: protectedProcedure.input(z.object({ companyId: z.number().int().positive(), year: z.number().int().min(2020).max(2100), month: z.number().int().min(1).max(12), currency: z.string().min(1).max(10).default("ALL"), taxRulesJson: z.string().max(10000).optional(), socialEmployeeRateBp: z.number().int().nonnegative().default(0), socialEmployerRateBp: z.number().int().nonnegative().default(0), notes: z.string().max(5000).optional() })).mutation(async ({ input }) => db.createPayrollPeriod(input)),
+      list: protectedProcedure.input(z.object({ companyId: z.number().int().positive() })).query(async ({ ctx, input }) => { await assertCompanyAccess(ctx.user.id, input.companyId); return db.getPayrollPeriods(input.companyId); }),
+      history: protectedProcedure.input(z.object({ companyId: z.number().int().positive() })).query(async ({ ctx, input }) => { await assertCompanyAccess(ctx.user.id, input.companyId); return db.getPayrollPeriodHistory(input.companyId); }),
+      create: protectedProcedure.input(z.object({ companyId: z.number().int().positive(), year: z.number().int().min(2020).max(2100), month: z.number().int().min(1).max(12), currency: z.string().min(1).max(10).default("ALL"), taxRulesJson: z.string().max(10000).optional(), socialEmployeeRateBp: z.number().int().nonnegative().default(0), socialEmployerRateBp: z.number().int().nonnegative().default(0), notes: z.string().max(5000).optional() })).mutation(async ({ ctx, input }) => { await assertCompanyWriteAccess(ctx.user, input.companyId); return db.createPayrollPeriod(input); }),
       generate: protectedProcedure.input(z.object({ payrollPeriodId: z.number().int().positive() })).mutation(async ({ ctx, input }) => db.generatePayrollPeriod(input.payrollPeriodId, ctx.user.id)),
       entries: protectedProcedure.input(z.object({ payrollPeriodId: z.number().int().positive() })).query(async ({ input }) => db.getPayrollEntries(input.payrollPeriodId)),
-      contributionHistory: protectedProcedure.input(z.object({ companyId: z.number().int().positive() })).query(async ({ input }) => db.getPayrollContributionHistory(input.companyId)),
+      contributionHistory: protectedProcedure.input(z.object({ companyId: z.number().int().positive() })).query(async ({ ctx, input }) => { await assertCompanyAccess(ctx.user.id, input.companyId); return db.getPayrollContributionHistory(input.companyId); }),
       attendance: protectedProcedure.input(z.object({ payrollPeriodId: z.number().int().positive() })).query(async ({ input }) => db.getPayrollAttendance(input.payrollPeriodId)),
       bonuses: protectedProcedure.input(z.object({ payrollPeriodId: z.number().int().positive() })).query(async ({ input }) => db.getPayrollPeriodBonuses(input.payrollPeriodId)),
       upsertBonuses: protectedProcedure.input(z.object({ payrollPeriodId: z.number().int().positive(), rows: z.array(z.object({ payrollEmployeeId: z.number().int().positive(), bonusCents: z.number().int().nonnegative() })).min(1).max(1000) })).mutation(async ({ input }) => db.upsertPayrollPeriodBonuses(input.payrollPeriodId, input.rows)),
@@ -652,8 +653,9 @@ export const appRouter = router({
       clearManualAttendance: protectedProcedure.input(z.object({ payrollPeriodId: z.number().int().positive() })).mutation(async ({ input }) => db.clearPayrollManualAttendance(input.payrollPeriodId)),
     }),
     leaveAbsences: router({
-      list: protectedProcedure.input(z.object({ companyId: z.number().int().positive() })).query(async ({ input }) => db.getPayrollLeaveAbsences(input.companyId)),
-      create: protectedProcedure.input(z.object({ companyId: z.number().int().positive(), payrollEmployeeId: z.number().int().positive(), leaveType: z.string().min(1).max(40), startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), notes: z.string().max(500).optional() })).mutation(async ({ input }) => {
+      list: protectedProcedure.input(z.object({ companyId: z.number().int().positive() })).query(async ({ ctx, input }) => { await assertCompanyAccess(ctx.user.id, input.companyId); return db.getPayrollLeaveAbsences(input.companyId); }),
+      create: protectedProcedure.input(z.object({ companyId: z.number().int().positive(), payrollEmployeeId: z.number().int().positive(), leaveType: z.string().min(1).max(40), startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), notes: z.string().max(500).optional() })).mutation(async ({ ctx, input }) => {
+        await assertCompanyWriteAccess(ctx.user, input.companyId);
         if (input.endDate < input.startDate) throw new Error("Data deri duhet të jetë pas datës nga.");
         return db.createPayrollLeaveAbsence(input);
       }),

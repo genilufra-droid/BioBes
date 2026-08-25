@@ -1892,3 +1892,11 @@
 - [ ] Audit handoff 2026-08-25: dorëzimi final kërkon clean clone të BioBes, pnpm install/check/test/build, Docker smoke test dhe E2E me DB bosh; tag vetëm pas milestone-it të provuar.
 - [ ] Audit correction: rikthe “Docker bootstrap wiring” dhe “Storage auth gate” si të pambyllura derisa Dockerfile/compose/routes të verifikohen realisht me prova.
 - [ ] Audit correction: mos shëno komponentë infrastrukture si të kryer vetëm nga wiring-u; kërko test runtime për migrime, session authorization dhe healthcheck.
+- [ ] Audit handoff 2026-08-25: shto UI/backend first-run për email, emër, password, kompani dhe NIPT; lejo vetëm në DB bosh me setup secret njëpërdorimësh dhe race-safety.
+- [ ] Audit handoff 2026-08-25: shto rate limiting për login dhe bootstrap dhe provo login/logout pas restart-it të container-ëve.
+- [ ] Audit handoff 2026-08-25: commit-i i ardhshëm duhet të përmbajë source implementim funksional për Docker, storage, healthcheck dhe testet; dokumentimi vetëm pas provave.
+- [ ] P0: verifiko dhe sinkronizo në GitHub drizzle/meta/0041, 0042 dhe 0043 snapshot koherent.
+- [ ] P0: shto .env.example me konfigurimin e nevojshëm për self-host Docker.
+- [ ] P0: shto assertCompanyAccess/Write për issuer, documentGroup, costCenter, product.list dhe Payroll employees/settings/periods/leave.
+- [ ] P0: rakordo me backup bl-01/BL-01 dhe apliko unique purchaseInvoices(companyId, docNumber) vetëm pas verifikimit të të dhënave.
+- [ ] P0: ruaj log provash për docker compose up, /healthz 200, POST /api/local-auth/bootstrap dhe login.

@@ -687,10 +687,9 @@ export const purchaseInvoices = mysqlTable("purchaseInvoices", {
   inventoryReference: varchar("inventoryReference", { length: 100 }),
   status: mysqlEnum("status", ["DRAFT", "POSTED", "PAID", "CANCELLED"]).default("DRAFT"),
   paymentStatus: mysqlEnum("paymentStatus", ["UNPAID", "PAID", "LATER"]).default("UNPAID").notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
+}, table => [uniqueIndex("purchaseInvoices_company_number_unique").on(table.companyId, table.docNumber)]);
 export type PurchaseInvoice = typeof purchaseInvoices.$inferSelect;
 export type InsertPurchaseInvoice = typeof purchaseInvoices.$inferInsert;
 
