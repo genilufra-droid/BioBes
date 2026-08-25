@@ -3312,6 +3312,12 @@ export async function getPurchaseInvoiceById(id: number) {
 
 async function ensurePurchaseInvoiceStock(tx: any, invoice: any, items: any[]) {
   if (!invoice.warehouseId) return;
+  // Lock the source invoice row so concurrent post operations serialize before the idempotency check.
+  await tx.select({ id: purchaseInvoices.id })
+    .from(purchaseInvoices)
+    .where(and(eq(purchaseInvoices.companyId, invoice.companyId), eq(purchaseInvoices.id, invoice.id)))
+    .for("update")
+    .limit(1);
   const existing = await tx.select({ id: stockMovements.id })
     .from(stockMovements)
     .where(and(
@@ -3927,6 +3933,12 @@ export async function getSalesInvoiceById(id: number) {
 async function ensureSalesInvoiceStock(tx: any, invoice: any, items: any[], options: { allowNegative?: boolean } = {}) {
   if (!invoice.warehouseId || invoice.deliveryNoteId) return;
   if (!(invoice.status === "POSTED" || invoice.status === "PAID")) return;
+  // Lock the source invoice row so concurrent post operations serialize before the idempotency check.
+  await tx.select({ id: salesInvoices.id })
+    .from(salesInvoices)
+    .where(and(eq(salesInvoices.companyId, invoice.companyId), eq(salesInvoices.id, invoice.id)))
+    .for("update")
+    .limit(1);
   const existing = await tx.select({ id: stockMovements.id })
     .from(stockMovements)
     .where(and(
