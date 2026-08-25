@@ -1866,3 +1866,5 @@
 - [x] Stock audit finding: query read-only gjeti dublikatë reale në `stockMovements` për invoice 540/referenceId 30068/productId 90028; katër dalje në të njëjtin timestamp, pa fshirje ose ndryshim të të dhënave.
 
 - [x] Idempotency hardening: `ensurePurchaseInvoiceStock` dhe `ensureSalesInvoiceStock` tani marrin row-level `FOR UPDATE` lock mbi faturën burimore përpara kontrollit të lëvizjeve; TypeScript, 14 teste targetuara dhe production build kaluan. Auditimi i workflow-ve të tjera të stokut mbetet i hapur.
+
+- [x] Sales mobile route hardening: `SalesInvoices` sinkronizon `newInvoice=1` me state-in `invoiceOpen` edhe pas navigimit dinamik; 12 teste targetuara, TypeScript dhe production build kaluan. Verifikimi browser mobile E2E mbetet i hapur.

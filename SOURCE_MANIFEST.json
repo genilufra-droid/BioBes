@@ -1314,8 +1314,8 @@
     },
     {
       "path": "client/src/pages/SalesInvoices.tsx",
-      "bytes": 94509,
-      "sha256": "5b939f9c68d1c16c9bd6449dd58eef0a1784b2592e5063897f9962b2c650552b"
+      "bytes": 94610,
+      "sha256": "e53abc046a018aaab2710c78ff4e835dd4d260c4846a3b05c783478984d3a831"
     },
     {
       "path": "client/src/pages/Settings.tsx",
@@ -1439,8 +1439,8 @@
     },
     {
       "path": "docs/FINAL_ACCEPTANCE_REPORT.md",
-      "bytes": 4880,
-      "sha256": "db562fcb1ba2d78522a7084ac88213219a8828b8fbafdbd20707886a26cd832e"
+      "bytes": 5122,
+      "sha256": "37490651cebe3dea8f301fc51e34dde117e9b91c8468f5dc8e14bdd10af5f79a"
     },
     {
       "path": "docs/INSTALL.md",

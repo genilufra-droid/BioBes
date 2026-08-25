@@ -96,7 +96,9 @@ export default function SalesInvoices({ companyId }: { companyId: number }) {
   });
   useEffect(() => {
     const query = location.includes("?") ? location.slice(location.indexOf("?") + 1) : window.location.search.slice(1);
+    const params = new URLSearchParams(query);
     setSelectedSalesInvoiceId(getSalesInvoiceRouteId(query));
+    setInvoiceOpen(params.get("newInvoice") === "1");
   }, [location]);
   const [actionsDoc, setActionsDoc] = useState<{ type: SalesDocumentType; id: number } | null>(null);
   const routeQuery = location.includes("?") ? location.slice(location.indexOf("?") + 1) : window.location.search.slice(1);
