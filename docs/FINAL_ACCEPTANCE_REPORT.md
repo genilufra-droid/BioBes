@@ -2,8 +2,8 @@
 
 **Data:** 25 gusht 2026  
 **Repository:** https://github.com/genilufra-droid/BioBes  
-**Commit i fundit:** `15f327d`  
-**Tag i fundit i publikuar:** `v1.1.2` (source change pending next checkpoint)
+**Commit i fundit:** `5c58b27`  
+**Tag i fundit i publikuar:** `v1.1.8`
 
 ## Rezultate të provuara
 
@@ -13,7 +13,7 @@ U shtuan local auth me scrypt/JWT, first-run company setup me owner membership n
 
 ## Kufizime që nuk deklarohen si të mbyllura
 
-Ky raport nuk e deklaron sistemin production-ready 100%. Nuk është kryer ende integration/E2E me MySQL bosh dhe Docker smoke test lokal në këtë sandbox, sepse Docker CLI nuk është i disponueshëm. Deployment-i i menaxhuar provoi patch fix-in, por dështoi më pas në startup me `ERR_MODULE_NOT_FOUND`; checkpoint-i pas zhvendosjes së `vite`/plugin-it në production dependencies ri-provon rollout-in. Nuk janë mbyllur të gjitha guard-at individuale multi-company/RBAC, foreign keys/unique constraints të plota, idempotenca e çdo workflow-je të stokut, backup/restore drill, rate limiting, OIDC standard, password recovery dhe të gjitha provat e formateve PDF/Excel/Print në desktop/mobile.
+Ky raport nuk e deklaron sistemin production-ready 100%. Nuk është kryer ende integration/E2E me MySQL bosh dhe Docker smoke test lokal në këtë sandbox, sepse Docker CLI nuk është i disponueshëm. Deployment-i i menaxhuar provoi patch fix-in, por dështoi më pas në startup me `ERR_MODULE_NOT_FOUND`; pas importit runtime URL, log-et e Cloud Run konfirmuan `Server running on http://localhost:3000/` dhe nuk raportuan më `ERR_MODULE_NOT_FOUND`. Nuk janë mbyllur të gjitha guard-at individuale multi-company/RBAC, foreign keys/unique constraints të plota, idempotenca e çdo workflow-je të stokut, backup/restore drill, rate limiting, OIDC standard, password recovery dhe të gjitha provat e formateve PDF/Excel/Print në desktop/mobile.
 
 Profili `manus` mbetet kompatibil për preview-n ekzistues; profili i pavarur kërkon `AUTH_PROVIDER=local` ose `STORAGE_PROVIDER=local|s3` dhe variables të dokumentuara. Këto janë kërkesa konfigurimi të deklaruara, jo secrets të përfshira në repository. `pnpm audit --prod` pas përditësimit raporton 1 critical, 21 high, 51 moderate dhe 10 low; `xlsx` nuk ka patch upstream dhe disa probleme janë transitive, ndaj dependency gate nuk konsiderohet i mbyllur.
 
