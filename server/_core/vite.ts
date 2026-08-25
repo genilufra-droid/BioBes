@@ -3,14 +3,16 @@ import fs from "fs";
 import { type Server } from "http";
 import { nanoid } from "nanoid";
 import path from "path";
-import { createServer as createViteServer } from "vite";
-import viteConfig from "../../vite.config";
 
 export function shouldUseViteMiddleware(nodeEnv: string | undefined, previewFlag: string | undefined) {
   return nodeEnv === "development" || previewFlag === "1";
 }
 
 export async function setupVite(app: Express, _server: Server) {
+  const [{ createServer: createViteServer }, { default: viteConfig }] = await Promise.all([
+    import("vite"),
+    import("../../vite.config"),
+  ]);
   const serverOptions = {
     middlewareMode: true,
     // Proxy-i i preview-it nuk pranon në mënyrë të besueshme WebSocket upgrade.

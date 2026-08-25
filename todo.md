@@ -1838,3 +1838,5 @@
 - [x] Deployment regression: runtime stage dështoi me ERR_MODULE_NOT_FOUND sepse vite/plugin ishin devDependencies; lëvizi në production dependencies dhe u verifikua me check/test/build.
 
 - [x] Deployment regression: runtime bundle importon plugin-et statike nga vite.config; bëji production dependencies dhe verifiko check/test/build.
+
+- [x] Deployment hardening: importet Vite janë lazy në setupVite që production server të mos ngarkojë plugin-et build-time në startup; bundle-i nuk ka import statik të vite.config.
