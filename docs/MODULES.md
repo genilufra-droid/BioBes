@@ -10,6 +10,8 @@
 | Kontabilitet | server/accounting.ts | Workspace dhe llogari kontabël |
 | Raporte | shared/reportCatalog.ts dhe pages report | Filtra, PDF, Excel dhe lidhje burimi |
 | Konfigurime | client/src/pages dhe components | Parametra, kompani dhe katalogë |
-| Auth/RBAC | server/_core dhe server/companyRoles.ts | Sesione, role dhe multi-company |
+| Auth/RBAC | `server/_core`, `server/companyRoles.ts` | OAuth, session, role, permission dhe multi-company |
+| Transport/Dokumente | `server/transportActions.ts`, cargo/weight pages | Ngarkesa, peshore, CMR dhe dokumente burimore |
+| **Pagat** | `client/src/pages/Payroll.tsx`, `server/payroll.ts` | Punonjës, periudha, frekuentim, leje, bonuse, pajisje, llogaritje dhe pagesa |
 
-Moduli Pagat nuk është pjesë e eksportit BioBes sipas kufizimit të projektit.
+Çdo modul përbëhet nga page/component, router/service, helper database, schema/migration kur nevojitet dhe teste. Moduli Pagat përdor tabelat `payrollEmployees`, `payrollPeriods`, `payrollAttendance`, `payrollLeaveAbsences`, `payrollPeriodBonuses`, `payrollEntries`, `payrollDeviceMappings` dhe `payrollSettings`. Varësitë kryesore janë identiteti i kompanisë, role/RBAC, database helpers dhe audit log.
