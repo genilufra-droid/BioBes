@@ -1856,3 +1856,5 @@
 - [x] Production build regression: pas migration 0043 dhe admin company-scope, `pnpm build` kaloi; warning-u i chunk-ut të madh është performancë jo dështim funksional.
 
 - [x] Dependency audit finding: `pnpm audit --prod --json` raportoi 2 critical, 38 high, 61 moderate dhe 11 low në 863 dependencies; nuk u aplikua `audit fix` automatik sepse nuk ka patch të sigurt pa rrezik regresioni.
+
+- [x] Clean-clone acceptance: BioBes public u klonua me depth 1; `pnpm install --frozen-lockfile`, `pnpm check`, 5 teste RBAC dhe `pnpm build` kaluan.
