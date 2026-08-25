@@ -1833,4 +1833,4 @@
 - [ ] P1: audito idempotencën e stokut, unique constraints dhe numërimin atomik të dokumenteve.
 - [x] P1: krijo FINAL_ACCEPTANCE_REPORT.md me rezultatet reale dhe kufizimet e pambyllura.
 
-- [ ] Deployment regression: Dockerfile duhet të kopjojë patches/ përpara pnpm install, sepse Cloud Build dështoi me ENOENT për wouter patch.
+- [x] Deployment regression: Dockerfile kopjon patches/ përpara pnpm install; Cloud Build failure nga ENOENT për wouter patch u korrigjua.
