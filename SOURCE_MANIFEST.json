@@ -1439,8 +1439,8 @@
     },
     {
       "path": "docs/FINAL_ACCEPTANCE_REPORT.md",
-      "bytes": 2736,
-      "sha256": "49d5807d092246ae5351abf993406a8ba53e339d3fc22068b2165c1d808645f1"
+      "bytes": 3164,
+      "sha256": "d448b9d583615ce8da117b104c9339e93a22ddedef44923564e8b9a4977a5e76"
     },
     {
       "path": "docs/INSTALL.md",
@@ -1975,7 +1975,7 @@
     {
       "path": "package.json",
       "bytes": 4312,
-      "sha256": "3744208ce2281c068fe1df4e71981e6127a28432d77e86f1764f532d6af263a1"
+      "sha256": "9c6dabc9269777e52e20b652bb2094cb3bd7a18561290e5284ad0161e152d6e3"
     },
     {
       "path": "patches/wouter@3.7.1.patch",
@@ -1984,8 +1984,8 @@
     },
     {
       "path": "pnpm-lock.yaml",
-      "bytes": 348976,
-      "sha256": "7cf8181f78f95d28ea7a83668b0c9bd7fe97f4d8297edd176b4dbe5e35cde0c8"
+      "bytes": 348988,
+      "sha256": "844a538b7f705dc469834c28f951473b8744221b136c69681ec97e3eeafbc9aa"
     },
     {
       "path": "scripts/audit_biobes_export.py",

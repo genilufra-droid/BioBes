@@ -1834,3 +1834,5 @@
 - [x] P1: krijo FINAL_ACCEPTANCE_REPORT.md me rezultatet reale dhe kufizimet e pambyllura.
 
 - [x] Deployment regression: Dockerfile kopjon patches/ përpara pnpm install; Cloud Build failure nga ENOENT për wouter patch u korrigjua.
+
+- [ ] Deployment regression: runtime stage dështoi me ERR_MODULE_NOT_FOUND sepse vite/plugin ishin devDependencies; lëvizi në production dependencies dhe u verifikua me check/test/build.
