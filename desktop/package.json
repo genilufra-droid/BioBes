@@ -1,0 +1,23 @@
+{
+  "name": "biobes-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "BioBes desktop wrapper for Windows",
+  "main": "main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "build:windows": "electron-builder --win nsis"
+  },
+  "devDependencies": {
+    "electron": "^38.1.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.biobes.desktop",
+    "productName": "BioBes",
+    "directories": { "output": "release" },
+    "files": ["main.cjs", "preload.cjs"],
+    "win": { "target": ["nsis"] },
+    "nsis": { "oneClick": false, "perMachine": false, "allowToChangeInstallationDirectory": true }
+  }
+}
