@@ -30,6 +30,16 @@ describe("reader company access", () => {
     await expectForbidden(caller.creditNotes.deleteDraft({ companyId: 1, id: 1 }));
   });
 
+  it("refuzon payment cancel/deleteDraft para lookup-ut të dokumentit", async () => {
+    vi.spyOn(db, "getUserCompanies").mockResolvedValue([{ companyId: 1 }] as never);
+    vi.spyOn(db, "getCompanyMembership").mockResolvedValue({ companyId: 1, userId: 7, role: "viewer" } as never);
+    const paymentLookup = vi.spyOn(db, "getPaymentById").mockResolvedValue(null);
+    const caller = appRouter.createCaller(readerContext());
+    await expect(caller.payment.cancel({ companyId: 1, id: 999 })).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(caller.payment.deleteDraft({ companyId: 1, id: 999 })).rejects.toMatchObject({ code: "FORBIDDEN" });
+    expect(paymentLookup).not.toHaveBeenCalled();
+  });
+
   it("lejon query-t read-only për pagesa dhe Nota Krediti", async () => {
     vi.spyOn(db, "getUserCompanies").mockResolvedValue([{ companyId: 1 }] as never);
     vi.spyOn(db, "getPayments").mockResolvedValue([] as never);

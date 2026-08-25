@@ -1710,15 +1710,15 @@ export const appRouter = router({
       return result;
     }),
     cancel: protectedProcedure.input(z.object({ companyId: z.number().int().positive(), id: z.number().int().positive() })).mutation(async ({ ctx, input }) => {
+      await assertCompanyWriteAccess(ctx.user, input.companyId);
       const payment = await db.getPaymentById(input.id);
       if (!payment || payment.companyId !== input.companyId) throw new TRPCError({ code: "NOT_FOUND", message: "Pagesa nuk u gjet." });
-      await assertCompanyWriteAccess(ctx.user, input.companyId);
       try { return await db.cancelPayment(input.id, ctx.user.id); } catch (error) { throw new TRPCError({ code: "BAD_REQUEST", message: error instanceof Error ? error.message : "Pagesa nuk mund të anulohet." }); }
     }),
     deleteDraft: protectedProcedure.input(z.object({ companyId: z.number().int().positive(), id: z.number().int().positive() })).mutation(async ({ ctx, input }) => {
+      await assertCompanyWriteAccess(ctx.user, input.companyId);
       const payment = await db.getPaymentById(input.id);
       if (!payment || payment.companyId !== input.companyId) throw new TRPCError({ code: "NOT_FOUND", message: "Pagesa nuk u gjet." });
-      await assertCompanyWriteAccess(ctx.user, input.companyId);
       try { return await db.deletePaymentDraft(input.id, ctx.user.id); } catch (error) { throw new TRPCError({ code: "BAD_REQUEST", message: error instanceof Error ? error.message : "Pagesa nuk mund të fshihet." }); }
     }),
   }),

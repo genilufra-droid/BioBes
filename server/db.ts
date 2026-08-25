@@ -217,6 +217,22 @@ export async function createCompanyWithOwner(userId: number, data: any) {
   });
 }
 
+export async function bootstrapLocalOwner(data: { email: string; name: string; passwordHash: string; companyName: string; nipt?: string }) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.transaction(async tx => {
+    const existing = await tx.select({ id: users.id }).from(users).limit(1);
+    if (existing.length > 0) throw new Error("Local owner bootstrap is already completed");
+    const openId = `local:${data.email}`;
+    const [userResult] = await tx.insert(users).values({ openId, email: data.email, name: data.name, loginMethod: "local", role: "admin", passwordHash: data.passwordHash });
+    const userId = Number(userResult.insertId);
+    const [companyResult] = await tx.insert(companies).values({ name: data.companyName, nipt: data.nipt || null });
+    const companyId = Number(companyResult.insertId);
+    await tx.insert(userCompanies).values({ userId, companyId, role: "owner" });
+    return { userId, companyId, openId };
+  });
+}
+
 export async function updateCompany(companyId: number, data: any) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
