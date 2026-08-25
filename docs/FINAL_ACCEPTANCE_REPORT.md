@@ -2,8 +2,8 @@
 
 **Data:** 25 gusht 2026  
 **Repository:** https://github.com/genilufra-droid/BioBes  
-**Commit i fundit:** `5c58b27`  
-**Tag i fundit i publikuar:** `v1.1.8`
+**Commit i fundit:** `8cf58e7`  
+**Tag i fundit i publikuar:** `v1.2.2`
 
 ## Rezultate të provuara
 
