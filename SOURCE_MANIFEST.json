@@ -1,6 +1,6 @@
 {
   "root": ".",
-  "fileCount": 515,
+  "fileCount": 516,
   "files": [
     {
       "path": ".dockerignore",
@@ -1713,6 +1713,11 @@
       "sha256": "1c61ec14b438c9a3b158114ea8f8858207519650ef68ee87b535985359408c30"
     },
     {
+      "path": "drizzle/0042_flaky_virginia_dare.sql",
+      "bytes": 2091,
+      "sha256": "a237cc58232bc2bf5b916e4bfb220420c0871b9c3b1536aca04bef283562b56e"
+    },
+    {
       "path": "drizzle/meta/0000_snapshot.json",
       "bytes": 2593,
       "sha256": "bcb0f9fe1cf4d88d60ea25ef38162ec5d5625380a3a117aeaac7c14a8f4b366f"
@@ -1919,8 +1924,8 @@
     },
     {
       "path": "drizzle/meta/_journal.json",
-      "bytes": 6160,
-      "sha256": "5e8964e83a73d2960de30ab5319d2ff80c45bbdb92a63637cb1b8ffb20a40644"
+      "bytes": 6308,
+      "sha256": "7e7e35b22623dbe0844e5d0f327b9e4f1307fc9a5cb01feebea75339d866a17f"
     },
     {
       "path": "drizzle/migrations/.gitkeep",
@@ -1934,8 +1939,8 @@
     },
     {
       "path": "drizzle/schema.ts",
-      "bytes": 58491,
-      "sha256": "cfd45a7ed583f4ff532006f71c250d23ba01bc3125788ab8bbae4f3d8f692d7a"
+      "bytes": 59145,
+      "sha256": "1786706ea0d41a963c33d0f51dee9b71689063d0d4812d32af33f2ed00b97638"
     },
     {
       "path": "drizzle.config.ts",

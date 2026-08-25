@@ -64,11 +64,11 @@ export type InsertCompany = typeof companies.$inferInsert;
 // Link users to companies
 export const userCompanies = mysqlTable("userCompanies", {
   id: int("id").autoincrement().primaryKey(),
-  userId: int("userId").notNull(),
-  companyId: int("companyId").notNull(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  companyId: int("companyId").notNull().references(() => companies.id, { onDelete: "cascade" }),
   role: mysqlEnum("role", ["owner", "admin", "user", "viewer"]).default("user").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
+}, table => [uniqueIndex("userCompanies_user_company_unique").on(table.userId, table.companyId)]);
 
 export type UserCompany = typeof userCompanies.$inferSelect;
 export type InsertUserCompany = typeof userCompanies.$inferInsert;
@@ -78,7 +78,7 @@ export type InsertUserCompany = typeof userCompanies.$inferInsert;
 // ============================================================
 export const suppliers = mysqlTable("suppliers", {
   id: int("id").autoincrement().primaryKey(),
-  companyId: int("companyId").notNull(),
+  companyId: int("companyId").notNull().references(() => companies.id, { onDelete: "cascade" }),
   code: varchar("code", { length: 50 }),
   name: varchar("name", { length: 255 }).notNull(),
   nipt: varchar("nipt", { length: 50 }),
@@ -97,7 +97,7 @@ export type InsertSupplier = typeof suppliers.$inferInsert;
 
 export const customers = mysqlTable("customers", {
   id: int("id").autoincrement().primaryKey(),
-  companyId: int("companyId").notNull(),
+  companyId: int("companyId").notNull().references(() => companies.id, { onDelete: "cascade" }),
   code: varchar("code", { length: 50 }),
   name: varchar("name", { length: 255 }).notNull(),
   nipt: varchar("nipt", { length: 50 }),
@@ -116,7 +116,7 @@ export type InsertCustomer = typeof customers.$inferInsert;
 
 export const categories = mysqlTable("categories", {
   id: int("id").autoincrement().primaryKey(),
-  companyId: int("companyId").notNull(),
+  companyId: int("companyId").notNull().references(() => companies.id, { onDelete: "cascade" }),
   name: varchar("name", { length: 255 }).notNull(),
   code: varchar("code", { length: 50 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -178,11 +178,11 @@ export type InsertUnit = typeof units.$inferInsert;
 
 export const products = mysqlTable("products", {
   id: int("id").autoincrement().primaryKey(),
-  companyId: int("companyId").notNull(),
+  companyId: int("companyId").notNull().references(() => companies.id, { onDelete: "cascade" }),
   code: varchar("code", { length: 50 }),
   name: varchar("name", { length: 255 }).notNull(),
   barcode: varchar("barcode", { length: 100 }),
-  categoryId: int("categoryId"),
+  categoryId: int("categoryId").references(() => categories.id, { onDelete: "set null" }),
   baseUnit: varchar("baseUnit", { length: 50 }),
   itemType: mysqlEnum("itemType", ["QARKULLUES", "AFATGJATE", "SHERBIM"]).default("QARKULLUES").notNull(),
   stock: int("stock").default(0),
@@ -202,7 +202,7 @@ export type InsertProduct = typeof products.$inferInsert;
 
 export const warehouses = mysqlTable("warehouses", {
   id: int("id").autoincrement().primaryKey(),
-  companyId: int("companyId").notNull(),
+  companyId: int("companyId").notNull().references(() => companies.id, { onDelete: "cascade" }),
   code: varchar("code", { length: 50 }),
   name: varchar("name", { length: 255 }).notNull(),
   unitType: mysqlEnum("unitType", ["WAREHOUSE", "POINT_OF_SALE", "OFFICE", "OTHER"]).default("WAREHOUSE").notNull(),
@@ -223,8 +223,8 @@ export type InsertWarehouse = typeof warehouses.$inferInsert;
 
 export const stockLocations = mysqlTable("stockLocations", {
   id: int("id").autoincrement().primaryKey(),
-  companyId: int("companyId").notNull(),
-  warehouseId: int("warehouseId").notNull(),
+  companyId: int("companyId").notNull().references(() => companies.id, { onDelete: "cascade" }),
+  warehouseId: int("warehouseId").notNull().references(() => warehouses.id, { onDelete: "cascade" }),
   code: varchar("code", { length: 50 }),
   name: varchar("name", { length: 255 }).notNull(),
   locationType: mysqlEnum("locationType", ["INTERNAL", "INPUT", "OUTPUT", "VIRTUAL"]).default("INTERNAL").notNull(),

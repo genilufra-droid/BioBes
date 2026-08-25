@@ -1840,3 +1840,5 @@
 - [x] Deployment regression: runtime bundle importon plugin-et statike nga vite.config; bëji production dependencies dhe verifiko check/test/build.
 
 - [x] Deployment hardening: importet Vite janë lazy në setupVite që production server të mos ngarkojë plugin-et build-time në startup; bundle-i nuk ka import statik të vite.config.
+
+- [x] Database integrity: shto migration 0042 me FK për core multi-company/master-data dhe unique `(userId, companyId)`; kontrollo zero orphans/duplicates dhe aplikoje në DB.
