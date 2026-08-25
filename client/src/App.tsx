@@ -8,6 +8,7 @@ import DashboardLayout from "./components/DashboardLayout";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { CompanyProvider, useCompany } from "./contexts/CompanyContext";
 import Home from "./pages/Home";
+import LocalLogin from "./pages/LocalLogin";
 import Accounting from "./pages/Accounting";
 import Banks from "./pages/Banks";
 import CRM from "./pages/CRM";
@@ -43,6 +44,7 @@ function Workspace({ children }: { children: (companyId: number) => ReactNode })
 
 function Router() {
   return <Switch>
+    <Route path="/login" component={LocalLogin} />
     <Route path="/" component={() => <Workspace>{companyId => <Home companyId={companyId} />}</Workspace>} />
     <Route path="/partners" component={() => <Workspace>{companyId => <Partners companyId={companyId} defaultTab={getPartnerTabFromSearch(window.location.search)} />}</Workspace>} />
     <Route path="/suppliers" component={() => <Workspace>{companyId => <Partners companyId={companyId} defaultTab="suppliers" />}</Workspace>} />

@@ -32,8 +32,16 @@ services:
       OWNER_NAME: ${OWNER_NAME:-}
       BUILT_IN_FORGE_API_URL: ${BUILT_IN_FORGE_API_URL:-}
       BUILT_IN_FORGE_API_KEY: ${BUILT_IN_FORGE_API_KEY:-}
+      AUTH_PROVIDER: ${AUTH_PROVIDER:-local}
+      VITE_AUTH_PROVIDER: ${VITE_AUTH_PROVIDER:-local}
+      LOCAL_AUTH_USERS_JSON: ${LOCAL_AUTH_USERS_JSON:-[]}
+      STORAGE_PROVIDER: ${STORAGE_PROVIDER:-local}
+      LOCAL_STORAGE_DIR: /var/lib/biobes/storage
+    volumes:
+      - biobes_storage:/var/lib/biobes/storage
     ports:
       - "${BIOBES_PORT:-3000}:3000"
 
 volumes:
   biobes_mysql:
+  biobes_storage:

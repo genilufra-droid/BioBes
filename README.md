@@ -75,3 +75,7 @@ Për module, raporte dhe forma shih [docs/ADD-MODULE.md](docs/ADD-MODULE.md), [d
 ## Siguria dhe licenca
 
 Kodi licencohet me MIT. Mos commit-o password, tokena, certifikata private, connection strings, dump-e, backup-e ose të dhëna personale. Raporto dobësitë privatisht te administratori i repository-t.
+
+## Self-hosted pa Manus
+
+BioBes ka adapterë alternativë për deployment të pavarur. Vendos `AUTH_PROVIDER=local`, `VITE_AUTH_PROVIDER=local` dhe `STORAGE_PROVIDER=local`; përdor `LOCAL_AUTH_USERS_JSON` me passwordHash scrypt dhe volume persistent për `LOCAL_STORAGE_DIR`. Login-i është `/login`, endpoint-i është `POST /api/local-auth/login`, ndërsa skedarët shërbehen nga `/local-storage/*`. Profili default `manus` ruan kompatibilitetin me OAuth Manus dhe Forge/S3. Detajet janë te [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md).
