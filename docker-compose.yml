@@ -16,7 +16,10 @@ services:
       retries: 10
 
   app:
-    build: .
+    build:
+      context: .
+      args:
+        VITE_AUTH_PROVIDER: ${VITE_AUTH_PROVIDER:-local}
     restart: unless-stopped
     depends_on:
       db:

@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import { ENV } from "./env";
-import { readLocalStorage } from "../storage";
+import { readLocalStorage, storageGetSignedUrl } from "../storage";
 
 export function registerStorageProxy(app: Express) {
   app.get("/local-storage/*", async (req, res) => {
@@ -12,6 +12,13 @@ export function registerStorageProxy(app: Express) {
       res.set("Cache-Control", "private, max-age=3600");
       res.send(data);
     } catch { res.status(404).send("Storage object not found"); }
+  });
+  app.get("/s3-storage/*", async (req, res) => {
+    const key = (req.params as Record<string, string>)[0];
+    if (!key) { res.status(400).send("Missing storage key"); return; }
+    if (ENV.storageProvider.toLowerCase() !== "s3") { res.status(404).send("S3 storage is disabled"); return; }
+    try { res.set("Cache-Control", "private, max-age=900"); res.redirect(307, await storageGetSignedUrl(decodeURIComponent(key))); }
+    catch { res.status(404).send("Storage object not found"); }
   });
   app.get("/manus-storage/*", async (req, res) => {
     const key = (req.params as Record<string, string>)[0];

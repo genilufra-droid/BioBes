@@ -203,9 +203,18 @@ export async function getCompanyById(companyId: number) {
 export async function createCompany(data: any) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
   const result = await db.insert(companies).values(data);
   return result;
+}
+export async function createCompanyWithOwner(userId: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.transaction(async tx => {
+    const [result] = await tx.insert(companies).values(data);
+    const companyId = Number(result.insertId);
+    await tx.insert(userCompanies).values({ userId, companyId, role: "owner" });
+    return { companyId };
+  });
 }
 
 export async function updateCompany(companyId: number, data: any) {

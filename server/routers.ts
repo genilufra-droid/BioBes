@@ -166,8 +166,8 @@ export const appRouter = router({
         email: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
-        await db.createCompany(input);
-        return { success: true };
+        const created = await db.createCompanyWithOwner(ctx.user.id, input);
+        return { success: true, companyId: created.companyId };
       }),
     update: protectedProcedure
       .input(z.object({ companyId: z.number().int().positive(), name: z.string().min(1).max(255), nipt: z.string().max(100).optional(), address: z.string().max(500).optional(), city: z.string().max(100).optional(), phone: z.string().max(50).optional(), email: z.string().email().max(320).optional().or(z.literal("")), accountingPlan: z.enum(["PKP", "SKK"]).optional(), postingMode: z.enum(["DIRECT", "INDIRECT"]).optional(), customerDueEnabled: z.number().int().min(0).max(1).optional(), supplierDueEnabled: z.number().int().min(0).max(1).optional(), salesPriceMode: z.enum(["NET", "GROSS"]).optional(), itemDetailing: z.number().int().min(0).max(1).optional(), allowDocumentEditAfterSave: z.number().int().min(0).max(1).optional(), archiveEnabled: z.number().int().min(0).max(1).optional(), automaticBackupReminder: z.number().int().min(0).max(1).optional(), customFieldsCustomers: z.number().int().min(0).max(1).optional(), customFieldsSuppliers: z.number().int().min(0).max(1).optional(), customFieldsProducts: z.number().int().min(0).max(1).optional() }))

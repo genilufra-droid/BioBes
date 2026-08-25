@@ -11,4 +11,10 @@ export const ENV = {
   localStorageDir: process.env.LOCAL_STORAGE_DIR ?? "./storage-data",
   authProvider: process.env.AUTH_PROVIDER ?? "manus",
   localAuthUsersJson: process.env.LOCAL_AUTH_USERS_JSON ?? "[]",
+  s3Endpoint: process.env.S3_ENDPOINT ?? undefined,
+  s3Region: process.env.S3_REGION ?? "us-east-1",
+  s3Bucket: process.env.S3_BUCKET ?? "biobes",
+  s3AccessKeyId: process.env.S3_ACCESS_KEY_ID ?? "",
+  s3SecretAccessKey: process.env.S3_SECRET_ACCESS_KEY ?? "",
+  s3ForcePathStyle: process.env.S3_FORCE_PATH_STYLE !== "false",
 };

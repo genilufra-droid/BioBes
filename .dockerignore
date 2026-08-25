@@ -1,0 +1,15 @@
+node_modules
+dist
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+.manus-logs
+storage-data
+coverage
+*.log
+*.sql.gz
+*.dump
+*.bak
+/home

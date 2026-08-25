@@ -8,6 +8,7 @@ import { registerLocalAuthRoutes } from "./localAuth";
 import { registerStorageProxy } from "./storageProxy";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
+import { getDb } from "../db";
 import { serveStatic, setupVite, shouldUseViteMiddleware } from "./vite";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -35,6 +36,13 @@ async function startServer() {
   registerStorageProxy(app);
   registerOAuthRoutes(app);
   registerLocalAuthRoutes(app);
+  app.get("/healthz", async (_req, res) => {
+    try {
+      const database = await getDb();
+      if (!database) { res.status(503).json({ ok: false, database: false }); return; }
+      res.json({ ok: true, database: true });
+    } catch { res.status(503).json({ ok: false, database: false }); }
+  });
   app.use(
     "/api/trpc",
     createExpressMiddleware({

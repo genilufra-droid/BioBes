@@ -5,6 +5,7 @@ import { Route, Switch } from "wouter";
 import type { ReactNode } from "react";
 import ErrorBoundary from "./components/ErrorBoundary";
 import DashboardLayout from "./components/DashboardLayout";
+import FirstRunSetup from "./components/FirstRunSetup";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { CompanyProvider, useCompany } from "./contexts/CompanyContext";
 import Home from "./pages/Home";
@@ -38,8 +39,8 @@ import PostingWindow from "./pages/PostingWindow";
 import { getPartnerTabFromSearch } from "./lib/partnerRoute";
 
 function Workspace({ children }: { children: (companyId: number) => ReactNode }) {
-  const { companyId, isLoading } = useCompany();
-  return <DashboardLayout>{isLoading || !companyId ? <div className="grid min-h-[420px] place-items-center text-sm text-[#777]">Po hapet workspace-i...</div> : children(companyId)}</DashboardLayout>;
+  const { companyId, companies, selectCompany, isLoading } = useCompany();
+  return <DashboardLayout>{isLoading ? <div className="grid min-h-[420px] place-items-center text-sm text-[#777]">Po hapet workspace-i...</div> : !companies.length ? <FirstRunSetup onCreated={selectCompany} /> : !companyId ? <div className="grid min-h-[420px] place-items-center text-sm text-[#777]">Po përgatitet workspace-i...</div> : children(companyId)}</DashboardLayout>;
 }
 
 function Router() {
