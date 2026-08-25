@@ -1862,3 +1862,5 @@
 - [x] Full clean-clone test suite: në clone të freskët të BioBes kaluan 88 test files dhe 309 teste, pas instalimit frozen, check dhe build.
 
 - [x] Integrity verification: 616 skedarë lokalë kundrejt 519 në export; 0 source-code missing, 0 hash mismatch, 99 non-source artifacts të dokumentuara dhe vetëm `todo.md` remote-only.
+
+- [x] Stock audit finding: query read-only gjeti dublikatë reale në `stockMovements` për invoice 540/referenceId 30068/productId 90028; katër dalje në të njëjtin timestamp, pa fshirje ose ndryshim të të dhënave.
