@@ -32,6 +32,15 @@ describe("reference report column groups", () => {
     ]);
   });
 
+  it("groups purchase summary columns into document, invoice-currency and base-currency sections", () => {
+    const columns = ["Nr. rend", "Lloji", "Nr.", "Dt. Dok", "Monedha", "Kursi", "Kodi", "Emertimi", "Nentotal", "Zbritje", "TVSH", "Totali", "TVSH bazë", "Totali bazë"];
+    expect(getReferenceGroups("purchase_summary_register_pdf", columns)).toEqual([
+      { label: "DOKUMENTI", columns: columns.slice(0, 8) },
+      { label: "MONEDHA FATURE", columns: columns.slice(8, 12) },
+      { label: "MONEDHA BAZE", columns: columns.slice(12) },
+    ]);
+  });
+
   it("groups customs import columns into the four reference sections", () => {
     const columns = ["Ref.", "Nr.Fl.Dog.", "Dt Fl.Dog.", "Vl.Fatures", "Monedha", "Kursi", "Vlefta", "Transport", "Siguracion", "Refer./Tjera", "Vl.Dogane", "Dog", "Akciz", "Vl pa TVSH", "TVSH"];
     expect(getReferenceGroups("purchase_customs_import_register_pdf", columns)).toEqual([

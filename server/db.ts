@@ -1835,6 +1835,7 @@ const REFERENCE_COLUMN_SCHEMAS: Record<string, string[]> = {
   purchase_supplier_situation_category_pdf: ["Kodi", "Emërtimi", "Mon", "Qyteti", "Debi", "Kredi", "Detyrimi", "Debi bazë", "Kredi bazë", "Detyrimi bazë"],
   purchase_customs_import_register_pdf: ["Ref.", "Nr.Fl.Dog.", "Dt Fl.Dog.", "Vl.Fatures", "Monedha", "Kursi", "Vlefta", "Transport", "Siguracion", "Refer./Tjera", "Vl.Dogane", "Dog", "Akciz", "Vl pa TVSH", "TVSH"],
   purchase_invoice_payment_register_pdf: ["Fature", "Pagese", "Numer", "Date", "Pershkrimi", "Faturuar", "Paguar", "Diferenca"],
+  purchase_summary_register_pdf: ["Nr. rend", "Lloji", "Nr.", "Dt. Dok", "Monedha", "Kursi", "Kodi", "Emertimi", "Nentotal", "Zbritje", "TVSH", "Totali", "TVSH bazë", "Totali bazë"],
   sales_by_customer_pdf: ["Kodi", "Emërtimi", "Qyteti", "Fatura", "Vlefta"],
   sales_by_city_pdf: ["Qyteti", "Klientë", "Fatura", "Vlera"],
   sales_unsold_items_pdf: ["Nr. Blerje", "Dt.", "Njësia", "Kartelë", "Emërtimi i Artikullit", "Kod Bar", "Gjendja"],
@@ -1866,6 +1867,33 @@ const REFERENCE_FIELD_ALIASES: Record<string, string[]> = {
   "Lloj": ["Lloj Dok"], "Lloj Dok": ["Lloj", "Përshkrimi"], "Klienti": ["Partneri", "Klienti"], "Furnitori": ["Partneri", "Furnitori"], "Vlera Pa TVSH": ["Vlera"], "Vlera Me TVSH": ["Vlera"],
   "Gjendje": ["Gjendje", "Sasia", "Stoku"], "Kosto": ["Çmimi mesatar", "Kosto"], "Hyrje": ["Hyrje"], "Hyrje nga Blerjet": ["Hyrje"], "Dalje": ["Dalje"], "Dalje për Shitje": ["Dalje"], "Mungesat": ["Mungesa"], "Minimum": ["Minimumi"],
 };
+
+export function calculateSupplierSituationAmounts(totalAmount: number, exchangeRate: number, paid: boolean) {
+  const debit = Number(totalAmount || 0);
+  const debitBase = Math.round(debit * Number(exchangeRate || 1));
+  const credit = paid ? debit : 0;
+  const creditBase = paid ? debitBase : 0;
+  return { debit, credit, debitBase, creditBase, balance: debit - credit, balanceBase: debitBase - creditBase };
+}
+
+export function mapPurchaseCustomsFields(invoice: { inventoryReference?: string | null; docNumber: string; date: Date; totalAmount?: number | null; currency?: string | null; exchangeRate?: number | string | null; carrierName?: string | null; vehiclePlate?: string | null; vatAmount?: number | null }) {
+  const total = Number(invoice.totalAmount || 0);
+  const vat = Number(invoice.vatAmount || 0);
+  return { "Ref.": invoice.inventoryReference || invoice.docNumber, "Nr.Fl.Dog.": invoice.inventoryReference || "", "Dt Fl.Dog.": invoice.date, "Vl.Fatures": total, Monedha: invoice.currency || "ALL", Kursi: invoice.exchangeRate ?? "", Vlefta: total, Transport: invoice.carrierName || "", Siguracion: invoice.vehiclePlate || "", "Refer./Tjera": invoice.inventoryReference || "", "Vl.Dogane": "", Dog: "", Akciz: "", "Vl pa TVSH": total - vat, TVSH: vat };
+}
+
+export function normalizePurchasePaymentAmount(amount: number, exchangeRate: number) {
+  return Math.round(Number(amount || 0) * Number(exchangeRate || 1));
+}
+
+export function getSupplierMaturityBucket(days: number) {
+  const safeDays = Math.max(0, Math.floor(Number(days) || 0));
+  return safeDays === 0 ? "0" : safeDays <= 30 ? "1-30" : safeDays <= 60 ? "30-60" : safeDays <= 90 ? "60-90" : safeDays <= 180 ? "90-180" : "Mbi 180";
+}
+
+export function getInventoryRunningKey(warehouseId: number | null | undefined, productId: number) {
+  return `${String(warehouseId ?? 0)}:${productId}`;
+}
 
 export function shapeReferenceReport(reportKey: string, report: OdooReportResult): OdooReportResult {
   const schema = REFERENCE_COLUMN_SCHEMAS[reportKey];
@@ -1906,10 +1934,12 @@ export function applyOdooReportFilters(report: OdooReportResult, filters: OdooRe
   const max = filters.amountMax?.trim() ? Number(filters.amountMax) : undefined;
   const rowText = (row: Record<string, unknown>) => Object.values(row).map(value => String(value ?? "")).join(" ").toLocaleLowerCase("sq-AL");
   const rowFieldText = (row: Record<string, unknown>, keys: string[]) => keys.map(key => String(row[key] ?? "")).join(" ").toLocaleLowerCase("sq-AL");
+  const amountColumn = report.columns.find(column => ["Vlera", "Vlefta", "Totali", "Detyrimi", "Debi", "Kredi", "Vlera në Lek", "Vlefta në Lek", "Vlera totale në Lek", "Vlefta Shitjes", "Vlere(MB)"].includes(column));
   const rows = report.rows.filter(row => {
     const text = rowText(row);
-    const numeric = Object.values(row).find(value => typeof value === "number");
-    const amount = typeof numeric === "number" ? numeric : Number(numeric);
+    const amountValue = amountColumn ? row[amountColumn] : undefined;
+    const numeric = typeof amountValue === "number" ? amountValue : Number(amountValue);
+    const amount = Number.isFinite(numeric) ? numeric : Number.NaN;
     return normalized.every(([label, value]) => {
       if (label === "Shuma minimale" || label === "Shuma maksimale") return true;
       if (label === "Furnitor / Klient") {
@@ -1939,7 +1969,6 @@ export function applyOdooReportFilters(report: OdooReportResult, filters: OdooRe
       return text.includes(value);
     }) && (min === undefined || (Number.isFinite(amount) && amount >= min)) && (max === undefined || (Number.isFinite(amount) && amount <= max));
   });
-  const amountColumn = report.columns.find(column => ["Vlera", "Vlefta", "Totali", "Detyrimi", "Debi", "Kredi", "Vlera në Lek"].includes(column));
   const metrics = report.metrics.map(metric => {
     if (["Dokumente", "Fatura", "Grupime", "Rreshta të regjistrit", "Kërkojnë veprim"].includes(metric.label)) return { ...metric, value: rows.length };
     if (amountColumn && ["Vlera", "Vlefta", "Totali", "Detyrim", "Shpenzim", "Vlera totale në Lek"].includes(metric.label)) return { ...metric, value: rows.reduce((sum, row) => sum + Number(row[amountColumn] || 0), 0) };
@@ -1986,76 +2015,155 @@ async function getOdooBaseReport(companyId: number, reportKey: string, filters: 
   const monthNames = ["Janar", "Shkurt", "Mars", "Prill", "Maj", "Qershor", "Korrik", "Gusht", "Shtator", "Tetor", "Nëntor", "Dhjetor"];
 
   switch (reportKey) {
+    case "purchase_summary_register_pdf": {
+      const [invoiceRecords, supplierRecords] = await Promise.all([getPurchaseInvoices(companyId), getSuppliers(companyId)]);
+      const suppliersById = new Map(supplierRecords.map(supplier => [supplier.id, supplier]));
+      const rows = invoiceRecords.filter(invoice => inRange(invoice.date)).map((invoice, index) => {
+        const supplier = invoice.supplierId ? suppliersById.get(invoice.supplierId) : undefined;
+        const total = Number(invoice.totalAmount ?? 0);
+        const vat = Number(invoice.vatAmount ?? 0);
+        const exchangeRate = Number(invoice.exchangeRate || 1);
+        const net = total - vat;
+        const baseVat = Math.round(vat * exchangeRate);
+        const baseTotal = Math.round(total * exchangeRate);
+        const supplierName = invoice.supplierName || supplier?.name || "Pa furnitor";
+        return {
+          "Nr. rend": index + 1,
+          Lloji: "FB",
+          "Nr.": invoice.docNumber,
+          "Dt. Dok": invoice.date,
+          Monedha: invoice.currency || "ALL",
+          Kursi: exchangeRate,
+          Kodi: supplier?.code || "—",
+          Emertimi: supplierName,
+          Nentotal: net,
+          Zbritje: 0,
+          TVSH: vat,
+          Totali: total,
+          "TVSH bazë": baseVat,
+          "Totali bazë": baseTotal,
+          __partnerName: supplierName,
+          __documentNumber: invoice.docNumber,
+          __status: invoice.status,
+          __currency: invoice.currency || "ALL",
+          __warehouseName: invoice.warehouseId ? String(invoice.warehouseId) : "",
+          __documentId: invoice.id,
+          __documentType: "purchase-invoice",
+        };
+      });
+      return result(["Nr. rend", "Lloji", "Nr.", "Dt. Dok", "Monedha", "Kursi", "Kodi", "Emertimi", "Nentotal", "Zbritje", "TVSH", "Totali", "TVSH bazë", "Totali bazë"], rows, [
+        { label: "Fatura", value: rows.length },
+        { label: "Nëntotal", value: rows.reduce((sum, row) => sum + numberValue(row.Nentotal), 0) },
+        { label: "TVSH", value: rows.reduce((sum, row) => sum + numberValue(row.TVSH), 0) },
+        { label: "Totali", value: rows.reduce((sum, row) => sum + numberValue(row.Totali), 0) },
+      ], { Nenkategori: "FB", Ndermarrja: "Kompania aktive", "Dt. Dok.": "Sipas filtrit", "Dt. Regj.": "Sipas filtrit" });
+    }
     case "purchase_supplier_situation_category_pdf": {
       const [invoices, supplierRecords] = await Promise.all([getPurchaseInvoices(companyId), getSuppliers(companyId)]);
       const suppliersById = new Map(supplierRecords.map(supplier => [supplier.id, supplier]));
-      const grouped = new Map<string, { supplierId: number | null; name: string; city: string; currency: string; count: number; debit: number; credit: number; sourceDocumentId: number | null; sourceDocumentNumber: string; sourceStatus: string | null; sourceCurrency: string }>();
+      const grouped = new Map<string, { supplierId: number | null; name: string; city: string; currency: string; count: number; debit: number; credit: number; debitBase: number; creditBase: number; sourceDocumentId: number | null; sourceDocumentNumber: string; sourceStatus: string | null; sourceCurrency: string }>();
       invoices.filter(invoice => inRange(invoice.date)).forEach(invoice => {
         const supplier = invoice.supplierId ? suppliersById.get(invoice.supplierId) : undefined;
         const currency = invoice.currency || "ALL";
         const key = `${String(invoice.supplierId ?? invoice.supplierName ?? "Pa furnitor")}|${currency}`;
-        const current = grouped.get(key) ?? { supplierId: invoice.supplierId ?? null, name: invoice.supplierName || supplier?.name || "Pa furnitor", city: supplier?.city || "—", currency, count: 0, debit: 0, credit: 0, sourceDocumentId: invoice.id, sourceDocumentNumber: invoice.docNumber, sourceStatus: invoice.status, sourceCurrency: currency };
-        const amount = invoice.totalAmount ?? 0;
+        const current = grouped.get(key) ?? { supplierId: invoice.supplierId ?? null, name: invoice.supplierName || supplier?.name || "Pa furnitor", city: supplier?.city || "—", currency, count: 0, debit: 0, credit: 0, debitBase: 0, creditBase: 0, sourceDocumentId: invoice.id, sourceDocumentNumber: invoice.docNumber, sourceStatus: invoice.status, sourceCurrency: currency };
+        const amounts = calculateSupplierSituationAmounts(Number(invoice.totalAmount ?? 0), Number(invoice.exchangeRate || 1), invoice.paymentStatus === "PAID");
         current.count += 1;
-        current.debit += amount;
-        if (invoice.paymentStatus === "PAID") current.credit += amount;
+        current.debit += amounts.debit;
+        current.debitBase += amounts.debitBase;
+        current.credit += amounts.credit;
+        current.creditBase += amounts.creditBase;
         grouped.set(key, current);
       });
-      const rows = Array.from(grouped.values()).map(item => ({ Kodi: item.supplierId ? suppliersById.get(item.supplierId)?.code || "—" : "—", Emërtimi: item.name, Mon: item.currency, Qyteti: item.city, Debi: item.debit, Kredi: item.credit, Detyrimi: item.debit - item.credit, "Debi bazë": item.debit, "Kredi bazë": item.credit, "Detyrimi bazë": item.debit - item.credit, __partnerName: item.name, __documentNumber: item.sourceDocumentNumber, __status: item.sourceStatus, __currency: item.sourceCurrency, __documentId: item.sourceDocumentId, __documentType: "purchase-invoice" }));
+      const rows = Array.from(grouped.values()).map(item => ({ Kodi: item.supplierId ? suppliersById.get(item.supplierId)?.code || "—" : "—", Emërtimi: item.name, Mon: item.currency, Qyteti: item.city, Debi: item.debit, Kredi: item.credit, Detyrimi: item.debit - item.credit, "Debi bazë": item.debitBase, "Kredi bazë": item.creditBase, "Detyrimi bazë": item.debitBase - item.creditBase, __partnerName: item.name, __documentNumber: item.sourceDocumentNumber, __status: item.sourceStatus, __currency: item.sourceCurrency, __documentId: item.sourceDocumentId, __documentType: "purchase-invoice" }));
       return result(["Kodi", "Emërtimi", "Mon", "Qyteti", "Debi", "Kredi", "Detyrimi", "Debi bazë", "Kredi bazë", "Detyrimi bazë"], rows, [{ label: "Furnitorë", value: rows.length }, { label: "Detyrim", value: rows.reduce((sum, row) => sum + numberValue(row.Detyrimi), 0) }], { Kategoria: "Të gjitha", "Monedha e furnitorit": Array.from(new Set(rows.map(row => String(row.Mon || "ALL")))).join(", ") || "ALL", "Monedha bazë": "ALL" });
     }
     case "purchase_customs_import_register_pdf": {
       const invoices = (await getPurchaseInvoices(companyId)).filter(invoice => inRange(invoice.date));
-      const rows = invoices.map(invoice => ({ "Ref.": invoice.inventoryReference || "", "Nr.Fl.Dog.": "", "Dt Fl.Dog.": "", "Vl.Fatures": invoice.totalAmount ?? 0, Monedha: invoice.currency || "ALL", Kursi: invoice.exchangeRate ?? "", Vlefta: invoice.totalAmount ?? 0, Transport: "", Siguracion: "", "Refer./Tjera": "", "Vl.Dogane": "", Dog: "", Akciz: "", "Vl pa TVSH": invoice.totalAmount ?? 0, TVSH: invoice.vatAmount ?? 0, __partnerName: invoice.supplierName || "Pa furnitor", __documentNumber: invoice.docNumber, __status: invoice.status, __currency: invoice.currency || "ALL", __warehouseName: invoice.warehouseId ? String(invoice.warehouseId) : "", __documentId: invoice.id, __documentType: "purchase-invoice" }));
+      const rows = invoices.map(invoice => ({ ...mapPurchaseCustomsFields(invoice), __partnerName: invoice.supplierName || "Pa furnitor", __documentNumber: invoice.docNumber, __status: invoice.status, __currency: invoice.currency || "ALL", __warehouseName: invoice.warehouseId ? String(invoice.warehouseId) : "", __documentId: invoice.id, __documentType: "purchase-invoice" }));
       return result(["Ref.", "Nr.Fl.Dog.", "Dt Fl.Dog.", "Vl.Fatures", "Monedha", "Kursi", "Vlefta", "Transport", "Siguracion", "Refer./Tjera", "Vl.Dogane", "Dog", "Akciz", "Vl pa TVSH", "TVSH"], rows, [{ label: "Fatura", value: rows.length }, { label: "Vlefta", value: rows.reduce((sum, row) => sum + numberValue(row.Vlefta), 0) }], { "Import / Eksport": "Import", Monedha: "ALL" });
     }
     case "purchase_supplier_card_pdf": {
-      const [invoiceRecords, supplierRecords] = await Promise.all([getPurchaseInvoices(companyId), getSuppliers(companyId)]);
+      const [invoiceRecords, supplierRecords, paymentRecords] = await Promise.all([getPurchaseInvoices(companyId), getSuppliers(companyId), getPayments(companyId)]);
       const suppliersById = new Map(supplierRecords.map(supplier => [supplier.id, supplier]));
       const invoices = invoiceRecords.filter(invoice => inRange(invoice.date));
+      const supplierPayments = paymentRecords.filter(payment => payment.paymentType === "OUTBOUND" && payment.partnerType === "SUPPLIER" && payment.status !== "CANCELLED" && inRange(payment.paymentDate));
+      const invoiceByNumber = new Map(invoices.map(invoice => [normalizeDocumentNumber(invoice.docNumber), invoice]));
+      const events = [
+        ...invoices.map(invoice => ({ date: new Date(invoice.createdAt ?? invoice.date), kind: "invoice" as const, invoice })),
+        ...supplierPayments.map(payment => ({ date: new Date(payment.paymentDate), kind: "payment" as const, payment })),
+      ].sort((a, b) => a.date.getTime() - b.date.getTime());
       let progressive = 0;
-      const rows = invoices.map((invoice, index) => {
-        const amount = invoice.totalAmount ?? 0;
-        const credit = invoice.paymentStatus === "PAID" ? amount : 0;
-        progressive += amount - credit;
-        const supplierName = invoice.supplierName || (invoice.supplierId ? suppliersById.get(invoice.supplierId)?.name : undefined) || "Pa furnitor";
-        return { "Nr Rend": index + 1, "Data Rregj": invoice.createdAt ?? invoice.date, "Lloj Dok": "FB", "Nr Dok": invoice.docNumber, "Data Dok": invoice.date, "Përshkrimi i Veprimit": "Faturë blerjeje", Debi: amount, Kredi: credit, Progresivi: progressive, "Debi llogari": amount, "Kredi llogari": credit, "Progresivi llogari": progressive, __partnerName: supplierName, __documentNumber: invoice.docNumber, __status: invoice.status, __currency: invoice.currency || "ALL", __warehouseName: invoice.warehouseId ? String(invoice.warehouseId) : "", __documentId: invoice.id, __documentType: "purchase-invoice" };
+      const rows = events.map((event, index) => {
+        if (event.kind === "invoice") {
+          const invoice = event.invoice;
+          const amount = Number(invoice.totalAmount ?? 0);
+          const supplierName = invoice.supplierName || (invoice.supplierId ? suppliersById.get(invoice.supplierId)?.name : undefined) || "Pa furnitor";
+          progressive += amount;
+          return { "Nr Rend": index + 1, "Data Rregj": invoice.createdAt ?? invoice.date, "Lloj Dok": "FB", "Nr Dok": invoice.docNumber, "Data Dok": invoice.date, "Përshkrimi i Veprimit": "Faturë blerjeje", Debi: amount, Kredi: 0, Progresivi: progressive, "Debi llogari": amount, "Kredi llogari": 0, "Progresivi llogari": progressive, __partnerName: supplierName, __documentNumber: invoice.docNumber, __status: invoice.status, __currency: invoice.currency || "ALL", __warehouseName: invoice.warehouseId ? String(invoice.warehouseId) : "", __documentId: invoice.id, __documentType: "purchase-invoice" };
+        }
+        const payment = event.payment;
+        const linkedInvoice = payment.reference ? invoiceByNumber.get(normalizeDocumentNumber(payment.reference)) : undefined;
+        const supplierName = payment.partnerName || (payment.partnerId ? suppliersById.get(payment.partnerId)?.name : undefined) || linkedInvoice?.supplierName || "Pa furnitor";
+        const amount = Number(payment.amount || 0) * Number(payment.exchangeRate || 1);
+        progressive -= amount;
+        return { "Nr Rend": index + 1, "Data Rregj": payment.createdAt ?? payment.paymentDate, "Lloj Dok": "PAG", "Nr Dok": payment.paymentNumber, "Data Dok": payment.paymentDate, "Përshkrimi i Veprimit": "Pagesë furnitori", Debi: 0, Kredi: amount, Progresivi: progressive, "Debi llogari": 0, "Kredi llogari": amount, "Progresivi llogari": progressive, __partnerName: supplierName, __documentNumber: payment.paymentNumber, __status: payment.status, __currency: payment.currency || "ALL", __documentId: payment.id, __documentType: "accounting-payment", __reference: payment.reference || "" };
       });
-      return result(["Nr Rend", "Data Rregj", "Lloj Dok", "Nr Dok", "Data Dok", "Përshkrimi i Veprimit", "Debi", "Kredi", "Progresivi", "Debi llogari", "Kredi llogari", "Progresivi llogari"], rows, [{ label: "Fatura", value: rows.length }, { label: "Detyrimi", value: progressive }], { Furnitori: Array.from(new Set(rows.map(row => String(row.__partnerName || "")).filter(Boolean))).join(", ") || "Të gjithë", "Nr Llogarie": "—", Mon: "ALL", Titulli: "Kartelë furnitori", NIPTI: "—" });
+      return result(["Nr Rend", "Data Rregj", "Lloj Dok", "Nr Dok", "Data Dok", "Përshkrimi i Veprimit", "Debi", "Kredi", "Progresivi", "Debi llogari", "Kredi llogari", "Progresivi llogari"], rows, [{ label: "Dokumente", value: rows.length }, { label: "Detyrim", value: progressive }], { Furnitori: Array.from(new Set(rows.map(row => String(row.__partnerName || "")).filter(Boolean))).join(", ") || "Të gjithë", "Nr Llogarie": "—", Mon: "ALL", Titulli: "Kartelë furnitori", NIPTI: "—" });
     }
     case "purchase_supplier_card_format3_pdf": {
-      const [invoiceRecords, supplierRecords] = await Promise.all([getPurchaseInvoices(companyId), getSuppliers(companyId)]);
+      const [invoiceRecords, supplierRecords, paymentRecords] = await Promise.all([getPurchaseInvoices(companyId), getSuppliers(companyId), getPayments(companyId)]);
       const suppliersById = new Map(supplierRecords.map(supplier => [supplier.id, supplier]));
       const invoices = invoiceRecords.filter(invoice => inRange(invoice.date));
+      const supplierPayments = paymentRecords.filter(payment => payment.paymentType === "OUTBOUND" && payment.partnerType === "SUPPLIER" && payment.status !== "CANCELLED" && inRange(payment.paymentDate));
+      const invoiceByNumber = new Map(invoices.map(invoice => [normalizeDocumentNumber(invoice.docNumber), invoice]));
+      const events = [
+        ...invoices.map(invoice => ({ date: new Date(invoice.createdAt ?? invoice.date), kind: "invoice" as const, invoice })),
+        ...supplierPayments.map(payment => ({ date: new Date(payment.paymentDate), kind: "payment" as const, payment })),
+      ].sort((a, b) => a.date.getTime() - b.date.getTime());
       let progressive = 0;
-      const rows = invoices.map((invoice, index) => { const amount = invoice.totalAmount ?? 0; const credit = invoice.paymentStatus === "PAID" ? amount : 0; progressive += amount - credit; const supplierName = invoice.supplierName || (invoice.supplierId ? suppliersById.get(invoice.supplierId)?.name : undefined) || "Pa furnitor"; return { "Nr Rend": index + 1, "Data Rregj": invoice.createdAt ?? invoice.date, "Lloj Dok": "FB", "Nr Dok": invoice.docNumber, "Data Dok": invoice.date, "Përshkrimi i Veprimit": "Faturë blerjeje", Debi: amount, Kredi: credit, Progresivi: progressive, __partnerName: supplierName, __documentNumber: invoice.docNumber, __status: invoice.status, __currency: invoice.currency || "ALL", __warehouseName: invoice.warehouseId ? String(invoice.warehouseId) : "", __documentId: invoice.id, __documentType: "purchase-invoice" }; });
-      return result(["Nr Rend", "Data Rregj", "Lloj Dok", "Nr Dok", "Data Dok", "Përshkrimi i Veprimit", "Debi", "Kredi", "Progresivi"], rows, [{ label: "Fatura", value: rows.length }, { label: "Detyrimi", value: progressive }], { Furnitori: Array.from(new Set(rows.map(row => String(row.__partnerName || "")).filter(Boolean))).join(", ") || "Të gjithë", "Nr Llogarie": "—", Mon: "ALL", Titulli: "Kartelë furnitori", NIPTI: "—" });
+      const rows = events.map((event, index) => {
+        if (event.kind === "invoice") {
+          const invoice = event.invoice;
+          const amount = Number(invoice.totalAmount ?? 0);
+          const supplierName = invoice.supplierName || (invoice.supplierId ? suppliersById.get(invoice.supplierId)?.name : undefined) || "Pa furnitor";
+          progressive += amount;
+          return { "Nr Rend": index + 1, "Data Rregj": invoice.createdAt ?? invoice.date, "Lloj Dok": "FB", "Nr Dok": invoice.docNumber, "Data Dok": invoice.date, "Përshkrimi i Veprimit": "Faturë blerjeje", Debi: amount, Kredi: 0, Progresivi: progressive, __partnerName: supplierName, __documentNumber: invoice.docNumber, __status: invoice.status, __currency: invoice.currency || "ALL", __warehouseName: invoice.warehouseId ? String(invoice.warehouseId) : "", __documentId: invoice.id, __documentType: "purchase-invoice" };
+        }
+        const payment = event.payment;
+        const linkedInvoice = payment.reference ? invoiceByNumber.get(normalizeDocumentNumber(payment.reference)) : undefined;
+        const supplierName = payment.partnerName || (payment.partnerId ? suppliersById.get(payment.partnerId)?.name : undefined) || linkedInvoice?.supplierName || "Pa furnitor";
+        const amount = Number(payment.amount || 0) * Number(payment.exchangeRate || 1);
+        progressive -= amount;
+        return { "Nr Rend": index + 1, "Data Rregj": payment.createdAt ?? payment.paymentDate, "Lloj Dok": "PAG", "Nr Dok": payment.paymentNumber, "Data Dok": payment.paymentDate, "Përshkrimi i Veprimit": "Pagesë furnitori", Debi: 0, Kredi: amount, Progresivi: progressive, __partnerName: supplierName, __documentNumber: payment.paymentNumber, __status: payment.status, __currency: payment.currency || "ALL", __documentId: payment.id, __documentType: "accounting-payment", __reference: payment.reference || "" };
+      });
+      return result(["Nr Rend", "Data Rregj", "Lloj Dok", "Nr Dok", "Data Dok", "Përshkrimi i Veprimit", "Debi", "Kredi", "Progresivi"], rows, [{ label: "Dokumente", value: rows.length }, { label: "Detyrim", value: progressive }], { Furnitori: Array.from(new Set(rows.map(row => String(row.__partnerName || "")).filter(Boolean))).join(", ") || "Të gjithë", "Nr Llogarie": "—", Mon: "ALL", Titulli: "Kartelë furnitori", NIPTI: "—" });
     }
     case "purchase_supplier_maturity_summary_pdf": {
       const [invoices, supplierRecords] = await Promise.all([getPurchaseInvoices(companyId), getSuppliers(companyId)]);
       const supplierMap = new Map(supplierRecords.map(supplier => [supplier.id, supplier]));
       const grouped = new Map<number | string, { code: string; name: string; account: string; currency: string; total: number; buckets: Record<string, number>; sourceDocumentId: number | null }>();
-      invoices.filter(invoice => inRange(invoice.date)).forEach(invoice => {
+      invoices.filter(invoice => inRange(invoice.date) && invoice.paymentStatus !== "PAID").forEach(invoice => {
         const supplier = invoice.supplierId ? supplierMap.get(invoice.supplierId) : undefined;
         const key = invoice.supplierId ?? invoice.supplierName ?? "Pa furnitor";
         const current = grouped.get(key) ?? { code: supplier?.code || "", name: invoice.supplierName || supplier?.name || "Pa furnitor", account: "", currency: invoice.currency || "ALL", total: 0, buckets: { "0": 0, "1-30": 0, "30-60": 0, "60-90": 0, "90-180": 0, "Mbi 180": 0 }, sourceDocumentId: invoice.id };
         const amount = Number(invoice.totalAmount || 0);
         const due = invoice.dueDate ? new Date(invoice.dueDate) : null;
         const days = due ? Math.max(0, Math.floor((Date.now() - due.getTime()) / 86_400_000)) : 0;
-        const bucket = days === 0 ? "0" : days <= 30 ? "1-30" : days <= 60 ? "30-60" : days <= 90 ? "60-90" : days <= 180 ? "90-180" : "Mbi 180";
+        const bucket = getSupplierMaturityBucket(days);
         current.total += amount; current.buckets[bucket] += amount; grouped.set(key, current);
       });
       const rows = Array.from(grouped.values()).map(item => ({ "Kod Klienti": item.code, Emri: item.name, Llogaria: item.account, "Mon Llog": item.currency, Total: item.total, "0": item.buckets["0"], "1-30": item.buckets["1-30"], "30-60": item.buckets["30-60"], "60-90": item.buckets["60-90"], "90-180": item.buckets["90-180"], "Mbi 180": item.buckets["Mbi 180"], __documentId: item.sourceDocumentId, __documentType: "purchase-invoice" }));
       return result(["Kod Klienti", "Emri", "Llogaria", "Mon Llog", "Total", "0", "1-30", "30-60", "60-90", "90-180", "Mbi 180"], rows, [{ label: "Furnitorë", value: rows.length }, { label: "Totali", value: rows.reduce((sum, row) => sum + numberValue(row.Total), 0) }], { "Data Raportimi": new Date().toLocaleDateString("sq-AL"), "Periudha e Maturimit": "Të gjitha afatet", "Data e Maturimit": "Sipas dokumentit" });
     }
     case "purchase_supplier_maturity_pdf": {
-      const invoices = (await getPurchaseInvoices(companyId)).filter(invoice => inRange(invoice.date));
+      const invoices = (await getPurchaseInvoices(companyId)).filter(invoice => inRange(invoice.date) && invoice.paymentStatus !== "PAID");
       const rows = invoices.map(invoice => {
         const amount = invoice.totalAmount ?? 0;
         const due = invoice.dueDate ? new Date(invoice.dueDate) : null;
         const days = due ? Math.max(0, Math.floor((Date.now() - due.getTime()) / 86_400_000)) : 0;
-        const bucket = days === 0 ? "0" : days <= 30 ? "1-30" : days <= 60 ? "30-60" : days <= 90 ? "60-90" : days <= 180 ? "90-180" : ">";
-        return { "Dt. Dok": invoice.date, "Nr Dok": invoice.docNumber, "Lloj Dok": "FB", "Date Maturimi": due, "Dite Maturimi": days, Tejkaluar: days > 0 ? amount : 0, "0": bucket === "0" ? amount : 0, "1-30": bucket === "1-30" ? amount : 0, "30-60": bucket === "30-60" ? amount : 0, "60-90": bucket === "60-90" ? amount : 0, "90-180": bucket === "90-180" ? amount : 0, ">": bucket === ">" ? amount : 0, Totali: amount, __partnerName: invoice.supplierName || "Pa furnitor", __documentNumber: invoice.docNumber, __status: invoice.status, __currency: invoice.currency || "ALL", __documentId: invoice.id, __documentType: "purchase-invoice" };
+        const bucket = getSupplierMaturityBucket(days);
+        return { "Dt. Dok": invoice.date, "Nr Dok": invoice.docNumber, "Lloj Dok": "FB", "Date Maturimi": due, "Dite Maturimi": days, Tejkaluar: days > 0 ? amount : 0, "0": bucket === "0" ? amount : 0, "1-30": bucket === "1-30" ? amount : 0, "30-60": bucket === "30-60" ? amount : 0, "60-90": bucket === "60-90" ? amount : 0, "90-180": bucket === "90-180" ? amount : 0, ">": bucket === "Mbi 180" ? amount : 0, Totali: amount, __partnerName: invoice.supplierName || "Pa furnitor", __documentNumber: invoice.docNumber, __status: invoice.status, __currency: invoice.currency || "ALL", __documentId: invoice.id, __documentType: "purchase-invoice" };
       });
       return result(["Dt. Dok", "Nr Dok", "Lloj Dok", "Date Maturimi", "Dite Maturimi", "Tejkaluar", "0", "1-30", "30-60", "60-90", "90-180", ">", "Totali"], rows, [{ label: "Fatura", value: rows.length }, { label: "Totali", value: rows.reduce((sum, row) => sum + numberValue(row.Totali), 0) }], { "Data e raportimit": new Date().toLocaleDateString("sq-AL"), "Periudha e maturimit": "Të gjitha afatet", "Data e maturimit": "Sipas dokumentit" });
     }
@@ -2063,21 +2171,22 @@ async function getOdooBaseReport(companyId: number, reportKey: string, filters: 
       const [invoices, companyPayments] = await Promise.all([getPurchaseInvoices(companyId), getPayments(companyId)]);
       const filteredInvoices = invoices.filter(invoice => inRange(invoice.date));
       const invoiceNumbers = new Set(filteredInvoices.map(invoice => normalizeDocumentNumber(invoice.docNumber)));
-      const supplierPayments = companyPayments.filter(payment => payment.paymentType === "OUTBOUND" && payment.partnerType === "SUPPLIER" && inRange(payment.paymentDate));
+      const supplierPayments = companyPayments.filter(payment => payment.paymentType === "OUTBOUND" && payment.partnerType === "SUPPLIER" && payment.status !== "CANCELLED" && inRange(payment.paymentDate));
       const paymentByReference = new Map<string, number>();
       supplierPayments.forEach(payment => {
         const reference = normalizeDocumentNumber(payment.reference || "");
-        if (reference) paymentByReference.set(reference, (paymentByReference.get(reference) || 0) + (payment.amount || 0));
+        const amountInBase = normalizePurchasePaymentAmount(payment.amount, Number(payment.exchangeRate || 1));
+        if (reference) paymentByReference.set(reference, (paymentByReference.get(reference) || 0) + amountInBase);
       });
       const rows = [
         ...filteredInvoices.map(invoice => {
-          const billed = invoice.totalAmount || 0;
+          const billed = normalizePurchasePaymentAmount(Number(invoice.totalAmount || 0), Number(invoice.exchangeRate || 1));
           const paid = paymentByReference.get(normalizeDocumentNumber(invoice.docNumber)) || (invoice.paymentStatus === "PAID" ? billed : 0);
           return { Fature: "✓", Pagese: "", Numer: invoice.docNumber, Date: invoice.date, Pershkrimi: invoice.supplierName || "Faturë blerjeje", Faturuar: billed, Paguar: paid, Diferenca: billed - paid, __partnerName: invoice.supplierName || "Pa furnitor", __documentNumber: invoice.docNumber, __status: invoice.status, __currency: invoice.currency || "ALL", __warehouseName: invoice.warehouseId ? String(invoice.warehouseId) : "", __documentId: invoice.id, __documentType: "purchase-invoice" };
         }),
-        ...supplierPayments.filter(payment => !payment.reference || !invoiceNumbers.has(normalizeDocumentNumber(payment.reference))).map(payment => ({ Fature: "", Pagese: "✓", Numer: payment.paymentNumber, Date: payment.paymentDate, Pershkrimi: payment.partnerName || "Pagesë furnitori", Faturuar: 0, Paguar: payment.amount || 0, Diferenca: -(payment.amount || 0), __partnerName: payment.partnerName || "Pa furnitor", __documentNumber: payment.paymentNumber, __status: payment.status, __currency: payment.currency || "ALL", __documentId: payment.id, __documentType: "accounting-payment" }))
+        ...supplierPayments.filter(payment => !payment.reference || !invoiceNumbers.has(normalizeDocumentNumber(payment.reference))).map(payment => { const amountInBase = normalizePurchasePaymentAmount(payment.amount, Number(payment.exchangeRate || 1)); return { Fature: "", Pagese: "✓", Numer: payment.paymentNumber, Date: payment.paymentDate, Pershkrimi: payment.partnerName || "Pagesë furnitori", Faturuar: 0, Paguar: amountInBase, Diferenca: -amountInBase, __partnerName: payment.partnerName || "Pa furnitor", __documentNumber: payment.paymentNumber, __status: payment.status, __currency: "ALL", __documentId: payment.id, __documentType: "accounting-payment" }; })
       ];
-      return result(["Fature", "Pagese", "Numer", "Date", "Pershkrimi", "Faturuar", "Paguar", "Diferenca"], rows, [{ label: "Faturuar", value: rows.reduce((sum, row) => sum + numberValue(row.Faturuar), 0) }, { label: "Paguar", value: rows.reduce((sum, row) => sum + numberValue(row.Paguar), 0) }, { label: "Diferenca", value: rows.reduce((sum, row) => sum + numberValue(row.Diferenca), 0) }], { Furnitori: Array.from(new Set(rows.map(row => String(row.__partnerName || "")).filter(Boolean))).join(", ") || "Të gjithë", Monedha: Array.from(new Set(rows.map(row => String(row.__currency || "ALL")))).join(", ") || "ALL" });
+      return result(["Fature", "Pagese", "Numer", "Date", "Pershkrimi", "Faturuar", "Paguar", "Diferenca"], rows, [{ label: "Faturuar", value: rows.reduce((sum, row) => sum + numberValue(row.Faturuar), 0) }, { label: "Paguar", value: rows.reduce((sum, row) => sum + numberValue(row.Paguar), 0) }, { label: "Diferenca", value: rows.reduce((sum, row) => sum + numberValue(row.Diferenca), 0) }], { Furnitori: Array.from(new Set(rows.map(row => String(row.__partnerName || "")).filter(Boolean))).join(", ") || "Të gjithë", Monedha: "ALL" });
     }
     case "purchase_invoices": return documentRows(await getPurchaseInvoices(companyId), "date", "supplierName", "totalAmount", "purchase-invoice");
     case "purchase_orders": return documentRows(await getPurchaseOrders(companyId), "orderDate", "supplierName", "totalAmount", "purchase-order");
@@ -2147,13 +2256,14 @@ async function getOdooBaseReport(companyId: number, reportKey: string, filters: 
         current.vatValue += amounts.gross;
         totals.set(key, current);
       });
-      const rows = Array.from(totals.values()).map(item => ({ Kartela: item.code, Emërtimi: item.name, Njësia: item.unit, Sasia: item.quantity, Çmimi: item.quantity ? item.value / item.quantity : 0, "Vlefta pa TVSH": item.value, "Vlefta me TVSH": item.vatValue, "Në %": "", "Vlefta pa TVSH me Zbritje": item.value, "Vlefta me TVSH me Zbritje": item.vatValue, "Në % Analitike": "", __Grupi: item.category, __documentId: item.sourceDocumentId, __documentType: "sales-invoice" }));
+      const rows = Array.from(totals.values()).map(item => ({ Kartela: item.code, Emërtimi: item.name, Njësia: item.unit, Sasia: item.quantity, Çmimi: item.quantity ? item.value / item.quantity : 0, "Vlefta pa TVSH": item.value, "Vlefta me TVSH": item.vatValue, "Në %": "", "Vlefta pa TVSH me Zbritje": "", "Vlefta me TVSH me Zbritje": "", "Në % Analitike": "", __Grupi: item.category, __documentId: item.sourceDocumentId, __documentType: "sales-invoice" }));
       return result(["Kartela", "Emërtimi", "Njësia", "Sasia", "Çmimi", "Vlefta pa TVSH", "Vlefta me TVSH", "Në %", "Vlefta pa TVSH me Zbritje", "Vlefta me TVSH me Zbritje", "Në % Analitike"], rows, [{ label: "Artikuj", value: rows.length }, { label: "Vlefta", value: rows.reduce((sum, row) => sum + numberValue(row["Vlefta me TVSH"]), 0) }]);
     }
     case "sales_product_card_pdf": {
-      const [pairs, products, categories] = await Promise.all([salesItemsForPeriod(), getProducts(companyId), getCategories(companyId)]);
+      const [pairs, products, categories, customers] = await Promise.all([salesItemsForPeriod(), getProducts(companyId), getCategories(companyId), getCustomers(companyId)]);
       const productMap = new Map(products.map(product => [product.id, product]));
       const categoryMap = new Map(categories.map(category => [category.id, category.name]));
+      const customerMap = new Map(customers.map(customer => [customer.id, customer]));
       const progressive = new Map<number | string, number>();
       const rows = pairs.map(({ invoice, item }) => {
         const product = item.productId ? productMap.get(item.productId) : undefined;
@@ -2161,8 +2271,9 @@ async function getOdooBaseReport(companyId: number, reportKey: string, filters: 
         const quantity = Number(item.quantity || 0);
         const next = (progressive.get(key) || 0) + quantity;
         const amounts = salesLineAmounts(invoice, item);
+        const customer = invoice.customerId ? customerMap.get(invoice.customerId) : undefined;
         progressive.set(key, next);
-        return { "Nr Kartele": product?.code || product?.barcode || "", Kodbar: product?.barcode || "", "Grup Malli": product?.categoryId ? categoryMap.get(product.categoryId) || "" : "", "Nën Grupi": "", Klienti: invoice.customerName || "", "Nr. Dok": invoice.docNumber, "Dt. Dok": invoice.date, "Lloj Dok": "FS", Njësia: item.unit || product?.baseUnit || "", Sasia: quantity, Çmimi: item.unitPrice || 0, "Vlera Pa TVSH": amounts.net, "Vlera Me TVSH": amounts.gross, "Progresiv Sasi": next, __documentId: invoice.id, __documentType: "sales-invoice" };
+        return { "Nr Kartele": product?.code || product?.barcode || "", Kodbar: product?.barcode || "", "Grup Malli": product?.categoryId ? categoryMap.get(product.categoryId) || "" : "", "Nën Grupi": "", Klienti: invoice.customerName || customer?.name || "", "Nr. Dok": invoice.docNumber, "Dt. Dok": invoice.date, "Lloj Dok": "FS", Njësia: item.unit || product?.baseUnit || "", Sasia: quantity, Çmimi: item.unitPrice || 0, "Vlera Pa TVSH": amounts.net, "Vlera Me TVSH": amounts.gross, "Progresiv Sasi": next, __documentId: invoice.id, __documentType: "sales-invoice" };
       });
       return result(["Nr Kartele", "Kodbar", "Grup Malli", "Nën Grupi", "Klienti", "Nr. Dok", "Dt. Dok", "Lloj Dok", "Njësia", "Sasia", "Çmimi", "Vlera Pa TVSH", "Vlera Me TVSH", "Progresiv Sasi"], rows, [{ label: "Rreshta", value: rows.length }, { label: "Sasi", value: rows.reduce((sum, row) => sum + numberValue(row.Sasia), 0) }]);
     }
@@ -2170,7 +2281,7 @@ async function getOdooBaseReport(companyId: number, reportKey: string, filters: 
       const returns = (await getSalesReturns(companyId)).filter(item => inRange(item.returnDate));
       const rows = (await Promise.all(returns.map(async returnDocument => {
         const items = await getSalesReturnItems(returnDocument.id);
-        return items.map(item => ({ "Nr.Dok": returnDocument.docNumber, "Dt.Dok": returnDocument.returnDate, "Numer FS.Ref": "", "Date FS.Ref": "", Artikulli: item.productName, "Sasi Fature": "", "Sasi e Kthyer": item.quantity, "Çmimi": "", "Zbritje %": "", "Vlefta e Kthyer me TVSH": "", Monedha: "ALL", Kursi: "", "Vlefta e kthyer me TVSH ne MB": "", __documentId: returnDocument.id, __documentType: "sales-return" }));
+        return items.map(item => ({ "Nr.Dok": returnDocument.docNumber, "Dt.Dok": returnDocument.returnDate, "Numer FS.Ref": "", "Date FS.Ref": "", Artikulli: item.productName, "Sasi Fature": "", "Sasi e Kthyer": item.quantity, "Çmimi": "", "Zbritje %": "", "Vlefta e Kthyer me TVSH": "", Monedha: "", Kursi: "", "Vlefta e kthyer me TVSH ne MB": "", __documentId: returnDocument.id, __documentType: "sales-return" }));
       }))).flat();
       return result(["Nr.Dok", "Dt.Dok", "Numer FS.Ref", "Date FS.Ref", "Artikulli", "Sasi Fature", "Sasi e Kthyer", "Çmimi", "Zbritje %", "Vlefta e Kthyer me TVSH", "Monedha", "Kursi", "Vlefta e kthyer me TVSH ne MB"], rows, [{ label: "Kthime", value: rows.length }, { label: "Sasi e kthyer", value: rows.reduce((sum, row) => sum + numberValue(row["Sasi e Kthyer"]), 0) }]);
     }
@@ -2183,13 +2294,14 @@ async function getOdooBaseReport(companyId: number, reportKey: string, filters: 
         const key = String(item.productId ?? item.productName ?? "Pa artikull");
         const current = totals.get(key) ?? { code: product?.code || product?.barcode || "", name: product?.name || item.productName || "Pa artikull", unit: product?.baseUnit || item.unit || "", quantity: 0, sales: 0, cost: 0, sourceDocumentId: invoice.id };
         const quantity = Number(item.quantity || 0);
-        const sales = salesLineAmounts(invoice, item).baseGross;
+        const amounts = salesLineAmounts(invoice, item);
+        const sales = amounts.baseGross;
         current.quantity += quantity;
         current.sales += sales;
-        current.cost += (product?.avgPrice ?? 0) * quantity;
+        current.cost += (product?.avgPrice ?? 0) * quantity * amounts.rate;
         totals.set(key, current);
       });
-      const rows = Array.from(totals.values()).map(item => { const margin = item.sales - item.cost; const marginPct = item.sales ? (margin / item.sales) * 100 : 0; return { Kartela: item.code, "Emërtimi i Artikullit": item.name, Njësia: item.unit, "Sasia e Shitur": item.quantity, "Kosto/Njesi": item.quantity ? item.cost / item.quantity : 0, KMSH: item.cost, "Çmimi i shitjes": item.quantity ? item.sales / item.quantity : 0, "Vlera Shitjes": item.sales, "Marzhi Bruto me Zbritje": margin, "Marzhi Bruto % me Zbritje": marginPct, "Marzhi Bruto": margin, "Marzhi Bruto %": marginPct, __documentId: item.sourceDocumentId, __documentType: "sales-invoice" }; });
+      const rows = Array.from(totals.values()).map(item => { const margin = item.sales - item.cost; const marginPct = item.sales ? (margin / item.sales) * 100 : 0; return { Kartela: item.code, "Emërtimi i Artikullit": item.name, Njësia: item.unit, "Sasia e Shitur": item.quantity, "Kosto/Njesi": item.quantity ? item.cost / item.quantity : 0, KMSH: item.cost, "Çmimi i shitjes": item.quantity ? item.sales / item.quantity : 0, "Vlera Shitjes": item.sales, "Marzhi Bruto me Zbritje": "", "Marzhi Bruto % me Zbritje": "", "Marzhi Bruto": margin, "Marzhi Bruto %": marginPct, __documentId: item.sourceDocumentId, __documentType: "sales-invoice" }; });
       return result(["Kartela", "Emërtimi i Artikullit", "Njësia", "Sasia e Shitur", "Kosto/Njesi", "KMSH", "Çmimi i shitjes", "Vlera Shitjes", "Marzhi Bruto me Zbritje", "Marzhi Bruto % me Zbritje", "Marzhi Bruto", "Marzhi Bruto %"], rows, [{ label: "Artikuj", value: rows.length }, { label: "Marzhi", value: rows.reduce((sum, row) => sum + numberValue(row["Marzhi Bruto"]), 0) }]);
     }
     case "sales_margin_detail_pdf": {
@@ -2197,16 +2309,17 @@ async function getOdooBaseReport(companyId: number, reportKey: string, filters: 
       const productMap = new Map(products.map(product => [product.id, product]));
       const categoryMap = new Map(categories.map(category => [category.id, category.name]));
       const totalSales = pairs.reduce((sum, pair) => sum + salesLineAmounts(pair.invoice, pair.item).baseGross, 0);
-      const rows = pairs.map(({ invoice, item }) => { const product = item.productId ? productMap.get(item.productId) : undefined; const sales = salesLineAmounts(invoice, item).baseGross; const quantity = Number(item.quantity || 0); const cost = (product?.avgPrice ?? 0) * quantity; const margin = sales - cost; return { Kodi: product?.code || product?.barcode || "", Emërtimi: product?.name || item.productName || "Pa artikull", Grupi: product?.categoryId ? categoryMap.get(product.categoryId) || "" : "", "Nën Grupi": "", "Kodi artikulli": product?.code || "", "Emërtimi artikulli": product?.name || item.productName || "Pa artikull", Sasia: quantity, "Volumi Shitjeve(%)": totalSales ? (sales / totalSales) * 100 : 0, "Vlera e Shitjes": sales, KMSH: cost, Marzhi: margin, "Marzhi në %": sales ? (margin / sales) * 100 : 0, "Mark up": cost ? (margin / cost) * 100 : 0, Sales: totalSales ? (sales / totalSales) * 100 : 0, __documentId: invoice.id, __documentType: "sales-invoice" }; });
+      const rows = pairs.map(({ invoice, item }) => { const product = item.productId ? productMap.get(item.productId) : undefined; const amounts = salesLineAmounts(invoice, item); const sales = amounts.baseGross; const quantity = Number(item.quantity || 0); const cost = (product?.avgPrice ?? 0) * quantity * amounts.rate; const margin = sales - cost; return { Kodi: product?.code || product?.barcode || "", Emërtimi: product?.name || item.productName || "Pa artikull", Grupi: product?.categoryId ? categoryMap.get(product.categoryId) || "" : "", "Nën Grupi": "", "Kodi artikulli": product?.code || "", "Emërtimi artikulli": product?.name || item.productName || "Pa artikull", Sasia: quantity, "Volumi Shitjeve(%)": totalSales ? (sales / totalSales) * 100 : 0, "Vlera e Shitjes": sales, KMSH: cost, Marzhi: margin, "Marzhi në %": sales ? (margin / sales) * 100 : 0, "Mark up": cost ? (margin / cost) * 100 : 0, Sales: totalSales ? (sales / totalSales) * 100 : 0, __documentId: invoice.id, __documentType: "sales-invoice" }; });
       return result(["Kodi", "Emërtimi", "Grupi", "Nën Grupi", "Kodi artikulli", "Emërtimi artikulli", "Sasia", "Volumi Shitjeve(%)", "Vlera e Shitjes", "KMSH", "Marzhi", "Marzhi në %", "Mark up", "Sales"], rows, [{ label: "Rreshta", value: rows.length }, { label: "Vlefta", value: totalSales }]);
     }
     case "sales_by_product_pdf": {
-      const [pairs, products, categories] = await Promise.all([salesItemsForPeriod(), getProducts(companyId), getCategories(companyId)]);
+      const [pairs, products, categories, customers] = await Promise.all([salesItemsForPeriod(), getProducts(companyId), getCategories(companyId), getCustomers(companyId)]);
       const productMap = new Map(products.map(product => [product.id, product]));
       const categoryMap = new Map(categories.map(category => [category.id, category.name]));
+      const customerMap = new Map(customers.map(customer => [customer.id, customer]));
       const totalSales = pairs.reduce((sum, pair) => sum + salesLineAmounts(pair.invoice, pair.item).baseGross, 0);
       const totals = new Map<string, { client: string; code: string; name: string; group: string; quantity: number; value: number; sourceDocumentId: number | null }>();
-      pairs.forEach(({ invoice, item }) => { const product = item.productId ? productMap.get(item.productId) : undefined; const amounts = salesLineAmounts(invoice, item); const key = `${String(invoice.customerId ?? invoice.customerName ?? "Pa klient")}|${String(item.productId ?? item.productName ?? "Pa artikull")}`; const current = totals.get(key) ?? { client: invoice.customerName || "Pa klient", code: product?.code || product?.barcode || "", name: product?.name || item.productName || "Pa artikull", group: product?.categoryId ? categoryMap.get(product.categoryId) || "" : "", quantity: 0, value: 0, sourceDocumentId: invoice.id }; current.quantity += Number(item.quantity || 0); current.value += amounts.baseGross; totals.set(key, current); });
+      pairs.forEach(({ invoice, item }) => { const product = item.productId ? productMap.get(item.productId) : undefined; const customer = invoice.customerId ? customerMap.get(invoice.customerId) : undefined; const amounts = salesLineAmounts(invoice, item); const key = `${String(invoice.customerId ?? invoice.customerName ?? "Pa klient")}|${String(item.productId ?? item.productName ?? "Pa artikull")}`; const current = totals.get(key) ?? { client: formatSalesCustomerLabel(customer?.code || (invoice.customerId ? String(invoice.customerId) : null), invoice.customerName || customer?.name), code: product?.code || product?.barcode || "", name: product?.name || item.productName || "Pa artikull", group: product?.categoryId ? categoryMap.get(product.categoryId) || "" : "", quantity: 0, value: 0, sourceDocumentId: invoice.id }; current.quantity += Number(item.quantity || 0); current.value += amounts.baseGross; totals.set(key, current); });
       const rows = Array.from(totals.values()).map(item => ({ Klienti: item.client, Sasia: item.quantity, Çmimi: item.quantity ? item.value / item.quantity : 0, Grupi: item.group, Emërtimi: item.name, "Nën Grupi": "", Kodi: item.code, "Volumi i Shitjeve në %": totalSales ? (item.value / totalSales) * 100 : 0, "Vlere(MB)": item.value, __documentId: item.sourceDocumentId, __documentType: "sales-invoice" }));
       return result(["Klienti", "Sasia", "Çmimi", "Grupi", "Emërtimi", "Nën Grupi", "Kodi", "Volumi i Shitjeve në %", "Vlere(MB)"], rows, [{ label: "Artikuj", value: rows.length }, { label: "Vlefta", value: rows.reduce((sum, row) => sum + numberValue(row["Vlere(MB)" ]), 0) }]);
     }
@@ -2218,19 +2331,22 @@ async function getOdooBaseReport(companyId: number, reportKey: string, filters: 
         const product = item.productId ? productMap.get(item.productId) : undefined;
         const customer = invoice.customerId ? customerMap.get(invoice.customerId) : undefined;
         const amounts = salesLineAmounts(invoice, item);
-        return { Rend: index + 1, Lloj: "FS", Kodi: product?.barcode || product?.code || "", Nr: invoice.docNumber, Dt: invoice.date, "Kodi Klienti": customer?.code || (invoice.customerId ? String(invoice.customerId) : ""), Emertimi: product?.name || item.productName || "", Njesia: item.unit || product?.baseUnit || "", Monedha: invoice.currency || "ALL", Cmimi: Number(item.unitPrice || 0), Sasia: Number(item.quantity || 0), "Vlera Gjithsej": amounts.gross, "Zbr. Art%": 0, "Vlera me Zbritje Art": amounts.net, "Zbr. Tot%": 0, "Vlera Me Zbritje Tot%": amounts.net, Kursi: amounts.rate, "Vlera Me TVSH Mon. Fature": amounts.gross, "Vlera Me Zbritje Mon. Baze": amounts.baseGross, __documentId: invoice.id, __documentType: "sales-invoice" };
+        return { Rend: index + 1, Lloj: "FS", Kodi: product?.barcode || product?.code || "", Nr: invoice.docNumber, Dt: invoice.date, "Kodi Klienti": customer?.code || (invoice.customerId ? String(invoice.customerId) : ""), Emertimi: product?.name || item.productName || "", Njesia: item.unit || product?.baseUnit || "", Monedha: invoice.currency || "ALL", Cmimi: Number(item.unitPrice || 0), Sasia: Number(item.quantity || 0), "Vlera Gjithsej": amounts.gross, "Zbr. Art%": "", "Vlera me Zbritje Art": "", "Zbr. Tot%": "", "Vlera Me Zbritje Tot%": "", Kursi: amounts.rate, "Vlera Me TVSH Mon. Fature": amounts.gross, "Vlera Me Zbritje Mon. Baze": "", __documentId: invoice.id, __documentType: "sales-invoice" };
       });
       return result(["Rend", "Lloj", "Kodi", "Nr", "Dt", "Kodi Klienti", "Emertimi", "Njesia", "Monedha", "Cmimi", "Sasia", "Vlera Gjithsej", "Zbr. Art%", "Vlera me Zbritje Art", "Zbr. Tot%", "Vlera Me Zbritje Tot%", "Kursi", "Vlera Me TVSH Mon. Fature", "Vlera Me Zbritje Mon. Baze"], rows, [{ label: "Rreshta", value: rows.length }, { label: "Vlera në Lek", value: rows.reduce((sum, row) => sum + numberValue(row["Vlera Me Zbritje Mon. Baze"]), 0) }], { "Pike Shijte": "—", Shitesi: "—", Monedha: "ALL" });
     }
     case "sales_comparison_pdf": {
-      const invoices = (await getSalesInvoices(companyId)).filter(invoice => inRange(invoice.date));
-      const rows = invoices.map(invoice => {
+      const [invoices, customers] = await Promise.all([getSalesInvoices(companyId), getCustomers(companyId)]);
+      const customerMap = new Map(customers.map(customer => [customer.id, customer]));
+      const filteredInvoices = invoices.filter(invoice => inRange(invoice.date));
+      const rows = filteredInvoices.map(invoice => {
         const amount = Number(invoice.totalAmount || 0);
         const rate = invoice.currency === "ALL" || !invoice.currency ? 1 : Number(invoice.exchangeRate || 1);
         const baseAmount = Math.round(amount * rate);
         const net = Math.max(0, amount - Number(invoice.vatAmount || 0));
         const vat = Number(invoice.vatAmount || 0);
-        return { Lloj: "FS", "Kod i Klientit": invoice.customerName || "Pa klient", "Vlefte Artikulli": amount, Zbritje: 0, "pa Tvsh": net, "me Tvsh": amount, "pa Tvsh Baze": Math.round(net * rate), "Tvsh Baze": baseAmount, __documentId: invoice.id, __documentType: "sales-invoice", __vatAmount: vat };
+        const customer = invoice.customerId ? customerMap.get(invoice.customerId) : undefined;
+        return { Lloj: "FS", "Kod i Klientit": formatSalesCustomerLabel(customer?.code || (invoice.customerId ? String(invoice.customerId) : null), invoice.customerName || customer?.name), "Vlefte Artikulli": amount, Zbritje: "", "pa Tvsh": net, "me Tvsh": amount, "pa Tvsh Baze": Math.round(net * rate), "Tvsh Baze": baseAmount, __documentId: invoice.id, __documentType: "sales-invoice" };
       });
       return result(["Lloj", "Kod i Klientit", "Vlefte Artikulli", "Zbritje", "pa Tvsh", "me Tvsh", "pa Tvsh Baze", "Tvsh Baze"], rows, [{ label: "Fatura", value: rows.length }, { label: "Vlera në Lek", value: rows.reduce((sum, row) => sum + numberValue(row["Tvsh Baze"]), 0) }], { "Pike shitje": "—", Shitesi: "—" });
     }
@@ -2245,10 +2361,10 @@ async function getOdooBaseReport(companyId: number, reportKey: string, filters: 
         Grupi: product.categoryId ? categoryMap.get(product.categoryId) || "" : "",
         Nengrupi: "",
         "Cmimi 1": Number(product.lastPrice || 0),
-        "Cmimi 2": 0,
-        "Cmimi 3": 0,
-        "Cmimi 4": 0,
-        "Cmimi 5": 0,
+        "Cmimi 2": "",
+        "Cmimi 3": "",
+        "Cmimi 4": "",
+        "Cmimi 5": "",
         __documentId: product.id,
         __documentType: "product",
       }));
@@ -2367,16 +2483,18 @@ async function getOdooBaseReport(companyId: number, reportKey: string, filters: 
       const [movements, products, warehouses, categories] = await Promise.all([getStockMovements(companyId), getProducts(companyId), getWarehouses(companyId), getCategories(companyId)]);
       const categoryMap = new Map(categories.map(category => [category.id, category.name]));
       const orderedMovements = movements.filter(movement => inRange(movement.movementDate)).sort((left, right) => new Date(left.movementDate).getTime() - new Date(right.movementDate).getTime() || left.id - right.id);
-      const runningByProduct = new Map<number, number>();
+      const runningByProduct = new Map<string, number>();
       const rows = orderedMovements.map(movement => {
         const product = products.find(item => item.id === movement.productId);
         const quantity = movement.quantity;
+        const warehouseKey = String(movement.warehouseId ?? 0);
         const price = product?.avgPrice ?? 0;
         const isIncoming = movement.movementType === "IN";
         const isOutgoing = movement.movementType === "OUT";
-        const previous = runningByProduct.get(movement.productId) ?? 0;
+        const runningKey = getInventoryRunningKey(movement.warehouseId, movement.productId);
+        const previous = runningByProduct.get(runningKey) ?? 0;
         const running = previous + (isIncoming ? quantity : isOutgoing ? -quantity : 0);
-        runningByProduct.set(movement.productId, running);
+        runningByProduct.set(runningKey, running);
         const referenceType = String(movement.referenceType || "");
         const documentType = referenceType.startsWith("PURCHASE_INVOICE") ? "purchase-invoice" : referenceType === "PURCHASE_RECEIPT" ? "purchase-receipt" : referenceType === "PURCHASE_RETURN" ? "purchase-return" : referenceType.startsWith("SALES_INVOICE") ? "sales-invoice" : referenceType === "SALES_RETURN" ? "sales-return" : "stock-movement";
         const documentId = documentType === "stock-movement" ? movement.id : Number(movement.referenceId || movement.id);
@@ -2430,7 +2548,7 @@ async function getOdooBaseReport(companyId: number, reportKey: string, filters: 
     }
     case "inventory_analytic_register_pdf": {
       const [products, movements, warehouses] = await Promise.all([getProducts(companyId), getStockMovements(companyId), getWarehouses(companyId)]);
-      const rows = movements.filter(item => inRange(item.movementDate)).map(item => { const product = products.find(productItem => productItem.id === item.productId); const warehouseName = item.warehouseId ? warehouses.find(warehouse => warehouse.id === item.warehouseId)?.name || `#${item.warehouseId}` : ""; const price = product?.avgPrice ?? 0; const referenceType = String(item.referenceType || ""); const documentType = referenceType.startsWith("PURCHASE_INVOICE") ? "purchase-invoice" : referenceType === "PURCHASE_RECEIPT" ? "purchase-receipt" : referenceType === "PURCHASE_RETURN" ? "purchase-return" : referenceType.startsWith("SALES_INVOICE") ? "sales-invoice" : referenceType === "SALES_RETURN" ? "sales-return" : "stock-movement"; const documentId = documentType === "stock-movement" ? item.id : Number(item.referenceId || item.id); return { Lloji: item.movementType, Numri: item.docNumber, Data: item.movementDate, "Dt Regj": item.createdAt, Kartela: product?.code || "—", Përshkrimi: item.productName, Njësia: product?.baseUnit || "", Sasia: item.quantity, Çmimi: price, Vlefta: item.quantity * price, __warehouse: warehouseName, __documentId: documentId, __documentType: documentType }; });
+      const rows = movements.filter(item => inRange(item.movementDate)).map(item => { const product = products.find(productItem => productItem.id === item.productId); const warehouseName = item.warehouseId ? warehouses.find(warehouse => warehouse.id === item.warehouseId)?.name || `#${item.warehouseId}` : ""; const price = product?.avgPrice ?? 0; const signedQuantity = item.movementType === "OUT" ? -item.quantity : item.quantity; const referenceType = String(item.referenceType || ""); const documentType = referenceType.startsWith("PURCHASE_INVOICE") ? "purchase-invoice" : referenceType === "PURCHASE_RECEIPT" ? "purchase-receipt" : referenceType === "PURCHASE_RETURN" ? "purchase-return" : referenceType.startsWith("SALES_INVOICE") ? "sales-invoice" : referenceType === "SALES_RETURN" ? "sales-return" : "stock-movement"; const documentId = documentType === "stock-movement" ? item.id : Number(item.referenceId || item.id); return { Lloji: item.movementType, Numri: item.docNumber, Data: item.movementDate, "Dt Regj": item.createdAt, Kartela: product?.code || "—", Përshkrimi: item.productName || product?.name || `#${item.productId}`, Njësia: product?.baseUnit || "", Sasia: item.quantity, Çmimi: price, Vlefta: signedQuantity * price, __warehouse: warehouseName, __documentId: documentId, __documentType: documentType }; });
       return result(["Lloji", "Numri", "Data", "Dt Regj", "Kartela", "Përshkrimi", "Njësia", "Sasia", "Çmimi", "Vlefta"], rows, [{ label: "Lëvizje", value: rows.length }, { label: "Sasi", value: rows.reduce((sum, row) => sum + numberValue(row.Sasia), 0) }, { label: "Vlefta", value: rows.reduce((sum, row) => sum + numberValue(row.Vlefta), 0) }]);
     }
     case "inventory_product_summary_pdf": {

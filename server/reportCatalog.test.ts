@@ -1,16 +1,46 @@
 import { describe, expect, it } from "vitest";
 import { REPORT_BASE_KEYS, REPORT_CATALOG } from "../shared/reportCatalog";
-import { applyOdooReportFilters, applyReportVariant, shapeReferenceReport } from "./db";
+import { applyOdooReportFilters, applyReportVariant, calculateSupplierSituationAmounts, getInventoryRunningKey, getSupplierMaturityBucket, mapPurchaseCustomsFields, normalizePurchasePaymentAmount, shapeReferenceReport } from "./db";
 
 describe("Odoo-style report catalog", () => {
+  it("keeps inventory progressive balances isolated by warehouse and product", () => {
+    expect(getInventoryRunningKey(1, 10)).toBe("1:10");
+    expect(getInventoryRunningKey(2, 10)).not.toBe(getInventoryRunningKey(1, 10));
+    expect(getInventoryRunningKey(null, 10)).toBe("0:10");
+  });
+
   it("contains unique reports in every ERP module, including reference formats", () => {
-    expect(REPORT_CATALOG.length).toBe(150);
+    expect(REPORT_CATALOG.length).toBe(151);
     expect(new Set(REPORT_CATALOG.map(report => report.key)).size).toBe(REPORT_CATALOG.length);
     expect(new Set(REPORT_CATALOG.map(report => report.module))).toEqual(new Set(["Blerje", "Shitje", "Magazina", "Kontabilitet", "CRM", "Banka"]));
     expect(REPORT_CATALOG.every(report => report.group.trim().length > 0)).toBe(true);
-    const expectedCounts = { Blerje: 27, Shitje: 36, Magazina: 27, Kontabilitet: 20, CRM: 20, Banka: 20 };
+    const expectedCounts = { Blerje: 28, Shitje: 36, Magazina: 27, Kontabilitet: 20, CRM: 20, Banka: 20 };
     expect(REPORT_CATALOG.every(report => REPORT_CATALOG.filter(item => item.module === report.module).length === expectedCounts[report.module])).toBe(true);
     expect(REPORT_CATALOG.every(report => Boolean(REPORT_BASE_KEYS[report.key]))).toBe(true);
+  });
+
+  it("converts supplier debit and credit to base currency using the real exchange rate", () => {
+    expect(calculateSupplierSituationAmounts(1250, 0.92, false)).toEqual({ debit: 1250, credit: 0, debitBase: 1150, creditBase: 0, balance: 1250, balanceBase: 1150 });
+    expect(calculateSupplierSituationAmounts(1250, 0.92, true)).toEqual({ debit: 1250, credit: 1250, debitBase: 1150, creditBase: 1150, balance: 0, balanceBase: 0 });
+  });
+
+  it("maps real purchase customs fields without fabricating unavailable duty values", () => {
+    const row = mapPurchaseCustomsFields({ docNumber: "BL-01", date: new Date("2026-08-18"), inventoryReference: "INV-77", totalAmount: 1200, vatAmount: 200, currency: "EUR", exchangeRate: "1.08", carrierName: "Carrier Test", vehiclePlate: "AA-123-AA" });
+    expect(row).toMatchObject({ "Ref.": "INV-77", "Nr.Fl.Dog.": "INV-77", "Vl.Fatures": 1200, Monedha: "EUR", Transport: "Carrier Test", Siguracion: "AA-123-AA", "Refer./Tjera": "INV-77", "Vl pa TVSH": 1000, TVSH: 200 });
+    expect(row["Vl.Dogane"]).toBe("");
+    expect(row.Dog).toBe("");
+    expect(row.Akciz).toBe("");
+  });
+
+  it("normalizes purchase invoice and payment amounts into base currency", () => {
+    expect(normalizePurchasePaymentAmount(1250, 0.92)).toBe(1150);
+    expect(normalizePurchasePaymentAmount(0, 1.25)).toBe(0);
+    expect(normalizePurchasePaymentAmount(100, 0)).toBe(100);
+  });
+
+  it("classifies supplier maturity into the exact reference buckets", () => {
+    expect([0, 1, 30, 31, 60, 61, 90, 91, 180, 181].map(getSupplierMaturityBucket)).toEqual(["0", "1-30", "1-30", "30-60", "30-60", "60-90", "60-90", "90-180", "90-180", "Mbi 180"]);
+    expect(getSupplierMaturityBucket(-4)).toBe("0");
   });
 
   it("creates dedicated analytic views for report variants", () => {
@@ -124,11 +154,38 @@ describe("Reference PDF schemas", () => {
     expect(inventoryAnalytic.rows[0]).toMatchObject({ Numri: "BL-01", __documentId: 24, __documentType: "purchase-invoice" });
   });
 
+  it("covers purchase summary reference report empty, single-row and multi-row source contracts", () => {
+    const empty = shapeReferenceReport("purchase_summary_register_pdf", { columns: [], rows: [], metrics: [] });
+    expect(empty.columns).toHaveLength(14);
+    expect(empty.rows).toEqual([]);
+
+    const single = shapeReferenceReport("purchase_summary_register_pdf", {
+      columns: [],
+      rows: [{ "Nr.": "BL-01", "Dt. Dok": "2026-08-18", Kodi: "F001", Emertimi: "Furnitor Test", Totali: 1200, __documentId: 41, __documentType: "purchase-invoice", __partnerName: "Furnitor Test" }],
+      metrics: [{ label: "Dokumente", value: 1 }],
+    });
+    expect(single.rows).toHaveLength(1);
+    expect(single.rows[0]).toMatchObject({ "Nr.": "BL-01", "Dt. Dok": "2026-08-18", Kodi: "F001", Emertimi: "Furnitor Test", Totali: 1200, __documentId: 41, __documentType: "purchase-invoice", __partnerName: "Furnitor Test" });
+
+    const many = shapeReferenceReport("purchase_summary_register_pdf", {
+      columns: [],
+      rows: [
+        { "Nr.": "BL-01", "Dt. Dok": "2026-08-18", Totali: 1200, __documentId: 41, __documentType: "purchase-invoice" },
+        { "Nr.": "BL-02", "Dt. Dok": "2026-08-19", Totali: 800, __documentId: 42, __documentType: "purchase-invoice" },
+      ],
+      metrics: [{ label: "Dokumente", value: 2 }],
+    });
+    expect(many.rows).toHaveLength(2);
+    expect(many.rows.map(row => row.__documentId)).toEqual([41, 42]);
+    expect(many.metrics).toEqual([{ label: "Dokumente", value: 2 }]);
+  });
+
   it("keeps the exact column count and order for the newly dedicated formats", () => {
     const expected: Record<string, string[]> = {
       purchase_supplier_situation_category_pdf: ["Kodi", "Emërtimi", "Mon", "Qyteti", "Debi", "Kredi", "Detyrimi", "Debi bazë", "Kredi bazë", "Detyrimi bazë"],
       purchase_customs_import_register_pdf: ["Ref.", "Nr.Fl.Dog.", "Dt Fl.Dog.", "Vl.Fatures", "Monedha", "Kursi", "Vlefta", "Transport", "Siguracion", "Refer./Tjera", "Vl.Dogane", "Dog", "Akciz", "Vl pa TVSH", "TVSH"],
       purchase_invoice_payment_register_pdf: ["Fature", "Pagese", "Numer", "Date", "Pershkrimi", "Faturuar", "Paguar", "Diferenca"],
+      purchase_summary_register_pdf: ["Nr. rend", "Lloji", "Nr.", "Dt. Dok", "Monedha", "Kursi", "Kodi", "Emertimi", "Nentotal", "Zbritje", "TVSH", "Totali", "TVSH bazë", "Totali bazë"],
       sales_quantity_total_pdf: ["Artikulli", "Janar", "Shkurt", "Mars", "Prill", "Maj", "Qershor", "Korrik", "Gusht", "Shtator", "Tetor", "Nëntor", "Dhjetor"],
       sales_items_sold_pdf: ["Kartelë", "Emërtimi", "Njësia", "Sasia", "Çmimi", "Vlefta pa TVSH", "Vlefta me TVSH", "Në %", "Vlefta pa TVSH me Zbritje", "Vlefta me TVSH me Zbritje", "Në % Analitike"],
       sales_by_customer_pdf: ["Kodi", "Emërtimi", "Qyteti", "Fatura", "Vlefta"],

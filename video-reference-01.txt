@@ -1,0 +1,11 @@
+Starting video analysis...
+Submitting video analysis task...
+Task submitted (ID: video-analysis-dac721f2-4afc-4873-a79e-e67432f89a31)
+[8s] Status: Analyzing video content with AI...
+[15s] Status: Analysis completed
+[15s] Analysis completed!
+Full analysis result saved to: /home/ubuntu/sistemi-genit-cloud/video_Recording2026-08-22095410_analysis_20260824_142454.md
+Note: This tool performs AI-based visual and audio analysis, not verbatim transcription. For detailed speech transcription, use `manus-speech-to-text` instead.
+Analysis result:
+
+Nuk shfaqet asnjë dokument me titull INVOICE, EXPORT INVOICE, COMMERCIAL INVOICE ose CMR në këtë video. Pamjet tregojnë vetëm ndërfaqen e një programi për menaxhimin e pagave dhe listëprezencave.

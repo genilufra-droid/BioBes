@@ -34,6 +34,21 @@ describe("server report filters", () => {
     expect(result.meta?.Monedha).toBe("EUR");
   });
 
+  it("filters monetary bounds using the declared amount column instead of the first numeric field", () => {
+    const result = applyOdooReportFilters({
+      columns: ["Nr Rend", "Sasia", "Vlera"],
+      rows: [
+        { "Nr Rend": 1, Sasia: 99, Vlera: 120, __documentId: 1 },
+        { "Nr Rend": 2, Sasia: 1, Vlera: 80, __documentId: 2 },
+      ],
+      metrics: [{ label: "Rreshta të regjistrit", value: 2 }, { label: "Vlera", value: 200 }],
+    }, { amountMin: "100" });
+
+    expect(result.rows).toHaveLength(1);
+    expect(result.rows[0]).toMatchObject({ "Nr Rend": 1, Sasia: 99, Vlera: 120 });
+    expect(result.metrics.find(item => item.label === "Rreshta të regjistrit")?.value).toBe(1);
+  });
+
   it("filters hidden supplier metadata and rewrites the supplier header to the filtered partner", () => {
     const result = applyOdooReportFilters({
       columns: ["Nr Rend", "Nr Dok", "Debi"],

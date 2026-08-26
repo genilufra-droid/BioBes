@@ -31,6 +31,7 @@ export const REPORT_REFERENCE_TITLES: Record<string, string> = {
   purchase_supplier_situation_category_pdf: "SITUACION I FURNITORËVE (SIPAS KATEGORISË)",
   purchase_customs_import_register_pdf: "REGJISTRI I DOGANIMIT TË IMPORTEVE",
   purchase_invoice_payment_register_pdf: "FATURIME DHE PAGESA",
+  purchase_summary_register_pdf: "REGJISTRI PËRMBLEDHËS I BLERJEVE",
   sales_by_city_pdf: "SHITJET SIPAS QYTETEVE",
   sales_by_customer_pdf: "SHITJET SIPAS KLIENTEVE",
   sales_items_sold_pdf: "ARTIKUJT E SHITUR",
@@ -149,6 +150,11 @@ export const REPORT_REFERENCE_GROUPS: Record<string, ReferenceHeaderGroup[]> = {
   purchase_invoice_payment_register_pdf: [
     { label: "Dokumenti", columns: ["Fature", "Pagese", "Numer", "Date", "Pershkrimi"] },
     { label: "Vlerat", columns: ["Faturuar", "Paguar", "Diferenca"] },
+  ],
+  purchase_summary_register_pdf: [
+    { label: "Dokumenti", columns: ["Nr. rend", "Lloji", "Nr.", "Dt. Dok", "Monedha", "Kursi", "Kodi", "Emertimi"] },
+    { label: "Monedha Fature", columns: ["Nentotal", "Zbritje", "TVSH", "Totali"] },
+    { label: "Monedha Baze", columns: ["TVSH bazë", "Totali bazë"] },
   ],
   sales_by_customer_pdf: [
     { label: "Klienti", columns: ["Kodi", "Emërtimi", "Qyteti"] },
@@ -472,10 +478,48 @@ function SalesSummaryRegisterReferenceView({ props }: { props: Props }) {
   </section>;
 }
 
+function PurchaseSummaryRegisterReferenceView({ props }: { props: Props }) {
+  const { period, columns, rows, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort } = props;
+  const orderedColumns = ["Nr. rend", "Lloji", "Nr.", "Dt. Dok", "Monedha", "Kursi", "Kodi", "Emertimi", "Nentotal", "Zbritje", "TVSH", "Totali", "TVSH bazë", "Totali bazë"];
+  const actualColumn = (column: string) => columns.find(item => normalize(item) === normalize(column)) ?? column;
+  const totalFor = (column: string) => sumNumericColumn(rows, actualColumn(column));
+  const metaValue = (label: string, fallback: string) => meta?.[label] || fallback;
+  const renderCell = (row: Row, column: string) => {
+    const actual = actualColumn(column);
+    return column === "Nr." && isLinkedDocument(row, actual)
+      ? <SourceDocumentLink label={cellValue(row[actual])} onOpen={() => onOpenDocument(row)} />
+      : cellValue(row[actual]);
+  };
+  return <section className="purchase-summary-reference-sheet mx-auto bg-white text-[#008000]">
+    <header className="purchase-summary-reference-header">
+      <h2>{getReferenceTitle("purchase_summary_register_pdf", "REGJISTRI PËRMBLEDHËS I BLERJEVE")}</h2>
+    </header>
+    <div className="purchase-summary-reference-filters">
+      <strong>Filtrat</strong>
+      <div><span>Nenkategori:</span><b>{metaValue("Nenkategori", "FB")}</b><span>Ndermarrja:</span><b>{metaValue("Ndermarrja", "Kompania aktive")}</b><span>Dt. Dok.:</span><b>{metaValue("Dt. Dok.", period)}</b></div>
+      <div><span>Dt. Regj.:</span><b>{metaValue("Dt. Regj.", period)}</b></div>
+    </div>
+    <div className="overflow-x-auto">
+      <table className="purchase-summary-reference-table">
+        <thead>
+          <tr><th rowSpan={2}>Nr.<br />rend</th><th colSpan={7}>Dokumenti</th><th colSpan={4}>Monedha Fature</th><th colSpan={2}>Monedha Baze</th></tr>
+          <tr>{orderedColumns.slice(1).map(column => <th key={column}><button type="button" onClick={() => onSort(actualColumn(column))}>{column}<span aria-hidden="true">{sort?.column === actualColumn(column) ? (sort.direction === "asc" ? " ↑" : " ↓") : ""}</span></button></th>)}</tr>
+        </thead>
+        <tbody>
+          {isLoading ? <tr><td colSpan={orderedColumns.length}>Po ngarkohet...</td></tr> : rows.length === 0 ? <tr><td colSpan={orderedColumns.length}></td></tr> : rows.map((row, index) => <tr key={index}>{orderedColumns.map(column => <td key={column}>{renderCell(row, column)}</td>)}</tr>)}
+        </tbody>
+        {!isLoading && <tfoot><tr>{orderedColumns.map((column, index) => <td key={column}>{index === 7 ? "Totali" : index < 7 ? "" : totalFor(column) === null ? "" : cellValue(totalFor(column))}</td>)}</tr></tfoot>}
+      </table>
+    </div>
+    <footer className="purchase-summary-reference-footer"><span>Copyright © IMB<br />Instituti i Modelimeve ne Biznes<br />www.imb.al</span><span>1/1</span></footer>
+  </section>;
+}
+
 export function ReferenceReportView({ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }: Props) {
   if (reportKey === "inventory_product_card_pdf") return <ProductCardReferenceView props={{ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }} />;
   if (reportKey === "purchase_supplier_card_format3_pdf") return <SupplierCardSimpleReferenceView props={{ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }} />;
   if (reportKey === "sales_summary_register_pdf") return <SalesSummaryRegisterReferenceView props={{ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }} />;
+  if (reportKey === "purchase_summary_register_pdf") return <PurchaseSummaryRegisterReferenceView props={{ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }} />;
   if (reportKey === "sales_quantity_total_pdf") return <SalesQuantityTotalReferenceView props={{ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }} />;
   if (reportKey === "sales_quantity_pdf") return <SalesQuantityReferenceView props={{ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }} />;
   const displayGroups = getReferenceGroups(reportKey, columns);

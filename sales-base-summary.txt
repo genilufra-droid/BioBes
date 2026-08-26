@@ -1,0 +1,445 @@
+{
+  "sheet": "FATURAT 2026",
+  "header_index_zero_based": 2,
+  "headers_first_21": [
+    "Data / Date",
+    "NR",
+    "KODI I FERMEREVE",
+    "1",
+    "Kodi / Code",
+    "Produkti (Anglisht) / Product (English)",
+    "SASIA NE KG",
+    "CMIMI",
+    "VLERA PA TVSH",
+    "TVSH",
+    "VLERA ME TVSH",
+    "TRANSPORTUESI",
+    "TARGA",
+    "NIVF",
+    "Komente",
+    "Column1",
+    "Column2",
+    "Column3",
+    "Column4",
+    "Column5",
+    "Column6"
+  ],
+  "record_count": 194,
+  "date_min": "1900-01-12",
+  "date_max": "2026-08-19",
+  "invoice_count": 173,
+  "unique_invoice_numbers": [
+    "1",
+    "1/2026",
+    "10",
+    "100",
+    "101",
+    "102",
+    "103",
+    "104",
+    "106",
+    "107",
+    "108",
+    "109",
+    "11",
+    "110",
+    "111",
+    "112",
+    "12",
+    "13",
+    "136",
+    "137",
+    "14",
+    "140",
+    "143",
+    "149",
+    "15",
+    "152",
+    "16",
+    "17",
+    "170",
+    "18"
+  ],
+  "invoice_samples": {
+    "1": {
+      "rows": 1,
+      "total": 929200.0,
+      "customers": [
+        "SPIRO XHAKA"
+      ],
+      "dates": [
+        "2026-01-04"
+      ]
+    },
+    "1/2026": {
+      "rows": 2,
+      "total": 1250000.0,
+      "customers": [
+        "ALBFRUT 2005"
+      ],
+      "dates": [
+        "2026-01-30"
+      ]
+    },
+    "10": {
+      "rows": 1,
+      "total": 1323000.0,
+      "customers": [
+        "ADEM ALI STRANA"
+      ],
+      "dates": [
+        "2026-01-06"
+      ]
+    },
+    "100": {
+      "rows": 2,
+      "total": 576600.0,
+      "customers": [
+        "VJOLLCA RRASA"
+      ],
+      "dates": [
+        "2026-01-30"
+      ]
+    },
+    "101": {
+      "rows": 2,
+      "total": 432600.0,
+      "customers": [
+        "YLMI RRASA"
+      ],
+      "dates": [
+        "2026-01-30"
+      ]
+    },
+    "102": {
+      "rows": 2,
+      "total": 577800.0,
+      "customers": [
+        "KLODJANA SHTYLLA"
+      ],
+      "dates": [
+        "2026-01-30"
+      ]
+    },
+    "103": {
+      "rows": 1,
+      "total": 783000.0,
+      "customers": [
+        "SOFIJE TOSHKALLARI"
+      ],
+      "dates": [
+        "2026-01-30"
+      ]
+    },
+    "104": {
+      "rows": 5,
+      "total": 847240.0,
+      "customers": [
+        "EDUART GJONI",
+        "ZAMIR MEMA"
+      ],
+      "dates": [
+        "2026-01-30",
+        "2026-06-05"
+      ]
+    },
+    "106": {
+      "rows": 1,
+      "total": 0.0,
+      "customers": [
+        "AGREST"
+      ],
+      "dates": [
+        "2026-02-02"
+      ]
+    }
+  },
+  "customer_column_candidates": {
+    "seller_or_customer": [
+      [
+        "NUTRECO",
+        31
+      ],
+      [
+        "KRENAR KAPEDANI",
+        8
+      ],
+      [
+        "YLMI RRASA",
+        7
+      ],
+      [
+        "ANILA VRAHORI",
+        6
+      ],
+      [
+        "TOMORR MALAJ",
+        6
+      ],
+      [
+        "KLODJANA SHTYLLA",
+        5
+      ],
+      [
+        "ZAMIR MEMA",
+        5
+      ],
+      [
+        "#N/A",
+        4
+      ],
+      [
+        "RESMI MERAJ",
+        4
+      ],
+      [
+        "SOFIJE TOSHKALLARI",
+        4
+      ],
+      [
+        "VALENTINA KONDAJ",
+        4
+      ],
+      [
+        "Waldland",
+        4
+      ],
+      [
+        "ARDION STRANA",
+        3
+      ],
+      [
+        "EDUART GJONI",
+        3
+      ],
+      [
+        "ERSOJ STRANA",
+        3
+      ],
+      [
+        "FIQIRI SHTYLLA",
+        3
+      ],
+      [
+        "VALENTINA KOCI",
+        3
+      ],
+      [
+        "XHAFO VRAHORI",
+        3
+      ],
+      [
+        "XHULIANO AGOLLI",
+        3
+      ],
+      [
+        "ADEM ALI STRANA",
+        2
+      ]
+    ],
+    "company_column": [
+      [
+        "",
+        75
+      ],
+      [
+        "BIOBES SHPK",
+        59
+      ],
+      [
+        "Ersoj strana",
+        13
+      ],
+      [
+        "TOMOR MALAJ",
+        11
+      ],
+      [
+        "ILIR SHTYLLA",
+        8
+      ],
+      [
+        "PANAJOT MUCO",
+        7
+      ],
+      [
+        "FATMIR ILIAS",
+        4
+      ],
+      [
+        "MANUSH KONDAJ",
+        4
+      ],
+      [
+        "FLAMUR GURAJ",
+        3
+      ],
+      [
+        "ARDION STRANA",
+        2
+      ],
+      [
+        "GENTIAN VEIZAJ",
+        2
+      ],
+      [
+        "AEDA 2007 SHPK",
+        1
+      ],
+      [
+        "BUMI COMPANY",
+        1
+      ],
+      [
+        "GENTIAN VEIZI",
+        1
+      ],
+      [
+        "GENTJAN VEIZI",
+        1
+      ],
+      [
+        "PETRIT SULOVARI",
+        1
+      ],
+      [
+        "SOKOL KOLA",
+        1
+      ]
+    ]
+  },
+  "product_names": [
+    [
+      "Gjethe Ferre",
+      60
+    ],
+    [
+      "#N/A",
+      43
+    ],
+    [
+      "Rrenje Qumeshtore",
+      10
+    ],
+    [
+      "",
+      6
+    ],
+    [
+      "Bar Blete",
+      5
+    ],
+    [
+      "Caj Mali",
+      5
+    ],
+    [
+      "Dellenje  e zeze",
+      5
+    ],
+    [
+      "LULE SHTOGU",
+      5
+    ],
+    [
+      "GJETHE FRASHERI",
+      4
+    ],
+    [
+      "LEVANDUL",
+      4
+    ],
+    [
+      "Rrenje Mullage e bardhe",
+      4
+    ],
+    [
+      "GJETHE MJEDRE (IDEUS)",
+      3
+    ],
+    [
+      "Gjethe Dafine I",
+      3
+    ],
+    [
+      "QUMESHTORE",
+      3
+    ],
+    [
+      "Gjethe Rozmarine",
+      2
+    ],
+    [
+      "TIMUS CAPITATUS",
+      2
+    ],
+    [
+      "Zbritje nga parapagimi referuar fatures\nNr.489/2025 date 25/12/2025",
+      2
+    ],
+    [
+      "AGULICE",
+      1
+    ],
+    [
+      "Caj mali fidan",
+      1
+    ],
+    [
+      "DELLENJE E KUQE",
+      1
+    ],
+    [
+      "GJ. LULESHTRYLLE",
+      1
+    ],
+    [
+      "GJETHE FERRE",
+      1
+    ],
+    [
+      "Gjethe Mullage e Bardhe",
+      1
+    ],
+    [
+      "HERB SHEREBELE",
+      1
+    ],
+    [
+      "Konopic",
+      1
+    ],
+    [
+      "LUIZA C1",
+      1
+    ],
+    [
+      "LULE AGULICE",
+      1
+    ],
+    [
+      "LULE CIJANI",
+      1
+    ],
+    [
+      "Lule Bliri I BARDHE",
+      1
+    ],
+    [
+      "Lule Kulumrie",
+      1
+    ]
+  ],
+  "currency_like_values": [
+    [
+      "",
+      194
+    ]
+  ],
+  "totals": {
+    "net_value": 95262595.0,
+    "vat": 250000.0,
+    "gross_value": 95512595.0,
+    "quantity_kg": 253314.0
+  }
+}

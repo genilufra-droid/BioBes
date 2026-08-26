@@ -1,0 +1,80 @@
+{
+  "sourceCount": 64,
+  "entryCount": 74,
+  "sourceOnly": [
+    {
+      "number": "43",
+      "name": "BESE RABIA",
+      "key": "beserabia"
+    }
+  ],
+  "entryOnly": [
+    {
+      "id": 570038,
+      "number": "43",
+      "name": "BESE RABIJA",
+      "key": "beserabija"
+    },
+    {
+      "id": 570059,
+      "number": "64",
+      "name": "AREBU SEID",
+      "key": "arebuseid"
+    },
+    {
+      "id": 570060,
+      "number": "65",
+      "name": "MEDINA MOHAMMED",
+      "key": "medinamohammed"
+    },
+    {
+      "id": 570061,
+      "number": "66",
+      "name": "MOHAMMED SIRAGE",
+      "key": "mohammedsirage"
+    },
+    {
+      "id": 570062,
+      "number": "67",
+      "name": "MIHAMMEDSIRAJ MUSA",
+      "key": "mihammedsirajmusa"
+    },
+    {
+      "id": 570063,
+      "number": "68",
+      "name": "OSAMA AHMED",
+      "key": "osamaahmed"
+    },
+    {
+      "id": 570064,
+      "number": "69",
+      "name": "SEID MOHAMMED",
+      "key": "seidmohammed"
+    },
+    {
+      "id": 570065,
+      "number": "70",
+      "name": "SHEMUN MOHAMMED",
+      "key": "shemunmohammed"
+    },
+    {
+      "id": 570066,
+      "number": "71",
+      "name": "ZIYAD MAHEMUD",
+      "key": "ziyadmahemud"
+    },
+    {
+      "id": 570073,
+      "number": "",
+      "name": "PUNETORET TE HUAJ",
+      "key": "punetorettehuaj"
+    },
+    {
+      "id": 570074,
+      "number": "",
+      "name": "PUNETORET TE HUAJ",
+      "key": "punetorettehuaj"
+    }
+  ],
+  "duplicateSourceNames": []
+}

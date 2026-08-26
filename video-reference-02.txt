@@ -1,0 +1,11 @@
+Starting video analysis...
+Submitting video analysis task...
+Task submitted (ID: video-analysis-f10b7f60-d854-4f17-9940-fbaf4e590f1e)
+[8s] Status: Analyzing video content with AI...
+[20s] Status: Analysis completed
+[20s] Analysis completed!
+Full analysis result saved to: /home/ubuntu/sistemi-genit-cloud/video_Recording2026-08-22100312_analysis_20260824_142529.md
+Note: This tool performs AI-based visual and audio analysis, not verbatim transcription. For detailed speech transcription, use `manus-speech-to-text` instead.
+Analysis result:
+
+Në video nuk shfaqet asnjë dokument me titull "INVOICE", "EXPORT INVOICE", "COMMERCIAL INVOICE" ose "CMR". Pamjet tregojnë një ndërfaqe programi për menaxhimin e pagave dhe listëprezencave, ku përfshihen dokumente si "Listëprezenca", "Listëpagesa Bordero", "Listëpagesa Bankë", "Listëpagesa Cash" dhe "Fletëpagesat".

@@ -1,0 +1,121 @@
+Starting video analysis...
+Submitting video analysis task...
+Task submitted (ID: video-analysis-804c578e-1a05-48cb-9514-56d6148391ad)
+[8s] Status: Analyzing video content with AI...
+[33s] Still processing, please wait...
+[40s] Status: Analysis completed
+[40s] Analysis completed!
+Full analysis result saved to: /home/ubuntu/video_Q_AJHvpbmZ0_analysis_20260825_062807.md
+Note: This tool performs AI-based visual and audio analysis, not verbatim transcription. For detailed speech transcription, use `manus-speech-to-text` instead.
+Analysis result:
+
+This analysis details the configuration and operational tutorial for the Alpha Business software, based on the provided video frames and audio.
+
+### **1. Main Dashboard (00:00 - 00:30)**
+The software opens to a central dashboard titled **"Funksionet dhe Blerjet"** (Functions and Purchases) or **"Klientët dhe Shitjet"** (Clients and Sales) depending on the selected tab.
+*   **Left Sidebar Navigation:** Contains links like "Guida për fillimin e punës", "IMB Regjistrime", "Manuali online", "IMB Suport", and "Raportet Web Demo". Below these are module buttons:
+    *   Klientët dhe Shitjet
+    *   Furnitorët dhe Blerjet
+    *   Inventari dhe Magazina
+    *   Kontabiliteti
+    *   Arka dhe Banka
+    *   Punonjësit dhe Pagat
+    *   Asetet
+    *   Amortizimi
+*   **Central Flowchart:** A visual process map showing icons for:
+    *   Klientë (Client) -> Shitje (Sale) -> Arka/Banka (Cash/Bank)
+    *   Furnitorë (Supplier) -> Blerje (Purchase) -> Pagim (Payment)
+    *   Magazina (Warehouse), Doganë (Customs), Shpërndarje (Distribution).
+*   **Right Panel:** 
+    *   **"Shitje" (Sales) Grid:** Columns for Numër, Datë, Përshkrim, Llogari, Klient, Monedha, Vlefta.
+    *   **"Raporte" (Reports) Links:** "Libri i Shitjeve", "Shitjet sipas Klientëve", etc.
+    *   **Chart:** A bar graph titled "Shitje sipas muajve" (Sales by month).
+
+---
+
+### **2. "Skedar" (File) Menu Analysis (00:31 - 01:43)**
+This menu handles enterprise-level management and data operations.
+*   **Visible Labels:**
+    *   **Çelje Ndërmarrje:** Used to create a new enterprise profile.
+    *   **Zgjedh Ndërmarrje:** Used to switch between existing enterprises.
+    *   **Backup/Restore:** For data security.
+    *   **Struktura Administrative:** Defines departments and sectors.
+    *   **Njësi Administrative:** Manages warehouse locations.
+    *   **Njësi Likuidimi:** Manages cash registers and bank accounts.
+    *   **Konfigurim fushash:** Customizes data fields for clients and articles.
+    *   **Grup & Njësi Artikujsh:** Defines article groups, sub-groups, and units of measurement.
+    *   **Qytete & Kategori:** Manages city lists and categories for clients/suppliers.
+    *   **Arkiva e Dokumentave:** Accesses deleted or archived records.
+    *   **Importim të dhënash:** Imports data from external standards or Excel.
+    *   **Mbyllje Viti:** Automatic year-end closing process.
+
+---
+
+### **3. "Konfigurime" (Configurations) Menu Analysis (01:44 - 03:52)**
+This module sets the parameters for how the software operates.
+*   **Artikuj (Articles):** Opens the **"Lista e Artikujve"** window.
+    *   **Columns:** Kod, Emërtimi (Name), Njësia (Unit), Lloji (Type), Grupi.
+    *   **Action:** Allows adding (Shto), editing (Ndrysho), or deleting (Fshi) inventory items.
+*   **Çmime Shitjeje (Sales Prices):** Opens **"Përcaktim Çmimesh Shitjeje"**.
+    *   **Input Fields:** Filters for Grupi, NënGrupi, Artikulli.
+    *   **Grid:** Displays article codes and multiple price levels (Çmimi 1, Çmimi 2, etc.).
+*   **Zbritje Analitike (Analytical Discounts):** Opens **"Përcaktim Zbritjesh për Artikuj"**.
+    *   **Action:** Sets percentage discounts (Zbritja 1, 2) per article or group.
+*   **Klientë / Furnitorë:** Opens **"Lista e Klientëve dhe Furnitorëve"**.
+    *   **Grid:** Shows Klient/Furnitor, Kod, Emërtimi, NIPT, Qyteti, Adresa.
+*   **Emetuesit:** Opens **"Emetuesit e Instrumenteve Financiare"**.
+    *   **Fields:** Kodi, Emërtimi, and an "Aktive" checkbox.
+*   **Qendra e Kostos (Cost Centers):** Opens **"Qendrat e Kostos"**.
+    *   **Action:** Defines internal cost centers for financial tracking.
+*   **Pagat (Salaries):** Includes **"Paga Bazë"** and **"Lista Pagesa"**.
+    *   **"Komponentë Page" Window:** Grid with Kod, Emërtimi, Lloji, Formula (e.g., PB*1/100).
+*   **Grupim Dokumentash:** Opens **"Grupe Dokumentash"**.
+    *   **Fields:** Kodi, Emërtimi, Lloji (Dropdown). Used to group documents for easier reporting.
+
+---
+
+### **4. "Regjistrime" (Registrations) Menu Analysis (03:53 - 06:56)**
+This menu is for daily transactional entries.
+*   **Shpërndarje Shpenzimesh:** Opens **"Shpërndarje e Shpenzimeve të Blerjes"**.
+    *   **Fields:** Dokumenti, Data, Monedha, Kursi.
+    *   **Action:** Allocates purchase costs (like transport or customs) across items to calculate total cost.
+*   **Oferta / Porosi:** Manages non-accounting documents like sales offers to clients or purchase orders to suppliers.
+*   **Likuiditete:** Handles cash (Arka) and bank (Banka) entries/withdrawals.
+*   **Veprime me Furnitorë:** Opens a specific entry window.
+    *   **Fields:** Kodi, Emërtimi, Llogaria, Data Dokumentit, Referenca.
+*   **Lista Pagesa:** Opens **"Regjistrime Liste-Pagesash"**.
+    *   **Fields:** Sektori, Numri, Muaji, Viti.
+    *   **Grid:** Tracks Nr. Personal, Punonjësi, Paga Bruto, Sigurimet, Paga Neto.
+*   **Qendra Kostosh:** Opens **"Regjistrime në Qendrat e Kostos"**.
+    *   **Grid:** Qendra e Kostos, Nr. Llog, Përshkrimi, Debia, Kredia.
+*   **Amortizimi:** Opens **"Regjistrim Amortizimi"**.
+    *   **Buttons:** "Përditëso Tabelën" (Update Table), "Llogarit Amortizimin" (Calculate Amortization).
+*   **Dokumenta Automatikë:** Opens **"Regjistri i Dokumentave Automatikë"**.
+    *   **Tabs:** "Dokumentat Aut. për tu kryer" and "Dokumentat Aut. të kryera".
+    *   **Filters:** Lloji i Faturës, Data, Klienti.
+
+---
+
+### **5. "Raporte" (Reports) Menu Analysis (06:57 - 08:07)**
+Displays all generated data.
+*   **Kontabilitet:** Opens **"Raporte të Kontabilitetit"**.
+    *   **Visible List:** Kartelat e Llogarive, Ditari i Kontabilitetit, Libri i Madh, Bilanci, Cash Flow, etj.
+*   **Other Modules:** Reports for Likuiditete, Magazina, Shitje, Blerje, and Marketing.
+
+---
+
+### **6. "Instrumenta" (Instruments) Menu Analysis (08:08 - 10:13)**
+Contains utility tools and system settings.
+*   **Tatime & Taksa:** Opens **"Lista e Tatimeve"**.
+    *   **Grid:** Kodi (e.g., TVSH), Emërtimi, Lloji, Mënyra, Norma (Rate, e.g., 20%).
+*   **Tabela Kontabilizimi:** Opens **"Tabela e Kontabilizimit"**.
+    *   **Grid:** Përshkrimi i Veprimit, Rezultati, Llogaria. Shows how transactions map to the chart of accounts.
+*   **Konfigurim Raporte:** Opens **"Konfiguro Raporte"**.
+    *   **UI:** A tree view with checkboxes to enable/disable specific reports across all modules.
+*   **Preferenca:** Sub-menus for "Konfigurime të Ndryshme", "Numrat Automatikë", "Formati i Numrave", and "Formati i Kodit të Artikullit".
+
+---
+
+### **7. "Ndihmë" (Help) Menu (10:14 - End)**
+Provides support resources.
+*   **Visible Labels:** Manuali, Manuali online, IMB Web Site, IMB Support, Këshilla (Tips), and "Kontabiliteti për jo specialistët" (Accounting for non-specialists).

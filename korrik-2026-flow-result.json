@@ -1,0 +1,70 @@
+{
+  "workbookPath": "/home/ubuntu/upload/07.PAGATMUAJIKORRIK2026.xlsx",
+  "period": {
+    "id": 270001,
+    "year": 2026,
+    "month": 7,
+    "currency": "ALL",
+    "status": "GENERATED"
+  },
+  "import": {
+    "sheetName": "ORET E PUNES",
+    "importedCells": 2077,
+    "matchedEmployees": 72,
+    "payrollRows": 64,
+    "createdFromHours": 0,
+    "createdFromPayroll": 0,
+    "costUpdate": {
+      "updated": 72
+    },
+    "errors": []
+  },
+  "sourceTotals": {
+    "employees": 64,
+    "grossCents": 347187300,
+    "bankPaymentCents": 184740300,
+    "cashPaymentCents": 167540000,
+    "normalHours": 12318,
+    "overtimeHours": 497
+  },
+  "actualTotals": {
+    "entries": 64,
+    "grossCents": 347187300,
+    "bankPaymentCents": 184740300,
+    "cashPaymentCents": 167540000,
+    "normalHours": 12318,
+    "overtimeHours": 497
+  },
+  "comparison": {
+    "found": 64,
+    "grossMatches": 64,
+    "bankMatches": 64,
+    "cashMatches": 64,
+    "allRowsMatch": true
+  },
+  "kastriot": {
+    "name": "kastriotkaboçi",
+    "found": true,
+    "grossMatch": true,
+    "bankMatch": true,
+    "cashMatch": true,
+    "expected": {
+      "number": "28",
+      "name": "kastriotkaboçi",
+      "grossCents": 7930000,
+      "bankPaymentCents": 4440000,
+      "cashPaymentCents": 3490000,
+      "normalHours": 240,
+      "overtimeHours": 21
+    },
+    "actual": {
+      "grossCents": 7930000,
+      "bankPaymentCents": 4440000,
+      "cashPaymentCents": 3490000,
+      "normalMinutes": 14400,
+      "overtimeMinutes": 1260
+    }
+  },
+  "foreignEntryCount": 8,
+  "employeeCountAfter": 74
+}

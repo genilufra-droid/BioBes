@@ -42,6 +42,7 @@ export const REPORT_CATALOG: ReportCatalogItem[] = [
     ["purchase_spend_trend", "Analizë", "Trendi i shpenzimeve", "purchase_invoices"],
     ["purchase_supplier_count", "Furnitorë", "Furnitorë aktivë", "purchase_suppliers"],
     ["purchase_document_register", "Dokumente", "Regjistri i blerjeve", "purchase_invoices"],
+    ["purchase_summary_register_pdf", "Formate referencë", "Regjistri Përmbledhës i blerjeve"],
     ["purchase_receipt_control", "Logjistikë", "Kontrolli i pranimeve", "purchase_receipts"],
     ["purchase_supplier_card_pdf", "Formate referencë", "Kartela e furnitorit"],
     ["purchase_supplier_card_format3_pdf", "Formate referencë", "Kartela e furnitorit — Formati 3"],
