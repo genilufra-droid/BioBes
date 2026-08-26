@@ -2033,4 +2033,5 @@
 - [x] Përshtat workspace-in e Blerjeve me modelin real Alpha accordion `Kryesore`/`Te Tjera 2`, kërkimin dhe kartat e modeleve, pa shfaqur tab-et e konfigurimit para zgjedhjes së modelit.
 - [x] Sinkronizo në BioBes panelin Alpha të tab-it Raporti dhe accordion-in e Blerjeve të implementuar pas commit-it `e9aa110`; commit `45a97a6de326b9f890baa72a76f7ff0667c51718` u shty dhe CI green: `https://github.com/genilufra-droid/BioBes/actions/runs/32968097400`.
 - [x] Ndaj automatikisht kolonat e raporteve pa metadata në grupe Alpha Dokumenti/Partneri-Artikulli/Sasitë dhe Vlerat, pa ndryshuar vlerat ose rendin e kolonave; u shtua klasifikim i dedikuar dhe regresion për kolonat e panjohura.
-- [ ] Sinkronizo fallback-un e grupeve Alpha dhe regresionin e renderer-it në BioBes; ekzekuto CI green para dorëzimit.
+- [x] Sinkronizo fallback-un e grupeve Alpha dhe regresionin e renderer-it në BioBes; commit `0e9bc090f184b1372caef65cfcfe6d32eef818ba` u shty në `main`; verifikimi lokal kaloi me 93 skedarë/350 teste, check, build dhe diff check.
+- [x] Pastro klasifikimin fallback të grupeve Alpha duke hequr kontrollin e përsëritur për kolonat e sasive dhe shto regresion minimal; auditimi konfirmoi se dega e dyfishtë nuk është në versionin aktual dhe testi fallback ekzistues kalon.
