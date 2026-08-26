@@ -1,6 +1,5 @@
 ALTER TABLE `warehouses` ADD `unitType` enum('WAREHOUSE','POINT_OF_SALE','OFFICE','OTHER') DEFAULT 'WAREHOUSE' NOT NULL;--> statement-breakpoint
 ALTER TABLE `warehouses` ADD `active` int DEFAULT 1 NOT NULL;--> statement-breakpoint
-ALTER TABLE `warehouses` ADD `unitType` enum('WAREHOUSE','POINT_OF_SALE','OFFICE','OTHER') DEFAULT 'WAREHOUSE' NOT NULL;--> statement-breakpoint
 ALTER TABLE `warehouses` ADD `address` varchar(255);--> statement-breakpoint
 ALTER TABLE `warehouses` ADD `location` varchar(255);--> statement-breakpoint
 ALTER TABLE `warehouses` ADD `contact` varchar(255);--> statement-breakpoint
