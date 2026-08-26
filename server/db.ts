@@ -838,6 +838,7 @@ export async function validateStockTransfer(stockTransferId: number) {
   const items = await getStockTransferItems(stockTransferId);
 
   await db.transaction(async tx => {
+    await tx.select({ id: stockTransfers.id }).from(stockTransfers).where(eq(stockTransfers.id, transfer.id)).for("update").limit(1);
     const applied = await tx.select({ id: stockMovements.id }).from(stockMovements).where(and(eq(stockMovements.companyId, transfer.companyId), eq(stockMovements.referenceType, "STOCK_TRANSFER"), eq(stockMovements.referenceId, transfer.id))).limit(1);
     if (applied.length > 0) {
       await tx.update(stockTransfers).set({ status: "VALIDATED" }).where(eq(stockTransfers.id, transfer.id));
@@ -946,6 +947,7 @@ export async function validateInventoryAdjustment(inventoryAdjustmentId: number)
   const items = await getInventoryAdjustmentItems(inventoryAdjustmentId);
 
   await db.transaction(async tx => {
+    await tx.select({ id: inventoryAdjustments.id }).from(inventoryAdjustments).where(eq(inventoryAdjustments.id, adjustment.id)).for("update").limit(1);
     const applied = await tx.select({ id: stockMovements.id }).from(stockMovements).where(and(eq(stockMovements.companyId, adjustment.companyId), eq(stockMovements.referenceType, "INVENTORY_ADJUSTMENT"), eq(stockMovements.referenceId, adjustment.id))).limit(1);
     if (applied.length > 0) {
       await tx.update(inventoryAdjustments).set({ status: "VALIDATED" }).where(eq(inventoryAdjustments.id, adjustment.id));
@@ -4399,6 +4401,7 @@ export async function validateDeliveryNote(deliveryNoteId: number) {
   const items = await getDeliveryItems(deliveryNoteId);
 
   await db.transaction(async tx => {
+    await tx.select({ id: deliveryNotes.id }).from(deliveryNotes).where(eq(deliveryNotes.id, delivery.id)).for("update").limit(1);
     const applied = await tx.select({ id: stockMovements.id }).from(stockMovements).where(and(eq(stockMovements.companyId, delivery.companyId), eq(stockMovements.referenceType, "DELIVERY_NOTE"), eq(stockMovements.referenceId, delivery.id))).limit(1);
     if (applied.length > 0) {
       await tx.update(deliveryNotes).set({ status: "VALIDATED" }).where(eq(deliveryNotes.id, delivery.id));
@@ -4501,6 +4504,7 @@ export async function validateSalesReturn(salesReturnId: number) {
   if (salesReturn.status === "CANCELLED") throw new Error("Kthimi i anuluar nuk mund të validohet");
   const items = await db.select().from(salesReturnItems).where(eq(salesReturnItems.salesReturnId, salesReturnId));
   await db.transaction(async tx => {
+    await tx.select({ id: salesReturns.id }).from(salesReturns).where(eq(salesReturns.id, salesReturn.id)).for("update").limit(1);
     const applied = await tx.select({ id: stockMovements.id }).from(stockMovements).where(and(eq(stockMovements.companyId, salesReturn.companyId), eq(stockMovements.referenceType, "SALES_RETURN"), eq(stockMovements.referenceId, salesReturn.id))).limit(1);
     if (applied.length > 0) {
       await tx.update(salesReturns).set({ status: "VALIDATED" }).where(eq(salesReturns.id, salesReturn.id));

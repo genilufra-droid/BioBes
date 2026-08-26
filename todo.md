@@ -1917,3 +1917,8 @@
 - [ ] D: shto CI me MySQL bosh, migrate 0000–0044, check/test/build dhe një E2E login+faturë.
 - [ ] E: provo backup/restore dhe rate limit login/bootstrap.
 - [ ] F: ruaj log të clone-it të pastër, compose up, healthz 200, bootstrap 201, login 200, një shitje dhe stok të saktë; vetëm nëse kalon krijo tag `v2.0.0`.
+- [ ] CI: verifiko web dhe Windows jobs me status real jeshil, jo vetëm YAML të commit-uar.
+- [ ] Compose: siguro secret wiring nga environment pa secret literal dhe verifiko fresh-start acceptance.
+- [ ] E2E: krijo magazinë në setup para krijimit të faturës dhe provo login + invoice në DB bosh.
+- [ ] Stock: bëj idempotencën atomike nën lock/unique invariant dhe shto teste paralele postimi 2x për dërgesë/kthim/transfer/inventar.
+- [ ] Release gate: mos krijo tag v2.0.0 pa web CI, Windows CI dhe Docker acceptance të gjitha jeshile.
