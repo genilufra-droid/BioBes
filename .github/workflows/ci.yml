@@ -9,19 +9,44 @@ on:
 jobs:
   web:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: genit_ci
+          MYSQL_USER: genit
+          MYSQL_PASSWORD: genit
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=5s --health-timeout=5s --health-retries=30
+    env:
+      DATABASE_URL: mysql://genit:genit@127.0.0.1:3306/genit_ci
+      AUTH_PROVIDER: local
+      JWT_SECRET: ci-only-jwt-secret-change-me
+      LOCAL_AUTH_SETUP_SECRET: ci-only-setup-secret-change-me
+      VITE_AUTH_PROVIDER: local
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
         with:
-          version: 10
+          version: 10.18.0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm db:migrate
+      - run: test "$(find drizzle -maxdepth 1 -name '*.sql' | wc -l)" -ge 45
       - run: pnpm check
       - run: pnpm test
       - run: pnpm build
+      - run: pnpm audit --prod --audit-level=critical
+      - run: nohup node dist/index.js > /tmp/genit-ci-server.log 2>&1 & echo $! > /tmp/genit-ci-server.pid
+      - run: for i in $(seq 1 30); do curl -fsS http://127.0.0.1:3000/healthz && break || sleep 2; done
+      - run: pnpm e2e:smoke
 
   windows-wrapper:
     runs-on: windows-latest

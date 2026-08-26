@@ -15,6 +15,7 @@
     "build:windows": "pnpm --dir desktop install && pnpm --dir desktop build:windows",
     "integrity:verify": "python3 scripts/verify_biobes_integrity.py --source . --export .",
     "auth:hash-password": "node scripts/hash_local_password.mjs",
+    "e2e:smoke": "node scripts/e2e_smoke.mjs",
     "manifest:generate": "python3 scripts/generate_source_manifest.py ."
   },
   "dependencies": {

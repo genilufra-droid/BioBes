@@ -1911,3 +1911,9 @@
 - [ ] P0 runtime acceptance: verifiko duplicate query para migration, Docker fresh-start 45/45, healthz 200, restart, local auth login/logout, storage 401/404/200 dhe persistence.
 - [ ] P0 self-host hardening: shto .env.example, bootstrap secret njëpërdorimësh, race-safety dhe rate limiting për bootstrap/login.
 - [ ] P0 dependency/build: rregullo critical vulnerabilities dhe analytics build warnings, me analizë reachability për high vulnerabilities të mbetura.
+- [ ] A: shto `.env.example` dhe INSTALL minimal me `docker compose` + bootstrap curl.
+- [ ] B: verifiko guard të gjitha procedurave me companyId ose ownership nga payrollPeriodId/weightForm/purchaseInvoice/backup dhe test A≠B.
+- [ ] C: zbato idempotencë stoku për dërgesë/kthim/transfer/inventar dhe test post 2x.
+- [ ] D: shto CI me MySQL bosh, migrate 0000–0044, check/test/build dhe një E2E login+faturë.
+- [ ] E: provo backup/restore dhe rate limit login/bootstrap.
+- [ ] F: ruaj log të clone-it të pastër, compose up, healthz 200, bootstrap 201, login 200, një shitje dhe stok të saktë; vetëm nëse kalon krijo tag `v2.0.0`.
