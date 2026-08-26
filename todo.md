@@ -2038,5 +2038,7 @@
 - [x] Verifiko me test që workspace-i i Blerjeve shfaq vetëm 29 modelet e Blerjeve, në rend katalogu dhe pa modele Shitje/Magazina/Klientë-Furnitorë; `reportsMenu.test.ts` kalon 6/6 dhe lista e çelësave u kontrollua në rend katalogu.
 - [x] Thjeshto header-in e workspace-it kur zgjidhet Blerje: shfaq vetëm numrin e raporteve të Blerjeve dhe jo formatin `29 / 152`; screenshot-i `/reports?module=Blerje` tregon `29 raporte`.
 - [x] Zëvendëso katalogun CRM të Raporteve me 7 modelet reale Alpha të Klientëve/Furnitorëve dhe implemento burimet reale të të dhënave në reportCenter pa prekur CRM operacional; check kaloi, 43 teste targetuara kaluan dhe verifikimi live tregoi 7 modele me modalin e filtrave Alpha.
-- [ ] Sinkronizo katalogun 7-modelësh të Klientëve/Furnitorëve, rastet backend, renderer-in dhe testet në BioBes; ekzekuto CI green.
-- [ ] Përditëso kontratën server të katalogut nga 152 në 139 raporte pas zëvendësimit të CRM me 7 modelet Alpha partner dhe verifiko suite-n e plotë.
+- [x] Sinkronizo katalogun 7-modelësh të Klientëve/Furnitorëve, rastet backend, renderer-in dhe testet në BioBes; commit-i `c93bebc15a795d316417a388e04d666d84d04d7f` dhe rregullimi `cc04bef657fe4cfcf7d9fedb44d589188b87177e` janë në `github/main`; CI green: https://github.com/genilufra-droid/BioBes/actions/runs/32972004817.
+- [x] Përditëso kontratën server të katalogut nga 152 në 139 raporte pas zëvendësimit të CRM me 7 modelet Alpha partner dhe verifiko suite-n e plotë; 93 skedarë dhe 354 teste kaluan në BioBes, bashkë me check/build.
+- [x] Shto layout-e reference specifike për modelet e mbetura të Blerjeve (fatura, porosi, pranime, kthime, status dhe analiza) pa ndryshuar query-t ose të dhënat reale; u shtuan tituj/grupe të dedikuara dhe kaluan 60 teste targetuara, check, build dhe diff check.
+- [ ] Sinkronizo layout-et e reja standarde të Blerjeve dhe regresionin 60-testësh në BioBes; CI duhet të jetë green.

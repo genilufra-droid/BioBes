@@ -244,3 +244,13 @@ it("keeps the sales summary reference contract stable", () => {
   expect(SALES_SUMMARY_REFERENCE_COLUMNS.at(-1)).toBe("Vlera në Mon Baze TVSH");
   expect(normalizeSalesSummaryPeriod("Fillimi — Sot")).toBe("01/01/2026-31/12/2026");
 });
+
+it("uses dedicated Alpha groups for standard purchase document reports", () => {
+  const columns = ["Nr.", "Data", "Partneri", "Vlera", "Statusi"];
+  for (const reportKey of ["purchase_invoices", "purchase_orders", "purchase_open_invoices", "purchase_document_register", "purchase_invoice_status"]) {
+    const groups = getReferenceGroups(reportKey, columns);
+    expect(groups).toHaveLength(1);
+    expect(groups[0]?.columns).toEqual(columns);
+    expect(groups[0]?.label).not.toBe("TË TJERA");
+  }
+});
