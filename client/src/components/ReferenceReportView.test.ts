@@ -154,6 +154,17 @@ describe("reference report column groups", () => {
     ]);
   });
 
+  it("groups columns without dedicated metadata into Alpha-style sections", () => {
+    const groups = getReferenceGroups("unknown_report_pdf", ["Nr Dokumenti", "Klienti", "Sasia", "Vlefta", "Statusi"]);
+    expect(groups).toEqual([
+      { label: "DOKUMENTI", columns: ["Nr Dokumenti"] },
+      { label: "PARTNERI DHE ARTIKULLI", columns: ["Klienti"] },
+      { label: "SASITË", columns: ["Sasia"] },
+      { label: "VLERAT", columns: ["Vlefta"] },
+      { label: "TË TJERA", columns: ["Statusi"] },
+    ]);
+  });
+
   it("places unconfigured columns in an ordered Të tjera group", () => {
     const groups = getReferenceGroups("sales_summary_register_pdf", [
       "Nr Rend",

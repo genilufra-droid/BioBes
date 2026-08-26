@@ -311,6 +311,25 @@ export const REPORT_REFERENCE_GROUPS: Record<string, ReferenceHeaderGroup[]> = {
 
 const normalize = (value: string) => value.trim().toLocaleLowerCase("sq-AL").replace(/\s+/g, " ").replace(/^dt reg$/, "dt regj");
 
+function getAutoReferenceGroups(columns: string[]): ReferenceHeaderGroup[] {
+  const groups: ReferenceHeaderGroup[] = [];
+  const classification = (column: string) => {
+    const normalized = normalize(column);
+    if (/nr|num|date|dat|dok|llog|lloji|referenc|monedh|kurs/.test(normalized)) return "Dokumenti";
+    if (/klient|furnitor|partner|artikull|kartel|kod|pershk|emert|grup|kategori|magazin|njesi|qytet/.test(normalized)) return "Partneri dhe artikulli";
+    if (/sasi|hyrje|dalje|gjendje|minimum|munges/.test(normalized)) return "Sasitë";
+    if (/vleft|vler|cmim|debi|kredi|detyrim|tot|zbrit|kosto|marzh|perqind|%/.test(normalized)) return "Vlerat";
+    return "Të tjera";
+  };
+  columns.forEach(column => {
+    const label = classification(column);
+    const last = groups[groups.length - 1];
+    if (last?.label === label) last.columns.push(column);
+    else groups.push({ label, columns: [column] });
+  });
+  return groups;
+}
+
 export function getReferenceGroups(reportKey: string, columns: string[]): ReferenceHeaderGroup[] {
   const uppercaseGroups = (groups: ReferenceHeaderGroup[]) => groups.map(group => ({ ...group, label: group.label.toLocaleUpperCase("sq-AL") }));
   if (reportKey === "inventory_analytic_register_pdf" && columns.length >= 10) {
@@ -331,7 +350,7 @@ export function getReferenceGroups(reportKey: string, columns: string[]): Refere
     ]);
   }
   const requested = REPORT_REFERENCE_GROUPS[reportKey];
-  if (!requested) return uppercaseGroups([{ label: "Të dhënat e raportit", columns }]);
+  if (!requested) return uppercaseGroups(getAutoReferenceGroups(columns));
   const expectedColumnCount = requested.reduce((total, group) => total + group.columns.length, 0);
   if (columns.length === expectedColumnCount) {
     let offset = 0;
