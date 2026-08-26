@@ -96,3 +96,11 @@ Në preview të cloud-it, `/reports?module=Magazina&report=inventory_warehouse_s
 U verifikua që filtrat e Raporteve përdorin fushat e dedikuara për Partner, Kategori, Status, Monedhë, Dokument dhe Magazinë; filtrat monetarë lexojnë kolonën reale të vlerës. `reportCenter.get` ka kontroll company scope përpara `getOdooReport`, me regresion cross-company që provon se kompania A nuk lexon kompaninë B dhe query-ja nuk thirret pas refuzimit.
 
 Variantet `accounting_revenue_summary`, `accounting_expense_summary` dhe `accounting_net_result` ekzekutojnë filtrimin e tyre para agregimit të përgjithshëm. Eksportet Excel/PDF/Print përdorin rreshtat pas filtrimit. Verifikimi lokal kaloi me 94 skedarë dhe 350 teste; BioBes u sinkronizua në commit `64f93058d885105f80c54afd0d35b4dc441a5917`, me CI web dhe windows-wrapper green në run-in `32963657526`.
+
+## Verifikim live Alpha Web — nënmenuja Raporte
+
+Pas hyrjes në Alpha Web u verifikua drejtpërdrejt se klikimi i `Raporte` në menunë blu hap një nënmenu horizontale me rendin: `Arka`, `Banka`, `BI`, `Blerje`, `Fatura Blerjes Einvoice`, `Inventar`, `Klientë dhe furnitorë`, `Kontabilitet`, `Shitje`, `Fatura shitje Einvoice`. Kjo nënmenu është e ndarë nga faqja `Raport_PivotGrid.aspx`, e cila hapet vetëm pasi zgjidhet kategoria dhe pastaj menaxhon modelet me `Ruaj`, `Shiko`, `Shto`, `Klono`, `Modifiko`, `Fshi`, tab-et dhe grid-in e konfigurimit.
+
+Gjetja kryesore për cloud-in është që hyrja e Raporteve duhet të ketë një shell të qartë me dy hapa: zgjedhje kategorie dhe më pas workspace të modeleve. Dokumenti i gjeneruar duhet të hapet në një dritare tjetër, jo të bashkohet vizualisht me katalogun e modeleve. Verifikimi live u krye më 26.08.2026 pas hyrjes së suksesshme në Alpha Web.
+
+Në verifikimin live të `Raport_PivotGrid.aspx?idModuli=19`, Alpha shfaq një workspace minimalist me vetëm tab-et `Te pergjithshme`, `Konfigurimi`, `Raporti`, kërkimin `Kerko...`, zonën `Terhiqni ketu kolonat per t'i grupuar` dhe grid-in `Kodi`, `Pershkrimi`, `#`, `Autorizime`. Në këtë hap nuk shfaqen kartat e moduleve dhe as dokumenti final. Kjo ndarje e qartë është referenca për listën e modeleve të cloud-it.

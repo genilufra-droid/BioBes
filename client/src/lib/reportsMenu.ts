@@ -17,6 +17,19 @@ export const ALPHA_REPORT_MODULE_GROUPS = {
   secondary: ALPHA_SECONDARY_REPORT_MODULES,
 } as const;
 
+export const ALPHA_REPORT_NAV_ITEMS = [
+  { label: "Arka", module: null },
+  { label: "Banka", module: "Banka" },
+  { label: "BI", module: null },
+  { label: "Blerje", module: "Blerje" },
+  { label: "Fatura Blerjes Einvoice", module: null },
+  { label: "Inventar", module: "Magazina" },
+  { label: "Klientë dhe furnitorë", module: "CRM" },
+  { label: "Kontabilitet", module: "Kontabilitet" },
+  { label: "Shitje", module: "Shitje" },
+  { label: "Fatura shitje Einvoice", module: null },
+] as const satisfies readonly { label: string; module: ReportModule | null }[];
+
 export function alphaReportWorkspaceUrl(module: ReportModule | "Të gjitha") {
   return module === "Të gjitha" ? "/reports" : `/reports?module=${encodeURIComponent(module)}`;
 }
