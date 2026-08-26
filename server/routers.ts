@@ -669,8 +669,8 @@ export const appRouter = router({
       }),
     }),
     backup: router({
-      get: protectedProcedure.input(z.object({ companyId: z.number().int().positive() })).query(async ({ input }) => db.getPayrollBackup(input.companyId)),
-      restore: protectedProcedure.input(z.object({ companyId: z.number().int().positive(), payload: z.any() })).mutation(async ({ input }) => db.restorePayrollBackup(input.companyId, input.payload)),
+      get: protectedProcedure.input(z.object({ companyId: z.number().int().positive() })).query(async ({ ctx, input }) => { await assertCompanyAccess(ctx.user.id, input.companyId); return db.getPayrollBackup(input.companyId); }),
+      restore: protectedProcedure.input(z.object({ companyId: z.number().int().positive(), payload: z.any() })).mutation(async ({ ctx, input }) => { await assertCompanyWriteAccess(ctx.user, input.companyId); return db.restorePayrollBackup(input.companyId, input.payload); }),
       reset: protectedProcedure.input(z.object({ companyId: z.number().int().positive() })).mutation(async ({ ctx, input }) => {
         await assertCompanyWriteAccess(ctx.user, input.companyId);
         return db.resetPayrollData(input.companyId);
@@ -684,7 +684,8 @@ export const appRouter = router({
   weightForm: router({
     list: protectedProcedure
       .input(z.object({ companyId: z.number() }))
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        await assertCompanyAccess(ctx.user.id, input.companyId);
         return db.getWeightForms(input.companyId);
       }),
 
@@ -705,7 +706,8 @@ export const appRouter = router({
         supplierId: z.number().optional(),
         productId: z.number().optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        await assertCompanyWriteAccess(ctx.user, input.companyId);
         return db.createWeightForm(input);
       }),
   }),
@@ -716,13 +718,15 @@ export const appRouter = router({
   purchaseInvoice: router({
     list: protectedProcedure
       .input(z.object({ companyId: z.number() }))
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        await assertCompanyAccess(ctx.user.id, input.companyId);
         return db.getPurchaseInvoices(input.companyId);
       }),
 
     register: protectedProcedure
       .input(z.object({ companyId: z.number() }))
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        await assertCompanyAccess(ctx.user.id, input.companyId);
         return db.getPurchaseInvoiceRegister(input.companyId);
       }),
 

@@ -1922,3 +1922,7 @@
 - [ ] E2E: krijo magazinë në setup para krijimit të faturës dhe provo login + invoice në DB bosh.
 - [ ] Stock: bëj idempotencën atomike nën lock/unique invariant dhe shto teste paralele postimi 2x për dërgesë/kthim/transfer/inventar.
 - [ ] Release gate: mos krijo tag v2.0.0 pa web CI, Windows CI dhe Docker acceptance të gjitha jeshile.
+- [ ] Final gate: shto `.env.example` që përputhet me INSTALL.md dhe kontrollo instalimin e dokumentuar.
+- [ ] Final gate: shto company access guards te payroll.backup.get/restore, weightForm.list/create dhe purchaseInvoice.list/register.
+- [ ] Final gate: verifiko linkun/statusin e GitHub Actions për commit-in 4a69a5c; mos e quaj green pa run real.
+- [ ] Final gate: krijo tag `v2.0.0` vetëm pasi `.env.example`, guards dhe CI web+Windows të jenë realisht green.
