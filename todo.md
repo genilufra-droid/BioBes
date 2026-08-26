@@ -2016,4 +2016,4 @@
 - [x] Siguro që variantet `accounting_revenue_summary`, `accounting_expense_summary` dhe `accounting_net_result` ekzekutojnë filtrimin e dedikuar para agregimit të përgjithshëm sipas datës.
 - [x] Shto test real cross-company për `reportCenter.get`: kompania A nuk lexon raportin e kompanisë B dhe `getOdooReport` nuk thirret pas dështimit të autorizimit.
 - [x] Rifresko label-et e filtrave aktive kur ndërrohet raporti, duke përfshirë çelësin e raportit në varësitë e memo-s së ReportsCenter.
-- [ ] Sinkronizo ndryshimet e verifikuara reports-only në BioBes dhe ekzekuto CI për commit-in pasues; mos shëno [x] pa push dhe rezultat green.
+- [x] Sinkronizo ndryshimet e verifikuara reports-only në BioBes dhe ekzekuto CI për commit-in pasues; commit `6ec8455b782738f5d034ef12152453bded864675` u shty në `origin/main`; CI green: `https://github.com/genilufra-droid/BioBes/actions/runs/32963458259`.
