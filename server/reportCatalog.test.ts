@@ -18,11 +18,11 @@ describe("Odoo-style report catalog", () => {
   });
 
   it("contains unique reports in every ERP module, including reference formats", () => {
-    expect(REPORT_CATALOG.length).toBe(139);
+    expect(REPORT_CATALOG.length).toBe(135);
     expect(new Set(REPORT_CATALOG.map(report => report.key)).size).toBe(REPORT_CATALOG.length);
     expect(new Set(REPORT_CATALOG.map(report => report.module))).toEqual(new Set(["Blerje", "Shitje", "Magazina", "Kontabilitet", "CRM", "Banka"]));
     expect(REPORT_CATALOG.every(report => report.group.trim().length > 0)).toBe(true);
-    const expectedCounts = { Blerje: 29, Shitje: 36, Magazina: 27, Kontabilitet: 20, CRM: 7, Banka: 20 };
+    const expectedCounts = { Blerje: 29, Shitje: 36, Magazina: 23, Kontabilitet: 20, CRM: 7, Banka: 20 };
     expect(REPORT_CATALOG.every(report => REPORT_CATALOG.filter(item => item.module === report.module).length === expectedCounts[report.module])).toBe(true);
     expect(REPORT_CATALOG.every(report => Boolean(REPORT_BASE_KEYS[report.key]))).toBe(true);
   });

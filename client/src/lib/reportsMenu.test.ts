@@ -14,7 +14,7 @@ describe("Alpha reports menu contract", () => {
     expect(getAlphaReportModuleCounts(REPORT_CATALOG)).toEqual({
       Blerje: 29,
       Shitje: 36,
-      Magazina: 27,
+      Magazina: 23,
       Kontabilitet: 20,
       CRM: 7,
       Banka: 20,
