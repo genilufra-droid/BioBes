@@ -24,6 +24,13 @@ type Props = {
 export type ReferenceHeaderGroup = { label: string; columns: string[] };
 
 export const REPORT_REFERENCE_TITLES: Record<string, string> = {
+  partner_customer_situation_pdf: "SITUACIONI I KLIENTIT",
+  partner_supplier_situation_pdf: "SITUACIONI I FURNITORIT",
+  partner_customer_card_pdf: "KARTELA E KLIENTIT",
+  partner_supplier_card_pdf: "KARTELA E FURNITORIT",
+  partner_customer_card_base_pdf: "KARTELA E KLIENTIT NË MONEDHË BAZË",
+  partner_supplier_card_base_pdf: "KARTELA E FURNITORIT NË MONEDHË BAZË",
+  partner_billing_payment_register_pdf: "REGJISTRI PËRMBLEDHËS FATURIME DHE PAGESA",
   purchase_supplier_card_pdf: "KARTELA E FURNITORIT",
   purchase_supplier_card_format3_pdf: "KARTELA E FURNITORIT",
   purchase_supplier_maturity_pdf: "MATURIMI I FURNITORIT",
@@ -79,6 +86,13 @@ export function getReferenceColumnLabel(reportKey: string, column: string) {
 }
 
 export const REPORT_REFERENCE_META: Record<string, string[]> = {
+  partner_customer_situation_pdf: ["Klienti", "NIPTI", "Mon"],
+  partner_customer_card_pdf: ["Klienti", "NIPTI", "Mon"],
+  partner_customer_card_base_pdf: ["Klienti", "NIPTI", "Mon"],
+  partner_supplier_situation_pdf: ["Furnitori", "NIPTI", "Mon"],
+  partner_supplier_card_pdf: ["Furnitori", "NIPTI", "Mon"],
+  partner_supplier_card_base_pdf: ["Furnitori", "NIPTI", "Mon"],
+  partner_billing_payment_register_pdf: ["Mon"],
   purchase_supplier_card_pdf: ["Furnitori", "Mon", "Nr Llogarie", "NIPTI"],
   purchase_supplier_card_format3_pdf: ["Furnitori", "Mon", "Nr Llogarie", "NIPTI"],
   sales_customer_statement: ["Klienti", "Mon", "Nr Llogarie", "NIPTI"],
@@ -103,6 +117,16 @@ export const REPORT_REFERENCE_META: Record<string, string[]> = {
 };
 
 export const REPORT_REFERENCE_GROUPS: Record<string, ReferenceHeaderGroup[]> = {
+  partner_customer_situation_pdf: [{ label: "Të dhënat e klientit", columns: ["Kodi", "Emërtimi", "NIPT", "Qyteti", "Telefoni", "Balanca"] }],
+  partner_customer_card_pdf: [{ label: "Të dhënat e klientit", columns: ["Kodi", "Emërtimi", "NIPT", "Qyteti", "Telefoni", "Balanca"] }],
+  partner_customer_card_base_pdf: [{ label: "Të dhënat e klientit", columns: ["Kodi", "Emërtimi", "NIPT", "Qyteti", "Telefoni", "Balanca"] }],
+  partner_supplier_situation_pdf: [{ label: "Të dhënat e furnitorit", columns: ["Kodi", "Emërtimi", "NIPT", "Qyteti", "Telefoni", "Balanca"] }],
+  partner_supplier_card_pdf: [{ label: "Të dhënat e furnitorit", columns: ["Kodi", "Emërtimi", "NIPT", "Qyteti", "Telefoni", "Balanca"] }],
+  partner_supplier_card_base_pdf: [{ label: "Të dhënat e furnitorit", columns: ["Kodi", "Emërtimi", "NIPT", "Qyteti", "Telefoni", "Balanca"] }],
+  partner_billing_payment_register_pdf: [
+    { label: "Dokumenti", columns: ["Data", "Dokumenti", "Partneri", "Lloji"] },
+    { label: "Vlerat", columns: ["Debi", "Kredi"] },
+  ],
   purchase_supplier_card_pdf: [
     { label: "Dokumenti", columns: ["Nr Rend", "Data Rregj", "Lloj Dok", "Nr Dok", "Data Dok", "Përshkrimi i Veprimit"] },
     { label: "Monedhe Llogarie", columns: ["Debi", "Kredi", "Progresivi"] },

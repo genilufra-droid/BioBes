@@ -2086,7 +2086,6 @@ async function getOdooBaseReport(companyId: number, reportKey: string, filters: 
       const rows = Array.from(grouped.values()).map((item, index) => ({ "Nr Rend": index + 1, Kodi: item.code, "Emertimi i Furnitorit": item.name, "Nr Llogarie": item.account, Kategoria: item.category, "Shuma Debi": item.debit, "Shuma Kredi": item.credit, Detyrimi: item.balance, "Pesha %": totalBalance > 0 ? Number(((Math.max(0, item.balance) / totalBalance) * 100).toFixed(2)) : 0, __partnerName: item.name, __documentNumber: item.sourceDocumentNumber, __status: item.sourceStatus, __currency: item.sourceCurrency, __documentId: item.sourceDocumentId, __documentType: "purchase-invoice" }));
       return result(["Nr Rend", "Kodi", "Emertimi i Furnitorit", "Nr Llogarie", "Kategoria", "Shuma Debi", "Shuma Kredi", "Detyrimi", "Pesha %"], rows, [{ label: "Furnitorë", value: rows.length }, { label: "Detyrimi", value: rows.reduce((sum, row) => sum + numberValue(row.Detyrimi), 0) }], { Periudha: "Sipas filtrit" });
     }
-
     case "purchase_supplier_situation_category_pdf": {
       const [invoices, supplierRecords] = await Promise.all([getPurchaseInvoices(companyId), getSuppliers(companyId)]);
       const suppliersById = new Map(supplierRecords.map(supplier => [supplier.id, supplier]));
@@ -2688,6 +2687,29 @@ async function getOdooBaseReport(companyId: number, reportKey: string, filters: 
       const [entries, companyJournals] = await Promise.all([getJournalEntries(companyId), getJournals(companyId)]);
       const filtered = entries.filter(item => inRange(item.entryDate));
       return result(["Nr.", "Data", "Ditari", "Debi", "Kredi", "Statusi"], filtered.map(item => ({ "Nr.": item.entryNumber, Data: item.entryDate, Ditari: companyJournals.find(journal => journal.id === item.journalId)?.name || `#${item.journalId}`, Debi: item.totalDebit, Kredi: item.totalCredit, Statusi: item.status, __documentId: item.id, __documentType: "accounting-entry" })), [{ label: "Regjistrime", value: filtered.length }]);
+    }
+    case "partner_customer_situation_pdf":
+    case "partner_customer_card_pdf":
+    case "partner_customer_card_base_pdf": {
+      const customers = await getCustomers(companyId);
+      const rows = customers.map(item => ({ Kodi: item.code || `#${item.id}`, Emërtimi: item.name, NIPT: item.nipt || "—", Qyteti: item.city || "—", Telefoni: item.phone || "—", Balanca: item.balance || 0, __partnerName: item.name }));
+      return result(["Kodi", "Emërtimi", "NIPT", "Qyteti", "Telefoni", "Balanca"], rows, [{ label: "Klientë", value: rows.length }, { label: "Balanca", value: rows.reduce((sum, row) => sum + Number(row.Balanca || 0), 0) }], { Titulli: reportKey === "partner_customer_situation_pdf" ? "Situacioni i klientit" : "Kartela e klientit", Mon: reportKey.endsWith("_base_pdf") ? "ALL" : "Të gjitha" });
+    }
+    case "partner_supplier_situation_pdf":
+    case "partner_supplier_card_pdf":
+    case "partner_supplier_card_base_pdf": {
+      const suppliers = await getSuppliers(companyId);
+      const rows = suppliers.map(item => ({ Kodi: item.code || `#${item.id}`, Emërtimi: item.name, NIPT: item.nipt || "—", Qyteti: item.city || "—", Telefoni: item.phone || "—", Balanca: item.balance || 0, __partnerName: item.name }));
+      return result(["Kodi", "Emërtimi", "NIPT", "Qyteti", "Telefoni", "Balanca"], rows, [{ label: "Furnitorë", value: rows.length }, { label: "Balanca", value: rows.reduce((sum, row) => sum + Number(row.Balanca || 0), 0) }], { Titulli: reportKey === "partner_supplier_situation_pdf" ? "Situacioni i furnitorit" : "Kartela e furnitorit", Mon: reportKey.endsWith("_base_pdf") ? "ALL" : "Të gjitha" });
+    }
+    case "partner_billing_payment_register_pdf": {
+      const [sales, purchases, payments] = await Promise.all([getSalesInvoices(companyId), getPurchaseInvoices(companyId), getPayments(companyId)]);
+      const rows = [
+        ...sales.filter(item => inRange(item.date)).map(item => ({ Data: item.date, Dokumenti: item.docNumber, Partneri: item.customerName || "Pa klient", Lloji: "Faturë shitje", Debi: item.totalAmount || 0, Kredi: 0, __partnerName: item.customerName || "Pa klient", __documentId: item.id, __documentType: "sales-invoice" })),
+        ...purchases.filter(item => inRange(item.date)).map(item => ({ Data: item.date, Dokumenti: item.docNumber, Partneri: item.supplierName || "Pa furnitor", Lloji: "Faturë blerje", Debi: 0, Kredi: item.totalAmount || 0, __partnerName: item.supplierName || "Pa furnitor", __documentId: item.id, __documentType: "purchase-invoice" })),
+        ...payments.filter(item => inRange(item.paymentDate)).map(item => ({ Data: item.paymentDate, Dokumenti: item.paymentNumber, Partneri: item.partnerName || "Pa partner", Lloji: "Pagesë", Debi: item.paymentType === "OUTBOUND" ? item.amount : 0, Kredi: item.paymentType === "INBOUND" ? item.amount : 0, __partnerName: item.partnerName || "Pa partner", __documentId: item.id, __documentType: "accounting-payment" })),
+      ];
+      return result(["Data", "Dokumenti", "Partneri", "Lloji", "Debi", "Kredi"], rows, [{ label: "Dokumente", value: rows.length }, { label: "Debi", value: rows.reduce((sum, row) => sum + Number(row.Debi || 0), 0) }, { label: "Kredi", value: rows.reduce((sum, row) => sum + Number(row.Kredi || 0), 0) }]);
     }
     case "crm_pipeline": {
       const report = await getCrmReport(companyId);

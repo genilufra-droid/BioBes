@@ -8,7 +8,7 @@ export const ALPHA_REPORT_MODULE_LABELS: Record<ReportModule, string> = {
   Shitje: "Shitje",
   Magazina: "Magazina",
   Kontabilitet: "Kontabiliteti",
-  CRM: "CRM",
+  CRM: "Klientë dhe furnitorë",
   Banka: "Banka",
 };
 

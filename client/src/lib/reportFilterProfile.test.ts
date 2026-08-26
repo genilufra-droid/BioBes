@@ -93,8 +93,17 @@ describe("legacy report filter visibility", () => {
     }
   });
 
-  it("keeps document and currency filters for non-inventory reports", () => {
+  it("keeps only supplier and currency filters for supplier purchase reports", () => {
     expect(getLegacyReportFilterVisibility("Blerje", "purchase_supplier_card_pdf")).toEqual({
+      documentNumber: false,
+      documentType: false,
+      currency: true,
+      genericAmountSidebar: true,
+    });
+  });
+
+  it("keeps document filters for purchase document reports", () => {
+    expect(getLegacyReportFilterVisibility("Blerje", "purchase_invoices")).toEqual({
       documentNumber: true,
       documentType: true,
       currency: true,

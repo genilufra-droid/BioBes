@@ -2035,3 +2035,7 @@
 - [x] Ndaj automatikisht kolonat e raporteve pa metadata në grupe Alpha Dokumenti/Partneri-Artikulli/Sasitë dhe Vlerat, pa ndryshuar vlerat ose rendin e kolonave; u shtua klasifikim i dedikuar dhe regresion për kolonat e panjohura.
 - [x] Sinkronizo fallback-un e grupeve Alpha dhe regresionin e renderer-it në BioBes; commit `0e9bc090f184b1372caef65cfcfe6d32eef818ba` u shty në `main`; verifikimi lokal kaloi me 93 skedarë/350 teste, check, build dhe diff check.
 - [x] Pastro klasifikimin fallback të grupeve Alpha duke hequr kontrollin e përsëritur për kolonat e sasive dhe shto regresion minimal; auditimi konfirmoi se dega e dyfishtë nuk është në versionin aktual dhe testi fallback ekzistues kalon.
+- [x] Verifiko me test që workspace-i i Blerjeve shfaq vetëm 29 modelet e Blerjeve, në rend katalogu dhe pa modele Shitje/Magazina/Klientë-Furnitorë; `reportsMenu.test.ts` kalon 6/6 dhe lista e çelësave u kontrollua në rend katalogu.
+- [x] Thjeshto header-in e workspace-it kur zgjidhet Blerje: shfaq vetëm numrin e raporteve të Blerjeve dhe jo formatin `29 / 152`; screenshot-i `/reports?module=Blerje` tregon `29 raporte`.
+- [x] Zëvendëso katalogun CRM të Raporteve me 7 modelet reale Alpha të Klientëve/Furnitorëve dhe implemento burimet reale të të dhënave në reportCenter pa prekur CRM operacional; check kaloi, 43 teste targetuara kaluan dhe verifikimi live tregoi 7 modele me modalin e filtrave Alpha.
+- [ ] Sinkronizo katalogun 7-modelësh të Klientëve/Furnitorëve, rastet backend, renderer-in dhe testet në BioBes; ekzekuto CI green.
