@@ -243,11 +243,6 @@ export const REPORT_REFERENCE_GROUPS: Record<string, ReferenceHeaderGroup[]> = {
     { label: "Monedha Fature", columns: ["Nentotal", "Zbritje", "TVSH", "Totali"] },
     { label: "Monedha Baze", columns: ["TVSH bazë", "Totali bazë"] },
   ],
-  purchase_summary_register_pdf: [
-    { label: "Dokumenti", columns: ["Nr. rend", "Lloji", "Nr.", "Dt. Dok", "Monedha", "Kursi", "Kodi", "Emertimi"] },
-    { label: "Monedha Fature", columns: ["Nentotal", "Zbritje", "TVSH", "Totali"] },
-    { label: "Monedha Baze", columns: ["TVSH bazë", "Totali bazë"] },
-  ],
   sales_by_customer_pdf: [
     { label: "Klienti", columns: ["Kodi", "Emërtimi", "Qyteti"] },
     { label: "Vlerat", columns: ["Fatura", "Vlefta"] },
