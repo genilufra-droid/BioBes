@@ -26,7 +26,7 @@ if (!loginResponse.ok) throw new Error(`login HTTP ${loginResponse.status}: ${aw
 captureCookie(loginResponse);
 const companyId = Number(bootstrap.companyId);
 const warehouse = await trpcMutation("warehouse.create", { companyId, name: "CI Warehouse", code: `CI-${Date.now()}`, unitType: "WAREHOUSE", active: 1, inventoryMethod: "CONTINUOUS", supplyPointOfSale: 0, allowNegativeStock: 1 });
-const warehouseId = Number(warehouse?.id);
+const warehouseId = Number(warehouse?.id ?? warehouse?.insertId ?? warehouse?.[0]?.insertId);
 if (!warehouseId) throw new Error(`warehouse.create did not return id: ${JSON.stringify(warehouse)}`);
 const input = { companyId, docNumber: `CI-${Date.now()}`, date: new Date().toISOString(), customerName: "CI Customer", warehouseId, currency: "ALL", items: [], vatAmount: 0 };
 await trpcMutation("salesInvoice.create", input, { values: { date: ["Date"] } });
