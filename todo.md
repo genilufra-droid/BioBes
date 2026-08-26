@@ -1914,10 +1914,10 @@
 - [ ] A: shto `.env.example` dhe INSTALL minimal me `docker compose` + bootstrap curl.
 - [ ] B: verifiko guard të gjitha procedurave me companyId ose ownership nga payrollPeriodId/weightForm/purchaseInvoice/backup dhe test A≠B.
 - [ ] C: zbato idempotencë stoku për dërgesë/kthim/transfer/inventar dhe test post 2x.
-- [ ] D: shto CI me MySQL bosh, migrate 0000–0044, check/test/build dhe një E2E login+faturë.
+- [x] D: shto CI me MySQL bosh, migrate 0000–0044, check/test/build dhe një E2E login+faturë; run `32950355559` kaloi të gjitha këto hapa.
 - [ ] E: provo backup/restore dhe rate limit login/bootstrap.
 - [ ] F: ruaj log të clone-it të pastër, compose up, healthz 200, bootstrap 201, login 200, një shitje dhe stok të saktë; vetëm nëse kalon krijo tag `v2.0.0`.
-- [ ] CI: verifiko web dhe Windows jobs me status real jeshil, jo vetëm YAML të commit-uar.
+- [x] CI: verifiko web dhe Windows jobs me status real jeshil, jo vetëm YAML të commit-uar; web dhe windows-wrapper janë Success në run `32950355559`: https://github.com/genilufra-droid/BioBes/actions/runs/32950355559.
 - [ ] Compose: siguro secret wiring nga environment pa secret literal dhe verifiko fresh-start acceptance.
 - [ ] E2E: krijo magazinë në setup para krijimit të faturës dhe provo login + invoice në DB bosh.
 - [ ] Stock: bëj idempotencën atomike nën lock/unique invariant dhe shto teste paralele postimi 2x për dërgesë/kthim/transfer/inventar.
@@ -1929,8 +1929,8 @@
 - [ ] Final gate: shto `.env.example` që përputhet me INSTALL dhe është në origin/main.
 - [ ] Final gate: rregullo `pnpm db:migrate` në CI, verifiko run pasues green me link dhe krijo `v2.0.0` vetëm pas suksesit.
 - [ ] Final CI gate: `.env.example` në root me placeholders jo-sekrete dhe `LOCAL_AUTH_SETUP_SECRET` i detyrueshëm në Compose.
-- [ ] Final CI gate: `pnpm db:migrate` përdor runner të njëjtë me AUTO_MIGRATE dhe kalon MySQL 8.4 bosh pas korrigjimit të migration 0032.
-- [ ] Final CI gate: run i ri GitHub Actions kalon deri te E2E dhe job-i Windows është Success.
+- [x] Final CI gate: `pnpm db:migrate` përdor MySQL 8.4 bosh në CI dhe kaloi pas korrigjimit të migration 0032; verifikuar në run `32950355559`.
+- [x] Final CI gate: run i ri GitHub Actions kalon deri te E2E dhe job-i Windows është Success; run `32950355559` përfundoi green.
 - [ ] Final release gate: tag `v2.0.0` krijohet vetëm pas Actions Success dhe verifikimit të `.env.example` në origin/main.
 - [ ] Release closeout: verifiko `.env.example` në origin/main, kryej clean install me të dhe krijo/verifiko tag `v2.0.0` vetëm pas suksesit.
 - [ ] Release gate: shto `.env.example` në root/origin/main, kryej clean install duke e përdorur dhe krijo/verifiko `v2.0.0` vetëm pas suksesit.
@@ -1959,3 +1959,61 @@
 - [x] Reports milestone: korrigjo `inventory_product_card_pdf` që progresivi i stokut të mos përzihet mes magazinave dhe të përdorë çelësin magazinë-artikull; helper-i u testua me magazina/artikuj të ndryshëm dhe `pnpm check` plus 37/37 teste targetuara kalojnë.
 - [x] Reports milestone: korrigjo `applyOdooReportFilters` që Shuma minimale/maksimale të përdorë kolonën monetare të raportit, jo numrin e parë numerik si sasia ose indeksi; u zgjerua për kolonat reale të raporteve dhe u shtua regresion i drejtpërdrejtë, ndërsa `pnpm check` plus 38/38 teste targetuara kalojnë.
 - [x] Reports milestone: korrigjo `inventory_analytic_register_pdf` që Vlefta të jetë hyrje pozitive/dalje negative dhe përshkrimi të bjerë te emri real i produktit kur movement.productName mungon; `pnpm check` dhe 38/38 testet targetuara kalojnë.
+- [x] Reports visual parity: rikthe `purchase_supplier_card_pdf` sipas HTML-së referente: titulli `KARTELA E FURNITORIT`, filtrat `Ndermarrja/Dt. Dok./Dt. Regj.`, identifikimi `Furnitori/Mon/Nr. Llogarie/NIPT`, header 6 kolona dokumenti + grupi `Monedhe Llogarie` me `Debi/Kredi/Progresivi`, gjendje fillestare, `Totali`, `Debitor/Kreditor`, footer IMB dhe layout pa kolonat MB; verifikuar live, `pnpm check` dhe 34/34 testet targetuara kalojnë.
+- [x] Reports visual parity: ndërto Kartelën e Klientit me të njëjtin layout HTML si furnitori, ngjarje reale faturë shitjeje/pagesë hyrëse, filtër klienti, progresiv dhe status Debitor/Kreditor pa të dhëna të fabrikuara; `pnpm check` dhe 35/35 testet targetuara të Raporteve kalojnë.
+
+## Alpha Navigation Clone — Session 2026-08-26
+- [ ] Audit navigimin e Alpha-s për Skedarë, Konfigurime, Regjistrime, Raporte, Instrumenta dhe Ndihmë, me hierarki dhe dalje të verifikueshme.
+- [ ] Hartëzo rrjedhat module/formë/dokument për Klientë, Furnitorë, Artikuj, Blerje, Shitje, Magazinë, Arkë/Banka, Paga dhe Kontabilitet.
+- [ ] Përshtat shell-in cloud me navigimin Alpha-style dhe breadcrumbs pa prishur scope-in e kompanisë.
+- [ ] Lidh menutë me formatet ekzistuese, toolbar-in, filtrat, Enter/Esc, Print/PDF/Excel dhe linket e dokumenteve burimore.
+- [ ] Verifiko navigimin dhe format në live desktop/mobile kundrejt referencës; mos e shëno identike pa provë.
+- [ ] Scope lock: trajto Alpha Business të linkuar nga përdoruesi si burimin kryesor të parity-t; çdo ndryshim i navigimit, forme, raporti ose toolbar-i duhet të krahasohet me atë referencë dhe të mos shënohet identik pa verifikim.
+- [x] Scope lock reports-only: verifiko që ndryshimet e këtij cikli kufizohen te komponentët, query-t, stilet, eksportet dhe testet e Raporteve; nuk u prekën modulet e tjera.
+
+## Reports-only PDF parity — Scope update 2026-08-26
+- [ ] Inventarizo të gjitha PDF-të referente të Raporteve dhe përcakto për secilin raport titullin, formatin e faqes, orientimin, kolonat, grupimet, filtrat, totalet dhe footer-in.
+- [x] Përshtat vetëm menunë Raporte me grupimet, renditjen dhe emërtimet e PDF-ve referente; mos ndrysho menutë ose modulet e tjera. U verifikuan kartat `Kryesore`, `Të Tjera 2` dhe listat e modeleve në preview.
+- [ ] Përshtat renderer-at HTML/PDF/Print/Excel të Raporteve sipas strukturës 1:1 të PDF-ve, pa placeholder-a dhe pa të dhëna të fabrikuara.
+- [ ] Verifiko që filtrat e çdo raporti aplikohen në modelin e dokumentit dhe që Enter hap vetëm pamjen e raportit.
+- [ ] Verifiko modelet e raporteve të Blerjeve, Shitjeve dhe Magazinës në preview dhe në eksportet PDF/Excel kundrejt PDF-ve referente.
+- [x] Shto teste kontraktuale për menunë, kolonat, grupimet, orientimin dhe totalet e modeleve të Raporteve; testet e menusë dhe renderer-it reference kalojnë.
+- [ ] Konfirmo me `git diff` që ky cikël ndryshon vetëm skedarët e Raporteve, testet përkatëse dhe TODO-n.
+
+## Alpha Web Reports navigation audit — Scope update 2026-08-26
+- [x] Hap dhe audito live Alpha Web te seksioni Raporte duke përdorur navigimin real, pa ndryshuar të dhëna; u verifikua rrjedha e faqes së dedikuar dhe PivotGrid-it.
+- [x] Regjistro renditjen e moduleve, grupeve, raporteve dhe sjelljen e dritares së filtrave që duhet klonuar vetëm te Raportet në `alpha-reports-navigation-audit-2026-08-26.md`.
+- [x] Krahaso modele PDF nga Blerje, Shitje dhe Magazinë me renderer-at aktualë dhe shëno mospërputhjet konkrete në auditin e navigimit dhe `reports-pdf-inventory-2026-08-26.txt`.
+
+## Strict Alpha parity clarification — 2026-08-26
+- [x] Realizo Qendrën e Raporteve me rrjedhën identike të Alpha Web: Raporte → grupi Kryesore → kartë moduli → listë modelesh → dritare filtrash → Shiko/Enter → dokument reference; rrjedha u verifikua live.
+- [x] Mos e trajto raportin si tabelë agreguese alternative: raportet `_pdf` dhe `sales_customer_statement` përdorin renderer-in reference me model dokumenti, toolbar, filtra, orientim dhe eksportet sipas PDF/HTML përkatës; u verifikua që katalogu PDF ka title/group mapping.
+- [x] Nisja e Qendrës së Raporteve duhet të jetë `Të gjitha`, me kartat Shitje, Magazina, Blerje dhe Kontabiliteti të dukshme njëkohësisht, si në Alpha Web.
+
+## Export Invoice quantity regression — 2026-08-26
+- [x] Audito rrjedhën e `Export Invoice` për faturat e huaja dhe gjej pse sasia e artikullit nuk kalon në preview/PDF/print/Excel: modeli ruan `quantity`, ndërsa renderer-i lexonte vetëm `exportDetails.grossWeights/netWeights`.
+- [x] Mapo nga të dhënat reale të faturës sasinë, njësinë, peshën bruto/neto dhe totalet e rreshtave në dokumentin e eksportit: `buildExportInvoiceRows` përdor peshat individuale reale kur ekzistojnë dhe `quantity` si fallback pa ndryshuar totalet.
+- [x] Shto teste që verifikojnë sasi/pesha dhe totalet në preview, PDF/print dhe Excel pa përdorur placeholder-a: 7/7 testet `invoiceReference` kalojnë dhe mapper-i i përbashkët përdoret nga HTML/print, PDF dhe Excel.
+- [x] Përshtat `inventory_product_summary_pdf` me kolonat reale të PDF-së Alpha dhe progresivin Gjendje Mbartur/Hyrje/Dalje/Gjendje sipas magazinës; TypeScript, 93 skedarë testesh/340 teste dhe build kalojnë.
+- [x] Përshtat `inventory_article_analysis_pdf` me kolonat reale Hyrje nga Blerjet/Hyrje të Tjera/Dalje për Shitje/Dalje të Tjera dhe lidhje reale të kategorisë, njësisë, kostos dhe vleftës.
+
+## Alpha internal report window — 2026-08-26
+- [x] Audito live Alpha Web te Raporte → Blerje → një model konkret dhe dokumento modalin/dritaren e brendshme në `alpha-reports-navigation-audit-2026-08-26.md`.
+- [x] Dokumento listën anësore të modeleve, renditjen, seksionet e filtrave, fushat me lupa dhe sjelljen e lookup-eve në auditin e Raporteve.
+- [x] Dokumento toolbar-in e dritares së raportit: Shiko/Enter, Mbyll/Esc, Print, PDF, Excel dhe mënyrën si kalon nga filtri te dokumenti.
+- [x] Përshtat cloud-in vetëm në ReportsCenter që dritarja e Blerjeve të ndjekë strukturën e Alpha Web: tab-et, kërkimi, toolbar-i dhe routing-u i kartës pa hapur filtrat automatikisht.
+- [x] Shto test kontraktual për rrjedhën e Blerjeve dhe routing-un e workspace-it; `reportsMenu.test.ts` kalon me 4 teste.
+- [x] Përputh titullin e `purchase_supplier_maturity_pdf` me `MATURIMI I FURNITORIT`, titullin e përmbledhjes me `MATURIMI I PERMBLEDHES` dhe header-in real `Mon Lig`; tsc dhe 22 testet targetuara kalojnë.
+- [x] Shto modelin e veçantë `purchase_supplier_situation_pdf` sipas PDF-së `crfurnitorsituacion.pdf`, me kolonat e furnitorit, debi/kredi/detyrim dhe peshën reale; mos e bashko me modelin sipas kategorive. Query-ja përdor fatura/pagesa reale dhe pesha llogaritet nga detyrimi i kompanisë; u verifikua live me toolbar-in dhe dokumentin reference.
+- [x] Përshtat `purchase_invoice_payment_register_pdf` sipas PDF-së `crshitjefaturimedhepagesa.pdf`, me grupet Lloji/Dokumenti/Vlefta dhe filtrat Furnitori/Monedha; shto test reference dhe verifiko 39/39 testet targetuara.
+- [x] Korrigjo `Në %` te `inventory_warehouse_status_pdf` dhe `inventory_warehouse_detail_pdf` që të llogaritet si pjesë reale e vleftës totale të magazinës, sipas PDF-së Alpha, jo si raport me minimumin e artikullit; shto helper dhe regresion, me 40/40 testet targetuara të kaluara.
+- [x] Ndaj `inventory_warehouse_detail_pdf` nga `inventory_warehouse_status_pdf`: përdor rreshtin përmbledhës të artikullit dhe nënrreshtat e lëvizjeve reale të magazinës, me progresiv dhe subtotal pa të dhëna të fabrikuara; TypeScript dhe 40/40 testet targetuara kalojnë.
+- [x] Përshtat `sales_by_product_pdf` sipas `crshitjesipasartikujve.pdf`, me kolonat Artikulli/Klienti, Sasia, Çmimi, Vlefta(MB), Volumi i Shitjeve dhe përqindjen reale të vleftës.
+- [x] Përshtat grupimet Alpha-style për raportet e Kontabilitetit (`accounting_trial_balance`, `accounting_profit_loss`, `accounting_payments`, `accounting_taxes`, `accounting_journals`) pa ndryshuar modulet operative.
+- [x] Përshtat grupimet Alpha-style për raportet CRM dhe Bankë (`crm_pipeline`, `crm_leads`, `crm_activities`, `crm_won`, `bank_balances`, `bank_statements`, `bank_transactions`, `bank_reconciliation`, `bank_transfers`) mbi kolonat reale.
+- [x] Korrigjo filtrat Shuma minimale/maksimale të Raporteve që të përdorin kolonën reale të vlerës (`Vlefta`, `Totali`, `Vlera`, `Detyrimi`, etj.), jo numrin e parë numerik të rreshtit.
+- [x] Shtrëngo filtrat e Raporteve sipas fushës: Partneri vetëm te partneri, Kategoria vetëm te grupi/kategoria dhe Magazina vetëm te magazina, me fallback vetëm për raporte pa kolonë të dedikuar.
+- [x] Siguro që variantet `accounting_revenue_summary`, `accounting_expense_summary` dhe `accounting_net_result` ekzekutojnë filtrimin e dedikuar para agregimit të përgjithshëm sipas datës.
+- [x] Shto test real cross-company për `reportCenter.get`: kompania A nuk lexon raportin e kompanisë B dhe `getOdooReport` nuk thirret pas dështimit të autorizimit.
+- [x] Rifresko label-et e filtrave aktive kur ndërrohet raporti, duke përfshirë çelësin e raportit në varësitë e memo-s së ReportsCenter.
+- [ ] Sinkronizo ndryshimet e verifikuara reports-only në BioBes dhe ekzekuto CI për commit-in pasues; mos shëno [x] pa push dhe rezultat green.

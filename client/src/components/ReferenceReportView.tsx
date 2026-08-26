@@ -24,11 +24,12 @@ type Props = {
 export type ReferenceHeaderGroup = { label: string; columns: string[] };
 
 export const REPORT_REFERENCE_TITLES: Record<string, string> = {
-  purchase_supplier_card_pdf: "KARTELA E FURNITORIT NË MB",
-  purchase_supplier_card_format3_pdf: "KARTELA E FURNITORIT (FORMATI I THJESHTË)",
-  purchase_supplier_maturity_pdf: "MATURIMI I FURNITORIT (ME FUSHA SHTESË)",
-  purchase_supplier_maturity_summary_pdf: "MATURIMI PËRMBLEDHËS",
-  purchase_supplier_situation_category_pdf: "SITUACION I FURNITORËVE (SIPAS KATEGORISË)",
+  purchase_supplier_card_pdf: "KARTELA E FURNITORIT",
+  purchase_supplier_card_format3_pdf: "KARTELA E FURNITORIT",
+  purchase_supplier_maturity_pdf: "MATURIMI I FURNITORIT",
+  purchase_supplier_maturity_summary_pdf: "MATURIMI I PERMBLEDHES",
+  purchase_supplier_situation_pdf: "SITUACION I FURNITOREVE",
+  purchase_supplier_situation_category_pdf: "SITUACION I FURNITOREVE (sipas Kategorise)",
   purchase_customs_import_register_pdf: "REGJISTRI I DOGANIMIT TË IMPORTEVE",
   purchase_invoice_payment_register_pdf: "FATURIME DHE PAGESA",
   purchase_summary_register_pdf: "REGJISTRI PËRMBLEDHËS I BLERJEVE",
@@ -38,6 +39,7 @@ export const REPORT_REFERENCE_TITLES: Record<string, string> = {
   sales_unsold_items_pdf: "ARTIKUJT E PASHITUR",
   sales_discount_analysis_pdf: "ARTIKUJT ME ZBRITJE ANALITIKE",
   sales_product_card_pdf: "KARTELA E ARTIKULLIT TË SHITJES",
+  sales_customer_statement: "KARTELA E KLIENTIT",
   sales_returns_pdf: "REGJISTRI I KTHIMEVE",
   sales_price_list_pdf: "LISTA E ÇMIMEVE",
   sales_comparison_pdf: "PARAGONA E SHITJEVE",
@@ -46,6 +48,13 @@ export const REPORT_REFERENCE_TITLES: Record<string, string> = {
   sales_margin_detail_pdf: "MARZHI I SHITJEVE — FORMATI 2",
   sales_by_product_pdf: "SHITJET SIPAS ARTIKUJVE",
   sales_quantity_total_pdf: "SHITJET SIPAS SASISE TOTAL",
+  inventory_warehouse_status_pdf: "GJENDJA E MAGAZINES",
+  inventory_analytic_register_pdf: "REGJISTRI ANALITIK I MAGAZINES",
+  inventory_product_summary_pdf: "GJENDJA E ARTIKUJVE E PERMBLEDHUR",
+  inventory_article_analysis_pdf: "ANALIZA E ARTIKUJVE",
+  inventory_minimum_status_pdf: "GJENDJA E ARTIKUJVE MINIMUM",
+  inventory_warehouse_detail_pdf: "GJENDJA E MAGAZINES SIPAS DETAJIMEVE TE ARTIKUJVE",
+  inventory_product_card_pdf: "KARTELA ARTIKULLIT",
 };
 
 export function getReferenceTitle(reportKey: string, fallback: string) {
@@ -69,11 +78,14 @@ export function getReferenceColumnLabel(reportKey: string, column: string) {
 }
 
 export const REPORT_REFERENCE_META: Record<string, string[]> = {
-  purchase_supplier_card_pdf: ["Furnitori", "Nr Llogarie", "Mon", "Titulli", "NIPTI"],
-  purchase_supplier_card_format3_pdf: ["Furnitori", "Nr Llogarie", "Mon", "Titulli", "NIPTI"],
+  purchase_supplier_card_pdf: ["Furnitori", "Mon", "Nr Llogarie", "NIPTI"],
+  purchase_supplier_card_format3_pdf: ["Furnitori", "Mon", "Nr Llogarie", "NIPTI"],
+  sales_customer_statement: ["Klienti", "Mon", "Nr Llogarie", "NIPTI"],
   purchase_supplier_maturity_pdf: ["Data e raportimit", "Periudha e maturimit", "Data e maturimit"],
   purchase_supplier_maturity_summary_pdf: ["Data Raportimi", "Periudha e Maturimit", "Data e Maturimit"],
+  purchase_supplier_situation_pdf: ["Periudha"],
   purchase_supplier_situation_category_pdf: ["Kategoria", "Monedha e furnitorit", "Monedha bazë"],
+  purchase_invoice_payment_register_pdf: ["Furnitori", "Monedha"],
   purchase_customs_import_register_pdf: ["Periudha", "Import / Eksport", "Monedha"],
   sales_quantity_pdf: ["Grupi", "Nengrupi"],
   sales_price_list_pdf: ["Grupi", "Nengrupi"],
@@ -85,24 +97,29 @@ export const REPORT_REFERENCE_META: Record<string, string[]> = {
   inventory_warehouse_status_pdf: ["Magazina"],
   inventory_warehouse_detail_pdf: ["Magazina"],
   inventory_minimum_status_pdf: ["Kartela", "Magazina"],
+  inventory_product_summary_pdf: ["Kartela"],
+  inventory_article_analysis_pdf: ["Magazina"],
 };
 
 export const REPORT_REFERENCE_GROUPS: Record<string, ReferenceHeaderGroup[]> = {
   purchase_supplier_card_pdf: [
     { label: "Dokumenti", columns: ["Nr Rend", "Data Rregj", "Lloj Dok", "Nr Dok", "Data Dok", "Përshkrimi i Veprimit"] },
-    { label: "Monedha bazë", columns: ["Debi", "Kredi", "Progresivi"] },
-    { label: "Monedha e llogarisë", columns: ["Debi llogari", "Kredi llogari", "Progresivi llogari"] },
+    { label: "Monedhe Llogarie", columns: ["Debi", "Kredi", "Progresivi"] },
   ],
   purchase_supplier_card_format3_pdf: [
     { label: "Dokumenti", columns: ["Nr Rend", "Data Rregj", "Lloj Dok", "Nr Dok", "Data Dok", "Përshkrimi i Veprimit"] },
     { label: "Monedha bazë", columns: ["Debi", "Kredi", "Progresivi"] },
+  ],
+  sales_customer_statement: [
+    { label: "Dokumenti", columns: ["Nr Rend", "Data Rregj", "Lloj Dok", "Nr Dok", "Data Dok", "Përshkrimi i Veprimit"] },
+    { label: "Monedhe Llogarie", columns: ["Debi", "Kredi", "Progresivi"] },
   ],
   purchase_supplier_maturity_pdf: [
     { label: "Të dhënat e raportit", columns: ["Dt. Dok", "Nr Dok", "Lloj Dok", "Date Maturimi", "Dite Maturimi"] },
     { label: "Koha e Maturimit", columns: ["Tejkaluar", "0", "1-30", "30-60", "60-90", "90-180", ">", "Totali"] },
   ],
   purchase_supplier_maturity_summary_pdf: [
-    { label: "Furnitori", columns: ["Kod Klienti", "Emri", "Llogaria", "Mon Llog"] },
+    { label: "Furnitori", columns: ["Kod Klienti", "Emri", "Llogaria", "Mon Lig"] },
     { label: "Koha e Maturimit", columns: ["Total", "0", "1-30", "30-60", "60-90", "90-180", "Mbi 180"] },
   ],
   sales_unsold_items_pdf: [
@@ -115,6 +132,60 @@ export const REPORT_REFERENCE_GROUPS: Record<string, ReferenceHeaderGroup[]> = {
     { label: "Zbritje", columns: ["Zbritje Anal.", "Zbritje Tot.", "Zbritje %", "Zbritje Gjithsej Vlefta"] },
     { label: "Vlera me zbritje", columns: ["Vlera me Zbritje pa TVSH", "Vlera me Zbritje me TVSH"] },
     { label: "Vlera në Mon Baze", columns: ["Vlera në Mon Baze pa TVSH", "Vlera në Mon Baze TVSH"] },
+  ],
+  accounting_trial_balance: [
+    { label: "Llogaria", columns: ["Kodi", "Llogaria", "Tipi"] },
+    { label: "Bilanci", columns: ["Debi", "Kredi", "Bilanci"] },
+  ],
+  accounting_profit_loss: [
+    { label: "Pasqyra", columns: ["Kategoria", "Vlera"] },
+  ],
+  accounting_payments: [
+    { label: "Dokumenti", columns: ["Nr.", "Data", "Partneri", "Lloji"] },
+    { label: "Vlerat", columns: ["Vlera", "Monedha", "Kursi", "Vlera në Lek"] },
+    { label: "Shlyerja", columns: ["Metoda", "Statusi"] },
+  ],
+  accounting_taxes: [
+    { label: "Norma tatimore", columns: ["Kodi", "Emri", "Norma", "Zbatimi", "Aktive"] },
+  ],
+  accounting_journals: [
+    { label: "Regjistrimi", columns: ["Nr.", "Data", "Ditari"] },
+    { label: "Vlerat", columns: ["Debi", "Kredi", "Statusi"] },
+  ],
+  crm_pipeline: [
+    { label: "Faza", columns: ["Faza", "Mundësi"] },
+    { label: "Vlerat", columns: ["Vlera e pritur", "Vlera e peshuar"] },
+  ],
+  crm_leads: [
+    { label: "Lead-i", columns: ["Nr.", "Kontakti", "Kompania"] },
+    { label: "Vlerësimi", columns: ["Faza", "Vlera e pritur", "Probabiliteti"] },
+  ],
+  crm_activities: [
+    { label: "Aktiviteti", columns: ["Afati", "Kontakti", "Lloji", "Subjekti"] },
+    { label: "Statusi", columns: ["Statusi"] },
+  ],
+  crm_won: [
+    { label: "Mundësia", columns: ["Nr.", "Kontakti", "Kompania"] },
+    { label: "Vlerat", columns: ["Vlera", "Probabiliteti"] },
+  ],
+  bank_balances: [
+    { label: "Llogaria bankare", columns: ["Llogaria", "Banka", "IBAN", "Lloji"] },
+    { label: "Balanca", columns: ["Balanca"] },
+  ],
+  bank_statements: [
+    { label: "Ekstrakti", columns: ["Nr. ekstraktit", "Llogaria", "Prej datës", "Deri më datën"] },
+    { label: "Mbyllja", columns: ["Balanca mbyllëse", "Statusi"] },
+  ],
+  bank_transactions: [
+    { label: "Transaksioni", columns: ["Data", "Përshkrimi", "Lloji"] },
+    { label: "Vlera", columns: ["Vlera", "Statusi"] },
+  ],
+  bank_reconciliation: [
+    { label: "Pajtimi", columns: ["Data", "Përshkrimi", "Lloji", "Vlera", "Referenca"] },
+  ],
+  bank_transfers: [
+    { label: "Transferimi", columns: ["Nr.", "Data", "Burim", "Destinacion"] },
+    { label: "Vlera", columns: ["Vlera", "Statusi"] },
   ],
   inventory_analytic_register_pdf: [
     { label: "Dokumenti", columns: ["Lloji", "Numri", "Data", "Dt Regj"] },
@@ -136,6 +207,21 @@ export const REPORT_REFERENCE_GROUPS: Record<string, ReferenceHeaderGroup[]> = {
     { label: "Lëvizja", columns: ["Hyrje", "Dalje", "Gjendje"] },
     { label: "Vlerësimi", columns: ["Kosto", "Vlefta", "Në %"] },
   ],
+  inventory_warehouse_detail_pdf: [
+    { label: "Artikulli", columns: ["Kartela", "Përshkrimi", "Grupi", "Njësia", "Llog. Inventar"] },
+    { label: "Lëvizja", columns: ["Hyrje", "Dalje", "Gjendje"] },
+    { label: "Vlerësimi", columns: ["Kosto", "Vlefta", "Në %"] },
+  ],
+  inventory_product_card_pdf: [
+    { label: "Dokumenti", columns: ["Lloj Dok.", "Nr Dokumenti", "Dt Dokumenti", "Magazina", "Njësia"] },
+    { label: "Hyrje", columns: ["Hyrje", "Çmimi Hyrje", "Vlefta Hyrje"] },
+    { label: "Dalje", columns: ["Dalje", "Çmimi Dalje", "Vlefta Dalje"] },
+    { label: "Gjendja", columns: ["Gjendje", "Vlefta"] },
+  ],
+  purchase_supplier_situation_pdf: [
+    { label: "Furnitori", columns: ["Nr Rend", "Kodi", "Emertimi i Furnitorit", "Nr Llogarie", "Kategoria"] },
+    { label: "Vlerat", columns: ["Shuma Debi", "Shuma Kredi", "Detyrimi", "Pesha %"] },
+  ],
   purchase_supplier_situation_category_pdf: [
     { label: "Furnitori", columns: ["Kodi", "Emërtimi", "Mon", "Qyteti"] },
     { label: "Monedhe Furnitori", columns: ["Debi", "Kredi", "Detyrimi"] },
@@ -148,8 +234,14 @@ export const REPORT_REFERENCE_GROUPS: Record<string, ReferenceHeaderGroup[]> = {
     { label: "Dogana", columns: ["Vl.Dogane", "Dog", "Akciz", "Vl pa TVSH", "TVSH"] },
   ],
   purchase_invoice_payment_register_pdf: [
-    { label: "Dokumenti", columns: ["Fature", "Pagese", "Numer", "Date", "Pershkrimi"] },
-    { label: "Vlerat", columns: ["Faturuar", "Paguar", "Diferenca"] },
+    { label: "Lloji", columns: ["Fature", "Pagese"] },
+    { label: "Dokumenti", columns: ["Numer", "Date", "Pershkrimi"] },
+    { label: "Vlefta", columns: ["Faturuar", "Paguar", "Diferenca"] },
+  ],
+  purchase_summary_register_pdf: [
+    { label: "Dokumenti", columns: ["Nr. rend", "Lloji", "Nr.", "Dt. Dok", "Monedha", "Kursi", "Kodi", "Emertimi"] },
+    { label: "Monedha Fature", columns: ["Nentotal", "Zbritje", "TVSH", "Totali"] },
+    { label: "Monedha Baze", columns: ["TVSH bazë", "Totali bazë"] },
   ],
   purchase_summary_register_pdf: [
     { label: "Dokumenti", columns: ["Nr. rend", "Lloji", "Nr.", "Dt. Dok", "Monedha", "Kursi", "Kodi", "Emertimi"] },
@@ -218,17 +310,6 @@ export const REPORT_REFERENCE_GROUPS: Record<string, ReferenceHeaderGroup[]> = {
     { label: "Artikulli", columns: ["Kartela", "Përshkrimi", "Grupi", "Njësia", "Llog. Inventare"] },
     { label: "Gjendja", columns: ["Minimum", "Mungesat", "Hyrje", "Dalje", "Gjendje"] },
     { label: "Vlerësimi", columns: ["Kosto", "Vlefta", "Furnitori"] },
-  ],
-  inventory_warehouse_detail_pdf: [
-    { label: "Artikulli", columns: ["Kartela", "Përshkrimi", "Grupi", "Njësia"] },
-    { label: "Lëvizja", columns: ["Llog. Inventar", "Hyrje", "Dalje", "Gjendje"] },
-    { label: "Vlerësimi", columns: ["Kosto", "Vlefta", "Në %"] },
-  ],
-  inventory_product_card_pdf: [
-    { label: "Dokumenti dhe magazina", columns: ["Lloj Dok.", "Nr Dokumenti", "Dt Dokumenti", "Magazina", "Njësia"] },
-    { label: "Hyrjet", columns: ["Hyrje", "Çmimi Hyrje", "Vlefta Hyrje"] },
-    { label: "Daljet", columns: ["Dalje", "Çmimi Dalje", "Vlefta Dalje"] },
-    { label: "Gjendja", columns: ["Gjendje", "Vlefta"] },
   ],
 };
 
@@ -339,7 +420,7 @@ export function resolveSupplierBalanceStatus(debit: number, credit: number): { s
   return difference > 0 ? { status: "DEBITOR", amount: difference } : { status: "KREDITOR", amount: Math.abs(difference) };
 }
 
-function SupplierCardSimpleReferenceView({ props }: { props: Props }) {
+function SupplierCardSimpleReferenceView({ props, entity = "supplier" }: { props: Props; entity?: "supplier" | "customer" }) {
   const { period, rows, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort } = props;
   const tableColumns = ["Nr Rend", "Data Rregj", "Lloj Dok", "Nr Dok", "Data Dok", "Përshkrimi i Veprimit", "Debi", "Kredi", "Progresivi"];
   const activeFilterLabels = new Set(["Furnitor / Klient", "Nr. dokumenti", "Status", "Monedha", "Lloj dokumenti", "Data nga", "Data deri"]);
@@ -351,35 +432,39 @@ function SupplierCardSimpleReferenceView({ props }: { props: Props }) {
   const endingProgressive = rows.length > 0 ? Number(rows[rows.length - 1]?.Progresivi ?? totalDebit - totalCredit) : totalDebit - totalCredit;
   const balance = resolveSupplierBalanceStatus(totalDebit, totalCredit);
   const balanceTone = balance.status === "DEBITOR" ? "debitor" : balance.status === "KREDITOR" ? "kreditor" : "balanc";
-  const supplier = meta?.Furnitori || meta?.["Furnitor / Klient"] || "";
-  const reportPeriod = period.includes("Fillimi") ? "01/01/2026-31/12/2026" : period;
+  const partner = entity === "customer" ? meta?.Klienti || meta?.["Furnitor / Klient"] || "" : meta?.Furnitori || meta?.["Furnitor / Klient"] || "";
+  const reportPeriod = period.includes("Fillimi") ? "01/01/2026 - 31/12/2026" : period;
   const balanceDate = reportPeriod.split("-")[0]?.trim() || "01/01/2026";
   return <section className="supplier-card-simple-sheet mx-auto bg-white text-[#191919]">
     <header className="supplier-card-simple-header">
       <span className="supplier-card-simple-year">{new Date().getFullYear()}</span>
-      <h2>KARTELA E FURNITORIT (Formati i Thjeshte)</h2>
+      <h2>{entity === "customer" ? "KARTELA E KLIENTIT" : "KARTELA E FURNITORIT"}</h2>
       <p>{reportPeriod}</p>
     </header>
+    <div className="supplier-card-simple-report-filters">
+      <span>Ndermarrja: <strong>{meta?.Ndermarrja || "Alpha WEB"}</strong></span>
+      <span>Dt. Dok.: <strong>{reportPeriod}</strong></span>
+      <span>Dt. Regj. <strong>{meta?.["Dt. Regj."] || "01/01/1900 - 31/12/9999"}</strong></span>
+    </div>
     <div className="supplier-card-simple-identification">
-      <span>Furnitori: <strong>{supplier}</strong></span>
-      <span>Nr Llogarie: <strong>{meta?.["Nr Llogarie"] || ""}</strong></span>
+      <span>{entity === "customer" ? "Klienti" : "Furnitori"}: <strong>{partner}</strong></span>
       <span>Mon <strong>{meta?.Mon || ""}</strong></span>
-      <span>Titulli: <strong>{meta?.Titulli || ""}</strong></span>
-      <span>NIPTI: <strong>{meta?.NIPTI || ""}</strong></span>
+      <span>Nr. Llogarie <strong>{meta?.["Nr Llogarie"] || ""}</strong></span>
+      <span>NIPT <strong>{meta?.NIPTI || ""}</strong></span>
     </div>
     {activeFilters.length > 0 && <div className="supplier-card-simple-filters"><strong>Filtra aktive:</strong>{activeFilters.map(([label, value]) => <span key={label}>{label}: {value}</span>)}</div>}
     <table className="supplier-card-simple-table">
       <thead>
-        <tr>{tableColumns.slice(0, 6).map(column => <th key={column} rowSpan={2}><button type="button" onClick={() => onSort(column)}>{column}<span aria-hidden="true">{sort?.column === column ? (sort.direction === "asc" ? " ↑" : " ↓") : ""}</span></button></th>)}<th colSpan={3}>Monedhe Baze</th></tr>
+        <tr>{tableColumns.slice(0, 6).map(column => <th key={column} rowSpan={2}><button type="button" onClick={() => onSort(column)}>{column}<span aria-hidden="true">{sort?.column === column ? (sort.direction === "asc" ? " ↑" : " ↓") : ""}</span></button></th>)}<th colSpan={3}>Monedhe Llogarie</th></tr>
         <tr>{tableColumns.slice(6).map(column => <th key={column}><button type="button" onClick={() => onSort(column)}>{column}<span aria-hidden="true">{sort?.column === column ? (sort.direction === "asc" ? " ↑" : " ↓") : ""}</span></button></th>)}</tr>
       </thead>
       <tbody>
-        <tr className="supplier-card-simple-balance"><td colSpan={5}></td><td>Gjendja deri ne daten {balanceDate}</td><td colSpan={3}></td></tr>
+        <tr className="supplier-card-simple-balance"><td colSpan={6}>Gjendja ne fillim</td><td colSpan={3}></td></tr>
         {isLoading ? <tr><td colSpan={tableColumns.length}>Po ngarkohet...</td></tr> : rows.length === 0 ? <tr><td colSpan={tableColumns.length}></td></tr> : rows.map((row, index) => <tr key={index} className={index === rows.length - 1 ? "supplier-card-simple-last-row" : undefined}>{tableColumns.map(column => <td key={column}>{isLinkedDocument(row, column) ? <button type="button" className="supplier-card-simple-link" onClick={() => onOpenDocument(row)}>{cellValue(valueFor(row, column))} ↗</button> : cellValue(valueFor(row, column))}</td>)}</tr>)}
       </tbody>
       {!isLoading && <tfoot>
-        <tr className={`supplier-card-simple-balance-summary supplier-card-simple-${balanceTone}`}><td colSpan={6}>Gjendja përfundimtare: <strong>{balance.status}</strong></td><td colSpan={2}>{cellValue(balance.amount)}</td><td>{cellValue(endingProgressive)}</td></tr>
-        <tr className="supplier-card-simple-total-row"><td colSpan={6}>TOTALI I RAPORTIT</td><td>{cellValue(totalDebit)}</td><td>{cellValue(totalCredit)}</td><td>{cellValue(endingProgressive)}</td></tr>
+        <tr className="supplier-card-simple-total-row"><td colSpan={6}>Totali</td><td>{cellValue(totalDebit)}</td><td>{cellValue(totalCredit)}</td><td></td></tr>
+        <tr className={`supplier-card-simple-balance-summary supplier-card-simple-${balanceTone}`}><td colSpan={6}>Debitor/Kreditor</td><td>{cellValue(balance.status === "DEBITOR" ? balance.amount : 0)}</td><td>{cellValue(balance.status === "KREDITOR" ? balance.amount : 0)}</td><td></td></tr>
       </tfoot>}
     </table>
   </section>;
@@ -517,7 +602,8 @@ function PurchaseSummaryRegisterReferenceView({ props }: { props: Props }) {
 
 export function ReferenceReportView({ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }: Props) {
   if (reportKey === "inventory_product_card_pdf") return <ProductCardReferenceView props={{ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }} />;
-  if (reportKey === "purchase_supplier_card_format3_pdf") return <SupplierCardSimpleReferenceView props={{ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }} />;
+  if (reportKey === "purchase_supplier_card_pdf" || reportKey === "purchase_supplier_card_format3_pdf") return <SupplierCardSimpleReferenceView props={{ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }} />;
+  if (reportKey === "sales_customer_statement") return <SupplierCardSimpleReferenceView entity="customer" props={{ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }} />;
   if (reportKey === "sales_summary_register_pdf") return <SalesSummaryRegisterReferenceView props={{ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }} />;
   if (reportKey === "purchase_summary_register_pdf") return <PurchaseSummaryRegisterReferenceView props={{ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }} />;
   if (reportKey === "sales_quantity_total_pdf") return <SalesQuantityTotalReferenceView props={{ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }} />;

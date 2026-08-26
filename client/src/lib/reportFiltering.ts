@@ -61,6 +61,24 @@ export function sortReportRows(rows: Record<string, unknown>[], sort: ReportSort
   });
 }
 
+const REPORT_FILTER_FIELDS = {
+  document: ["Dokumenti", "Nr Dok", "Nr. Dok", "Nr dokumenti", "Nr", "Fatura", "__documentNumber"],
+  partner: ["Partneri", "Furnitori", "Klienti", "__partnerName"],
+  category: ["Grupi", "Nën Grupi", "Kategori", "Kategoria", "__category"],
+  status: ["Statusi", "Status"],
+  currency: ["Monedha", "Mon", "Currency"],
+  documentType: ["__documentType", "Lloj Dok", "Lloj", "Përshkrimi i Veprimit"],
+  warehouse: ["Magazina", "Magazinë", "Warehouse", "__warehouseName", "__warehouse", "warehouseName"],
+  unit: ["Njësia", "Njesia", "__unitName"],
+} as const;
+
+function matchesReportField(row: Record<string, unknown>, fields: readonly string[], value: string, fallbackText: string) {
+  if (!value) return true;
+  const present = fields.map(field => row[field]).filter(item => item !== undefined && item !== null);
+  const source = present.length > 0 ? present.map(searchableValue).join(" ") : fallbackText;
+  return source.toLocaleLowerCase("sq-AL").includes(value);
+}
+
 export function filterReportRows(rows: Record<string, unknown>[], filters: ReportFilterValues) {
   const documentFilter = filters.documentFilter.trim().toLocaleLowerCase("sq-AL");
   const partnerFilter = filters.partnerFilter.trim().toLocaleLowerCase("sq-AL");
@@ -72,18 +90,23 @@ export function filterReportRows(rows: Record<string, unknown>[], filters: Repor
   const unitFilter = (filters.unitFilter ?? "").trim().toLocaleLowerCase("sq-AL");
   const min = filters.amountMin.trim() ? Number(filters.amountMin) : undefined;
   const max = filters.amountMax.trim() ? Number(filters.amountMax) : undefined;
+  const amountColumnPriority = [
+    "Vlefta", "Vlere(MB)", "Totali", "Vlera", "Vlera në Lek", "Vlera me TVSH", "Vlefta me TVSH",
+    "Detyrim", "Detyrimi", "Detyrimi bazë", "Bilanci", "Debi", "Kredi", "Vlera e Shitjes", "Vlera e pritur",
+  ];
 
   return rows.filter(row => {
     const text = Object.values(row).map(searchableValue).join(" ").toLocaleLowerCase("sq-AL");
-    const amount = Number(Object.values(row).find(value => typeof value === "number"));
-    return (!documentFilter || text.includes(documentFilter))
-      && (!partnerFilter || text.includes(partnerFilter))
-      && (!categoryFilter || text.includes(categoryFilter))
-      && (!statusFilter || text.includes(statusFilter))
-      && (!currencyFilter || text.includes(currencyFilter))
-      && (!documentTypeFilter || text.includes(documentTypeFilter))
-      && (!warehouseFilter || text.includes(warehouseFilter))
-      && (!unitFilter || text.includes(unitFilter))
+    const amountValue = amountColumnPriority.map(column => row[column]).find(value => typeof value === "number");
+    const amount = Number(amountValue);
+    return matchesReportField(row, REPORT_FILTER_FIELDS.document, documentFilter, text)
+      && matchesReportField(row, REPORT_FILTER_FIELDS.partner, partnerFilter, text)
+      && matchesReportField(row, REPORT_FILTER_FIELDS.category, categoryFilter, text)
+      && matchesReportField(row, REPORT_FILTER_FIELDS.status, statusFilter, text)
+      && matchesReportField(row, REPORT_FILTER_FIELDS.currency, currencyFilter, text)
+      && matchesReportField(row, REPORT_FILTER_FIELDS.documentType, documentTypeFilter, text)
+      && matchesReportField(row, REPORT_FILTER_FIELDS.warehouse, warehouseFilter, text)
+      && matchesReportField(row, REPORT_FILTER_FIELDS.unit, unitFilter, text)
       && (min === undefined || (Number.isFinite(amount) && amount >= min))
       && (max === undefined || (Number.isFinite(amount) && amount <= max));
   });

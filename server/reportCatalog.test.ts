@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { REPORT_BASE_KEYS, REPORT_CATALOG } from "../shared/reportCatalog";
-import { applyOdooReportFilters, applyReportVariant, calculateSupplierSituationAmounts, getInventoryRunningKey, getSupplierMaturityBucket, mapPurchaseCustomsFields, normalizePurchasePaymentAmount, shapeReferenceReport } from "./db";
+import { applyInventoryValuePercent, applyOdooReportFilters, applyReportVariant, calculateSupplierSituationAmounts, getInventoryRunningKey, getSupplierMaturityBucket, mapPurchaseCustomsFields, normalizePurchasePaymentAmount, shapeReferenceReport } from "./db";
 
 describe("Odoo-style report catalog", () => {
   it("keeps inventory progressive balances isolated by warehouse and product", () => {
@@ -9,12 +9,19 @@ describe("Odoo-style report catalog", () => {
     expect(getInventoryRunningKey(null, 10)).toBe("0:10");
   });
 
+  it("calculates warehouse value share from the real total value", () => {
+    expect(applyInventoryValuePercent([
+      { Kartelë: "A", Vlefta: 100, "Në %": 0 },
+      { Kartelë: "B", Vlefta: -300, "Në %": 0 },
+    ]).map(row => row["Në %"])).toEqual([25, 75]);
+    expect(applyInventoryValuePercent([{ Kartelë: "A", Vlefta: 0 }])[0]["Në %"]).toBe(0);
+  });
   it("contains unique reports in every ERP module, including reference formats", () => {
-    expect(REPORT_CATALOG.length).toBe(151);
+    expect(REPORT_CATALOG.length).toBe(152);
     expect(new Set(REPORT_CATALOG.map(report => report.key)).size).toBe(REPORT_CATALOG.length);
     expect(new Set(REPORT_CATALOG.map(report => report.module))).toEqual(new Set(["Blerje", "Shitje", "Magazina", "Kontabilitet", "CRM", "Banka"]));
     expect(REPORT_CATALOG.every(report => report.group.trim().length > 0)).toBe(true);
-    const expectedCounts = { Blerje: 28, Shitje: 36, Magazina: 27, Kontabilitet: 20, CRM: 20, Banka: 20 };
+    const expectedCounts = { Blerje: 29, Shitje: 36, Magazina: 27, Kontabilitet: 20, CRM: 20, Banka: 20 };
     expect(REPORT_CATALOG.every(report => REPORT_CATALOG.filter(item => item.module === report.module).length === expectedCounts[report.module])).toBe(true);
     expect(REPORT_CATALOG.every(report => Boolean(REPORT_BASE_KEYS[report.key]))).toBe(true);
   });
@@ -59,6 +66,21 @@ describe("Odoo-style report catalog", () => {
     expect(byStatus.columns).toEqual(["Statusi", "Dokumente", "Vlera"]);
     expect(byStatus.rows).toHaveLength(2);
     expect(openDocuments.rows).toEqual([{ Dokumenti: "SH-01", Data: "2026-08-17", Partneri: "Klienti A", Vlera: 100, Statusi: "DRAFT" }]);
+
+    const accountingBase = {
+      columns: ["Data", "Kategoria", "Vlera"],
+      rows: [
+        { Data: "2026-08-17", Kategoria: "Të ardhura", Vlera: 300 },
+        { Data: "2026-08-17", Kategoria: "Shpenzime", Vlera: 120 },
+      ],
+      metrics: [],
+    };
+    expect(applyReportVariant("accounting_revenue_summary", accountingBase).rows).toEqual([
+      { Data: "2026-08-17", Kategoria: "Të ardhura", Vlera: 300 },
+    ]);
+    expect(applyReportVariant("accounting_expense_summary", accountingBase).rows).toEqual([
+      { Data: "2026-08-17", Kategoria: "Shpenzime", Vlera: 120 },
+    ]);
 
     const inventoryBase = { columns: ["Lloji", "Sasia", "Stoku", "Vlera", "Statusi"], rows: [
       { Lloji: "IN", Sasia: 5, Stoku: 5, Vlera: 50, Statusi: "VALIDATED" },

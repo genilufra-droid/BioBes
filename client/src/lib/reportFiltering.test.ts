@@ -19,6 +19,17 @@ describe("filterReportRows", () => {
     })).toEqual([rows[0]]);
   });
 
+  it("aplikon shumën mbi kolonën monetare dhe jo mbi numrin e parë", () => {
+    const inventoryRows = [
+      { Artikulli: "A", Sasia: 2, Vlefta: 100 },
+      { Artikulli: "B", Sasia: 200, Vlefta: 10 },
+    ];
+    expect(filterReportRows(inventoryRows, {
+      documentFilter: "", partnerFilter: "", categoryFilter: "", statusFilter: "",
+      amountMin: "50", amountMax: "150",
+    })).toEqual([inventoryRows[0]]);
+  });
+
   it("mbledh totalin vetëm nga rreshtat e filtruar", () => {
     const filtered = filterReportRows(rows, {
       documentFilter: "", partnerFilter: "Alba", categoryFilter: "", statusFilter: "",

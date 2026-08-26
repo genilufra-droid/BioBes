@@ -1778,11 +1778,11 @@ export function applyReportVariant(reportKey: string, baseReport: OdooReportResu
   const amountColumn = baseReport.columns.find(column => ["Vlera", "Të ardhura", "Bilanci", "Debi", "Kredi"].includes(column) || column.toLocaleLowerCase("sq-AL").includes("vlera"));
 
   if (/_status$/.test(reportKey)) return aggregateRows(rows, "Statusi", amountColumn);
-  if (/(volume|trend|today|summary|forecast|analysis)$/.test(reportKey) && baseReport.columns.includes("Data")) return aggregateRows(rows, "Data", amountColumn);
-  if (/(top_|statement|supplier_count|customer_statement)/.test(reportKey) && amountColumn) return withVariant([...rows].sort((left, right) => numberValue(right[amountColumn]) - numberValue(left[amountColumn])), "Renditur sipas vlerës");
   if (reportKey === "accounting_revenue_summary") return withVariant(rows.filter(row => String(row.Kategoria) === "Të ardhura"), "Të ardhura");
   if (reportKey === "accounting_expense_summary") return withVariant(rows.filter(row => String(row.Kategoria) === "Shpenzime"), "Shpenzime");
   if (reportKey === "accounting_net_result") return withVariant(rows.filter(row => String(row.Kategoria).includes("neto")), "Rezultat neto");
+  if (/(volume|trend|today|summary|forecast|analysis)$/.test(reportKey) && baseReport.columns.includes("Data")) return aggregateRows(rows, "Data", amountColumn);
+  if (/(top_|statement|supplier_count|customer_statement)/.test(reportKey) && amountColumn) return withVariant([...rows].sort((left, right) => numberValue(right[amountColumn]) - numberValue(left[amountColumn])), "Renditur sipas vlerës");
   if (["accounting_balance_sheet", "accounting_debit_credit", "accounting_account_register"].includes(reportKey)) return aggregateRows(rows, "Tipi", "Bilanci");
   if (reportKey === "bank_cash_flow") return aggregateRows(rows, "Lloji", "Vlera");
   if (reportKey === "bank_reconciled_register") return withVariant(rows.filter(row => String(row.Statusi) === "RECONCILED"), "Të pajtuara");
@@ -1828,10 +1828,11 @@ const REFERENCE_COLUMN_SCHEMAS: Record<string, string[]> = {
   purchase_supplier_card_pdf: ["Nr Rend", "Data Rregj", "Lloj Dok", "Nr Dok", "Data Dok", "Përshkrimi i Veprimit", "Debi", "Kredi", "Progresivi", "Debi llogari", "Kredi llogari", "Progresivi llogari"],
   purchase_supplier_card_format3_pdf: ["Nr Rend", "Data Rregj", "Lloj Dok", "Nr Dok", "Data Dok", "Përshkrimi i Veprimit", "Debi", "Kredi", "Progresivi"],
   purchase_supplier_maturity_pdf: ["Dt. Dok", "Nr Dok", "Lloj Dok", "Date Maturimi", "Dite Maturimi", "Tejkaluar", "0", "1-30", "30-60", "60-90", "90-180", ">", "Totali"],
-  purchase_supplier_maturity_summary_pdf: ["Kod Klienti", "Emri", "Llogaria", "Mon Llog", "Total", "0", "1-30", "30-60", "60-90", "90-180", "Mbi 180"],
+  purchase_supplier_maturity_summary_pdf: ["Kod Klienti", "Emri", "Llogaria", "Mon Lig", "Total", "0", "1-30", "30-60", "60-90", "90-180", "Mbi 180"],
   inventory_product_summary_pdf: ["Kartelë", "Përshkrimi", "Grupi", "Njësia", "Llog. Inventar", "Gjendje Mbartur", "Hyrje", "Dalje", "Gjendje", "Kosto", "Vlefta"],
   inventory_warehouse_status_pdf: ["Kartelë", "Përshkrimi", "Grupi", "Njësia", "Llog. Inventar", "Hyrje", "Dalje", "Gjendje", "Kosto", "Vlefta", "Në %"],
   inventory_article_analysis_pdf: ["Kartela", "Emërtimi", "Njësia", "Gjendje me Pare", "Hyrje nga Blerjet", "Hyrje të Tjera", "Dalje për Shitje", "Dalje të Tjera", "Gjendje", "Çmimi mesatar", "Vlefta"],
+  purchase_supplier_situation_pdf: ["Nr Rend", "Kodi", "Emertimi i Furnitorit", "Nr Llogarie", "Kategoria", "Shuma Debi", "Shuma Kredi", "Detyrimi", "Pesha %"],
   purchase_supplier_situation_category_pdf: ["Kodi", "Emërtimi", "Mon", "Qyteti", "Debi", "Kredi", "Detyrimi", "Debi bazë", "Kredi bazë", "Detyrimi bazë"],
   purchase_customs_import_register_pdf: ["Ref.", "Nr.Fl.Dog.", "Dt Fl.Dog.", "Vl.Fatures", "Monedha", "Kursi", "Vlefta", "Transport", "Siguracion", "Refer./Tjera", "Vl.Dogane", "Dog", "Akciz", "Vl pa TVSH", "TVSH"],
   purchase_invoice_payment_register_pdf: ["Fature", "Pagese", "Numer", "Date", "Pershkrimi", "Faturuar", "Paguar", "Diferenca"],
@@ -1893,6 +1894,11 @@ export function getSupplierMaturityBucket(days: number) {
 
 export function getInventoryRunningKey(warehouseId: number | null | undefined, productId: number) {
   return `${String(warehouseId ?? 0)}:${productId}`;
+}
+
+export function applyInventoryValuePercent(rows: Record<string, unknown>[]): Record<string, unknown>[] {
+  const totalValue = rows.reduce((sum, row) => sum + Math.abs(numberValue(row.Vlefta)), 0);
+  return rows.map(row => ({ ...row, "Në %": totalValue > 0 ? Number(((Math.abs(numberValue(row.Vlefta)) / totalValue) * 100).toFixed(2)) : 0 }));
 }
 
 export function shapeReferenceReport(reportKey: string, report: OdooReportResult): OdooReportResult {
@@ -2058,6 +2064,29 @@ async function getOdooBaseReport(companyId: number, reportKey: string, filters: 
         { label: "Totali", value: rows.reduce((sum, row) => sum + numberValue(row.Totali), 0) },
       ], { Nenkategori: "FB", Ndermarrja: "Kompania aktive", "Dt. Dok.": "Sipas filtrit", "Dt. Regj.": "Sipas filtrit" });
     }
+    case "purchase_supplier_situation_pdf": {
+      const [invoices, supplierRecords] = await Promise.all([getPurchaseInvoices(companyId), getSuppliers(companyId)]);
+      const suppliersById = new Map(supplierRecords.map(supplier => [supplier.id, supplier]));
+      const grouped = new Map<number | string, { supplierId: number | null; code: string; name: string; account: string; category: string; debit: number; credit: number; balance: number; sourceDocumentId: number | null; sourceDocumentNumber: string; sourceStatus: string | null; sourceCurrency: string }>();
+      invoices.filter(invoice => inRange(invoice.date)).forEach(invoice => {
+        const supplier = invoice.supplierId ? suppliersById.get(invoice.supplierId) : undefined;
+        const key = invoice.supplierId ?? invoice.supplierName ?? "Pa furnitor";
+        let profile: Record<string, unknown> = {};
+        if (supplier?.profileData) {
+          try { profile = JSON.parse(supplier.profileData) as Record<string, unknown>; } catch { profile = {}; }
+        }
+        const current = grouped.get(key) ?? { supplierId: invoice.supplierId ?? null, code: supplier?.code || "", name: invoice.supplierName || supplier?.name || "Pa furnitor", account: typeof profile.accountNumber === "string" ? profile.accountNumber : "", category: typeof profile.category === "string" ? profile.category : typeof profile.supplierCategory === "string" ? profile.supplierCategory : "", debit: 0, credit: 0, balance: 0, sourceDocumentId: invoice.id, sourceDocumentNumber: invoice.docNumber, sourceStatus: invoice.status, sourceCurrency: invoice.currency || "ALL" };
+        const amounts = calculateSupplierSituationAmounts(Number(invoice.totalAmount ?? 0), Number(invoice.exchangeRate || 1), invoice.paymentStatus === "PAID");
+        current.debit += amounts.debit;
+        current.credit += amounts.credit;
+        current.balance += amounts.balance;
+        grouped.set(key, current);
+      });
+      const totalBalance = Array.from(grouped.values()).reduce((sum, item) => sum + Math.max(0, item.balance), 0);
+      const rows = Array.from(grouped.values()).map((item, index) => ({ "Nr Rend": index + 1, Kodi: item.code, "Emertimi i Furnitorit": item.name, "Nr Llogarie": item.account, Kategoria: item.category, "Shuma Debi": item.debit, "Shuma Kredi": item.credit, Detyrimi: item.balance, "Pesha %": totalBalance > 0 ? Number(((Math.max(0, item.balance) / totalBalance) * 100).toFixed(2)) : 0, __partnerName: item.name, __documentNumber: item.sourceDocumentNumber, __status: item.sourceStatus, __currency: item.sourceCurrency, __documentId: item.sourceDocumentId, __documentType: "purchase-invoice" }));
+      return result(["Nr Rend", "Kodi", "Emertimi i Furnitorit", "Nr Llogarie", "Kategoria", "Shuma Debi", "Shuma Kredi", "Detyrimi", "Pesha %"], rows, [{ label: "Furnitorë", value: rows.length }, { label: "Detyrimi", value: rows.reduce((sum, row) => sum + numberValue(row.Detyrimi), 0) }], { Periudha: "Sipas filtrit" });
+    }
+
     case "purchase_supplier_situation_category_pdf": {
       const [invoices, supplierRecords] = await Promise.all([getPurchaseInvoices(companyId), getSuppliers(companyId)]);
       const suppliersById = new Map(supplierRecords.map(supplier => [supplier.id, supplier]));
@@ -2153,8 +2182,8 @@ async function getOdooBaseReport(companyId: number, reportKey: string, filters: 
         const bucket = getSupplierMaturityBucket(days);
         current.total += amount; current.buckets[bucket] += amount; grouped.set(key, current);
       });
-      const rows = Array.from(grouped.values()).map(item => ({ "Kod Klienti": item.code, Emri: item.name, Llogaria: item.account, "Mon Llog": item.currency, Total: item.total, "0": item.buckets["0"], "1-30": item.buckets["1-30"], "30-60": item.buckets["30-60"], "60-90": item.buckets["60-90"], "90-180": item.buckets["90-180"], "Mbi 180": item.buckets["Mbi 180"], __documentId: item.sourceDocumentId, __documentType: "purchase-invoice" }));
-      return result(["Kod Klienti", "Emri", "Llogaria", "Mon Llog", "Total", "0", "1-30", "30-60", "60-90", "90-180", "Mbi 180"], rows, [{ label: "Furnitorë", value: rows.length }, { label: "Totali", value: rows.reduce((sum, row) => sum + numberValue(row.Total), 0) }], { "Data Raportimi": new Date().toLocaleDateString("sq-AL"), "Periudha e Maturimit": "Të gjitha afatet", "Data e Maturimit": "Sipas dokumentit" });
+      const rows = Array.from(grouped.values()).map(item => ({ "Kod Klienti": item.code, Emri: item.name, Llogaria: item.account, "Mon Lig": item.currency, Total: item.total, "0": item.buckets["0"], "1-30": item.buckets["1-30"], "30-60": item.buckets["30-60"], "60-90": item.buckets["60-90"], "90-180": item.buckets["90-180"], "Mbi 180": item.buckets["Mbi 180"], __documentId: item.sourceDocumentId, __documentType: "purchase-invoice" }));
+      return result(["Kod Klienti", "Emri", "Llogaria", "Mon Lig", "Total", "0", "1-30", "30-60", "60-90", "90-180", "Mbi 180"], rows, [{ label: "Furnitorë", value: rows.length }, { label: "Totali", value: rows.reduce((sum, row) => sum + numberValue(row.Total), 0) }], { "Data Raportimi": new Date().toLocaleDateString("sq-AL"), "Periudha e Maturimit": "Të gjitha afatet", "Data e Maturimit": "Sipas dokumentit" });
     }
     case "purchase_supplier_maturity_pdf": {
       const invoices = (await getPurchaseInvoices(companyId)).filter(invoice => inRange(invoice.date) && invoice.paymentStatus !== "PAID");
@@ -2375,8 +2404,35 @@ async function getOdooBaseReport(companyId: number, reportKey: string, filters: 
     case "sales_orders": return documentRows(await getSalesOrders(companyId), "orderDate", "customerName", "totalAmount", "sales-order");
     case "sales_deliveries": return documentRows(await getDeliveryNotes(companyId), "deliveryDate", "customerName", undefined, "sales-delivery");
     case "sales_returns": return documentRows(await getSalesReturns(companyId), "returnDate", "customerName", undefined, "sales-return");
-    case "sales_customers":
     case "sales_customer_statement": {
+      const [invoiceRecords, customerRecords, paymentRecords] = await Promise.all([getSalesInvoices(companyId), getCustomers(companyId), getPayments(companyId)]);
+      const customersById = new Map(customerRecords.map(customer => [customer.id, customer]));
+      const invoices = invoiceRecords.filter(invoice => inRange(invoice.date));
+      const customerPayments = paymentRecords.filter(payment => payment.paymentType === "INBOUND" && payment.partnerType === "CUSTOMER" && payment.status !== "CANCELLED" && inRange(payment.paymentDate));
+      const invoiceByNumber = new Map(invoices.map(invoice => [normalizeDocumentNumber(invoice.docNumber), invoice]));
+      const events = [
+        ...invoices.map(invoice => ({ date: new Date(invoice.createdAt ?? invoice.date), kind: "invoice" as const, invoice })),
+        ...customerPayments.map(payment => ({ date: new Date(payment.paymentDate), kind: "payment" as const, payment })),
+      ].sort((a, b) => a.date.getTime() - b.date.getTime());
+      let progressive = 0;
+      const rows = events.map((event, index) => {
+        if (event.kind === "invoice") {
+          const invoice = event.invoice;
+          const amount = Number(invoice.totalAmount ?? 0) * Number(invoice.exchangeRate || 1);
+          const customerName = invoice.customerName || (invoice.customerId ? customersById.get(invoice.customerId)?.name : undefined) || "Pa klient";
+          progressive += amount;
+          return { "Nr Rend": index + 1, "Data Rregj": invoice.createdAt ?? invoice.date, "Lloj Dok": "FS", "Nr Dok": invoice.docNumber, "Data Dok": invoice.date, "Përshkrimi i Veprimit": "Faturë shitjeje", Debi: amount, Kredi: 0, Progresivi: progressive, __partnerName: customerName, __documentNumber: invoice.docNumber, __status: invoice.status, __currency: invoice.currency || "ALL", __warehouseName: invoice.warehouseId ? String(invoice.warehouseId) : "", __documentId: invoice.id, __documentType: "sales-invoice" };
+        }
+        const payment = event.payment;
+        const linkedInvoice = payment.reference ? invoiceByNumber.get(normalizeDocumentNumber(payment.reference)) : undefined;
+        const customerName = payment.partnerName || (payment.partnerId ? customersById.get(payment.partnerId)?.name : undefined) || linkedInvoice?.customerName || "Pa klient";
+        const amount = Number(payment.amount || 0) * Number(payment.exchangeRate || 1);
+        progressive -= amount;
+        return { "Nr Rend": index + 1, "Data Rregj": payment.createdAt ?? payment.paymentDate, "Lloj Dok": "PAG", "Nr Dok": payment.paymentNumber, "Data Dok": payment.paymentDate, "Përshkrimi i Veprimit": "Pagesë klienti", Debi: 0, Kredi: amount, Progresivi: progressive, __partnerName: customerName, __documentNumber: payment.paymentNumber, __status: payment.status, __currency: payment.currency || "ALL", __documentId: payment.id, __documentType: "accounting-payment", __reference: payment.reference || "" };
+      });
+      return result(["Nr Rend", "Data Rregj", "Lloj Dok", "Nr Dok", "Data Dok", "Përshkrimi i Veprimit", "Debi", "Kredi", "Progresivi"], rows, [{ label: "Dokumente", value: rows.length }, { label: "Tepricë", value: progressive }], { Klienti: Array.from(new Set(rows.map(row => String(row.__partnerName || "")).filter(Boolean))).join(", ") || "Të gjithë", "Nr Llogarie": "—", Mon: "ALL", Titulli: "Kartelë klienti", NIPTI: "—" });
+    }
+    case "sales_customers": {
       const [invoices, customers] = await Promise.all([getSalesInvoices(companyId), getCustomers(companyId)]);
       const inRangeInvoices = invoices.filter(item => inRange(item.date));
       const customerMap = new Map(customers.map(customer => [customer.id, customer]));
@@ -2469,15 +2525,24 @@ async function getOdooBaseReport(companyId: number, reportKey: string, filters: 
     case "inventory_warehouse_detail_pdf": {
       const [products, warehouses, balances, movements, categories] = await Promise.all([getProducts(companyId), getWarehouses(companyId), getStockBalances(companyId), getStockMovements(companyId), getCategories(companyId)]);
       const categoryMap = new Map(categories.map(category => [category.id, category.name]));
-      const rows = balances.map(balance => {
+      const expandedRows = balances.flatMap(balance => {
         const product = products.find(item => item.id === balance.productId);
+        const warehouseName = warehouses.find(warehouse => warehouse.id === balance.warehouseId)?.name || `#${balance.warehouseId}`;
         const related = movements.filter(movement => movement.productId === balance.productId && movement.warehouseId === balance.warehouseId && inRange(movement.movementDate));
         const incoming = related.filter(movement => movement.movementType === "IN").reduce((sum, movement) => sum + movement.quantity, 0);
         const outgoing = related.filter(movement => movement.movementType === "OUT").reduce((sum, movement) => sum + movement.quantity, 0);
         const cost = product?.avgPrice ?? 0;
-        return { Kartela: product?.code || product?.barcode || "", Përshkrimi: product?.name || `#${balance.productId}`, Grupi: product?.categoryId ? categoryMap.get(product.categoryId) || "" : "", Njësia: product?.baseUnit || "", "Llog. Inventar": "", Hyrje: incoming, Dalje: outgoing, Gjendje: balance.quantity, Kosto: cost, Vlefta: balance.quantity * cost, "Në %": product?.minStock ? (balance.quantity / product.minStock) * 100 : 0, __warehouse: warehouses.find(warehouse => warehouse.id === balance.warehouseId)?.name || `#${balance.warehouseId}`, __documentId: product?.id, __documentType: "product" };
+        const master = { Kartela: product?.code || product?.barcode || "", Përshkrimi: product?.name || `#${balance.productId}`, Grupi: product?.categoryId ? categoryMap.get(product.categoryId) || "" : "", Njësia: product?.baseUnit || "", "Llog. Inventar": "", Hyrje: incoming, Dalje: outgoing, Gjendje: balance.quantity, Kosto: cost, Vlefta: balance.quantity * cost, "Në %": 0, __rowType: "master", __warehouse: warehouseName, __documentId: product?.id, __documentType: "product" };
+        const detailRows = related.map(movement => {
+          const isIncoming = movement.movementType === "IN";
+          const quantity = movement.quantity;
+          return { Kartela: "", Përshkrimi: "Pa Detajme", Grupi: "", Njësia: product?.baseUnit || "", "Llog. Inventar": "", Hyrje: isIncoming ? quantity : 0, Dalje: isIncoming ? 0 : quantity, Gjendje: "", Kosto: "", Vlefta: isIncoming ? quantity * cost : -quantity * cost, "Në %": "", __rowType: "detail", __warehouse: warehouseName, __documentId: movement.id, __documentType: "stock-movement" };
+        });
+        const subtotal = { Kartela: "", Përshkrimi: "Totali", Grupi: "", Njësia: "", "Llog. Inventar": "", Hyrje: "", Dalje: "", Gjendje: "", Kosto: "", Vlefta: detailRows.reduce((sum, row) => sum + numberValue(row.Vlefta), 0), "Në %": "", __rowType: "subtotal", __warehouse: warehouseName, __documentId: product?.id, __documentType: "product" };
+        return [master, ...detailRows, subtotal];
       });
-      return result(["Kartela", "Përshkrimi", "Grupi", "Njësia", "Llog. Inventar", "Hyrje", "Dalje", "Gjendje", "Kosto", "Vlefta", "Në %"], rows, [{ label: "Balanca", value: rows.length }, { label: "Vlefta", value: rows.reduce((sum, row) => sum + numberValue(row.Vlefta), 0) }]);
+      const rows = applyInventoryValuePercent(expandedRows.filter(row => row.__rowType === "master")).concat(expandedRows.filter(row => row.__rowType !== "master"));
+      return result(["Kartela", "Përshkrimi", "Grupi", "Njësia", "Llog. Inventar", "Hyrje", "Dalje", "Gjendje", "Kosto", "Vlefta", "Në %"], rows, [{ label: "Balanca", value: balances.length }, { label: "Detaje", value: movements.length }, { label: "Vlefta", value: rows.reduce((sum, row) => sum + numberValue(row.Vlefta), 0) }]);
     }
     case "inventory_product_card_pdf": {
       const [movements, products, warehouses, categories] = await Promise.all([getStockMovements(companyId), getProducts(companyId), getWarehouses(companyId), getCategories(companyId)]);
@@ -2535,7 +2600,7 @@ async function getOdooBaseReport(companyId: number, reportKey: string, filters: 
     case "inventory_warehouse_status_pdf": {
       const [products, warehouses, balances, movements, categories] = await Promise.all([getProducts(companyId), getWarehouses(companyId), getStockBalances(companyId), getStockMovements(companyId), getCategories(companyId)]);
       const categoryMap = new Map(categories.map(category => [category.id, category.name]));
-      const rows = balances.map(balance => {
+      const rows = applyInventoryValuePercent(balances.map(balance => {
         const product = products.find(item => item.id === balance.productId);
         const warehouse = warehouses.find(item => item.id === balance.warehouseId);
         const related = movements.filter(item => item.warehouseId === balance.warehouseId && item.productId === balance.productId && inRange(item.movementDate));
@@ -2543,7 +2608,7 @@ async function getOdooBaseReport(companyId: number, reportKey: string, filters: 
         const outgoing = related.filter(item => item.movementType === "OUT").reduce((sum, item) => sum + item.quantity, 0);
         const cost = product?.avgPrice ?? 0;
         return { Kartelë: product?.code || "—", Përshkrimi: product?.name || `#${balance.productId}`, Grupi: product?.categoryId ? categoryMap.get(product.categoryId) || "" : "", Njësia: product?.baseUnit || "", "Llog. Inventar": "", Hyrje: incoming, Dalje: outgoing, Gjendje: balance.quantity, Kosto: cost, Vlefta: balance.quantity * cost, "Në %": product?.minStock ? (balance.quantity / product.minStock) * 100 : 0, __warehouse: warehouse?.name || `#${balance.warehouseId}`, __documentId: product?.id, __documentType: "product" };
-      });
+      }));
       return result(["Kartelë", "Përshkrimi", "Grupi", "Njësia", "Llog. Inventar", "Hyrje", "Dalje", "Gjendje", "Kosto", "Vlefta", "Në %"], rows, [{ label: "Rreshta", value: rows.length }, { label: "Vlefta", value: rows.reduce((sum, row) => sum + numberValue(row.Vlefta), 0) }], { Magazina: Array.from(new Set(rows.map(row => String(row.__warehouse || "")).filter(Boolean))).join(", ") || "—" });
     }
     case "inventory_analytic_register_pdf": {
@@ -2552,25 +2617,46 @@ async function getOdooBaseReport(companyId: number, reportKey: string, filters: 
       return result(["Lloji", "Numri", "Data", "Dt Regj", "Kartela", "Përshkrimi", "Njësia", "Sasia", "Çmimi", "Vlefta"], rows, [{ label: "Lëvizje", value: rows.length }, { label: "Sasi", value: rows.reduce((sum, row) => sum + numberValue(row.Sasia), 0) }, { label: "Vlefta", value: rows.reduce((sum, row) => sum + numberValue(row.Vlefta), 0) }]);
     }
     case "inventory_product_summary_pdf": {
-      const [products, balances, warehouses] = await Promise.all([getProducts(companyId), getStockBalances(companyId), getWarehouses(companyId)]);
-      const rows = products.flatMap(product => { const productBalances = balances.filter(balance => balance.productId === product.id); if (productBalances.length > 0) return productBalances.map(balance => { const warehouseName = warehouses.find(warehouse => warehouse.id === balance.warehouseId)?.name || `#${balance.warehouseId}`; return { Kartelë: product.code || "—", Artikulli: product.name, Njësia: product.baseUnit || "", Magazina: warehouseName, Sasia: balance.quantity, "Çmimi mesatar": product.avgPrice ?? 0, Vlera: balance.quantity * (product.avgPrice ?? 0), __warehouse: warehouseName, __documentId: product.id, __documentType: "product" }; }); return [{ Kartelë: product.code || "—", Artikulli: product.name, Njësia: product.baseUnit || "", Magazina: "", Sasia: product.stock ?? 0, "Çmimi mesatar": product.avgPrice ?? 0, Vlera: (product.stock ?? 0) * (product.avgPrice ?? 0), __warehouse: "", __documentId: product.id, __documentType: "product" }]; });
-      return result(["Kartelë", "Artikulli", "Njësia", "Magazina", "Sasia", "Çmimi mesatar", "Vlera"], rows, [{ label: "Artikuj", value: rows.length }, { label: "Njësi", value: rows.reduce((sum, row) => sum + numberValue(row.Sasia), 0) }, { label: "Vlefta", value: rows.reduce((sum, row) => sum + numberValue(row.Vlera), 0) }]);
-    }
-    case "inventory_article_analysis_pdf": {
-      const [products, movements, balances, warehouses] = await Promise.all([getProducts(companyId), getStockMovements(companyId), getStockBalances(companyId), getWarehouses(companyId)]);
+      const [products, balances, warehouses, movements, categories] = await Promise.all([getProducts(companyId), getStockBalances(companyId), getWarehouses(companyId), getStockMovements(companyId), getCategories(companyId)]);
+      const categoryMap = new Map(categories.map(category => [category.id, category.name]));
       const rows = products.flatMap(product => {
         const productBalances = balances.filter(balance => balance.productId === product.id);
         const scopes = productBalances.length > 0 ? productBalances : [{ warehouseId: 0, quantity: product.stock ?? 0 }];
         return scopes.map(scope => {
           const warehouseName = scope.warehouseId ? warehouses.find(warehouse => warehouse.id === scope.warehouseId)?.name || `#${scope.warehouseId}` : "";
           const related = movements.filter(movement => movement.productId === product.id && (!scope.warehouseId || movement.warehouseId === scope.warehouseId) && inRange(movement.movementDate));
-          const hyrje = related.filter(movement => movement.movementType === "IN").reduce((sum, movement) => sum + movement.quantity, 0);
-          const dalje = related.filter(movement => movement.movementType === "OUT").reduce((sum, movement) => sum + movement.quantity, 0);
-          const gjendje = scope.quantity ?? 0;
-          return { Kodi: product.code || "—", Artikulli: product.name, Hyrje: hyrje, Dalje: dalje, Gjendje: gjendje, Minimumi: product.minStock ?? 0, "Çmimi mesatar": product.avgPrice ?? 0, Vlefta: gjendje * (product.avgPrice ?? 0), __warehouse: warehouseName, __documentId: product.id, __documentType: "product" };
+          const incoming = related.filter(movement => movement.movementType === "IN").reduce((sum, movement) => sum + movement.quantity, 0);
+          const outgoing = related.filter(movement => movement.movementType === "OUT").reduce((sum, movement) => sum + movement.quantity, 0);
+          const current = Number(scope.quantity ?? 0);
+          const opening = current - incoming + outgoing;
+          const cost = product.avgPrice ?? 0;
+          return { "Kartelë": product.code || product.barcode || "—", "Përshkrimi": product.name, Grupi: product.categoryId ? categoryMap.get(product.categoryId) || "" : "", "Njësia": product.baseUnit || "", "Llog. Inventar": "", "Gjendje Mbartur": opening, Hyrje: incoming, Dalje: outgoing, Gjendje: current, Kosto: cost, Vlefta: current * cost, __warehouse: warehouseName, __documentId: product.id, __documentType: "product" };
         });
       });
-      return result(["Kodi", "Artikulli", "Hyrje", "Dalje", "Gjendje", "Minimumi", "Çmimi mesatar", "Vlefta"], rows, [{ label: "Artikuj", value: rows.length }, { label: "Hyrje", value: rows.reduce((sum, row) => sum + numberValue(row.Hyrje), 0) }, { label: "Dalje", value: rows.reduce((sum, row) => sum + numberValue(row.Dalje), 0) }]);
+      return result(["Kartelë", "Përshkrimi", "Grupi", "Njësia", "Llog. Inventar", "Gjendje Mbartur", "Hyrje", "Dalje", "Gjendje", "Kosto", "Vlefta"], rows, [{ label: "Artikuj", value: rows.length }, { label: "Gjendje", value: rows.reduce((sum, row) => sum + numberValue(row.Gjendje), 0) }, { label: "Vlefta", value: rows.reduce((sum, row) => sum + numberValue(row.Vlefta), 0) }], { Magazina: Array.from(new Set(rows.map(row => String(row.__warehouse || "")).filter(Boolean))).join(", ") || "—" });
+    }
+    case "inventory_article_analysis_pdf": {
+      const [products, movements, balances, warehouses, categories] = await Promise.all([getProducts(companyId), getStockMovements(companyId), getStockBalances(companyId), getWarehouses(companyId), getCategories(companyId)]);
+      const categoryMap = new Map(categories.map(category => [category.id, category.name]));
+      const rows = products.flatMap(product => {
+        const productBalances = balances.filter(balance => balance.productId === product.id);
+        const scopes = productBalances.length > 0 ? productBalances : [{ warehouseId: 0, quantity: product.stock ?? 0 }];
+        return scopes.map(scope => {
+          const warehouseName = scope.warehouseId ? warehouses.find(warehouse => warehouse.id === scope.warehouseId)?.name || `#${scope.warehouseId}` : "";
+          const related = movements.filter(movement => movement.productId === product.id && (!scope.warehouseId || movement.warehouseId === scope.warehouseId) && inRange(movement.movementDate));
+          const incomingFromPurchases = related.filter(movement => movement.movementType === "IN" && String(movement.referenceType || "").startsWith("PURCHASE_")).reduce((sum, movement) => sum + movement.quantity, 0);
+          const incomingOther = related.filter(movement => movement.movementType === "IN" && !String(movement.referenceType || "").startsWith("PURCHASE_")).reduce((sum, movement) => sum + movement.quantity, 0);
+          const outgoingForSales = related.filter(movement => movement.movementType === "OUT" && String(movement.referenceType || "").startsWith("SALES_")).reduce((sum, movement) => sum + movement.quantity, 0);
+          const outgoingOther = related.filter(movement => movement.movementType === "OUT" && !String(movement.referenceType || "").startsWith("SALES_")).reduce((sum, movement) => sum + movement.quantity, 0);
+          const incoming = incomingFromPurchases + incomingOther;
+          const outgoing = outgoingForSales + outgoingOther;
+          const current = Number(scope.quantity ?? 0);
+          const opening = current - incoming + outgoing;
+          const cost = product.avgPrice ?? 0;
+          return { Kartela: product.code || product.barcode || "—", Emërtimi: product.name, "Njësia": product.baseUnit || "", "Gjendje me Pare": opening, "Hyrje nga Blerjet": incomingFromPurchases, "Hyrje të Tjera": incomingOther, "Dalje për Shitje": outgoingForSales, "Dalje të Tjera": outgoingOther, Gjendje: current, "Çmimi mesatar": cost, Vlefta: current * cost, __warehouse: warehouseName, __productGroup: product.categoryId ? categoryMap.get(product.categoryId) || "" : "", __documentId: product.id, __documentType: "product" };
+        });
+      });
+      return result(["Kartela", "Emërtimi", "Njësia", "Gjendje me Pare", "Hyrje nga Blerjet", "Hyrje të Tjera", "Dalje për Shitje", "Dalje të Tjera", "Gjendje", "Çmimi mesatar", "Vlefta"], rows, [{ label: "Artikuj", value: rows.length }, { label: "Hyrje", value: rows.reduce((sum, row) => sum + numberValue(row["Hyrje nga Blerjet"]) + numberValue(row["Hyrje të Tjera"]), 0) }, { label: "Dalje", value: rows.reduce((sum, row) => sum + numberValue(row["Dalje për Shitje"]) + numberValue(row["Dalje të Tjera"]), 0) }, { label: "Vlefta", value: rows.reduce((sum, row) => sum + numberValue(row.Vlefta), 0) }], { Magazina: Array.from(new Set(rows.map(row => String(row.__warehouse || "")).filter(Boolean))).join(", ") || "—" });
     }
     case "inventory_valuation": {
       const [products, balances, warehouses] = await Promise.all([getProducts(companyId), getStockBalances(companyId), getWarehouses(companyId)]);

@@ -48,6 +48,7 @@ export const REPORT_CATALOG: ReportCatalogItem[] = [
     ["purchase_supplier_card_format3_pdf", "Formate referencë", "Kartela e furnitorit — Formati 3"],
     ["purchase_supplier_maturity_pdf", "Formate referencë", "Furnitorët me maturim"],
     ["purchase_supplier_maturity_summary_pdf", "Formate referencë", "Maturimi përmbledhës i furnitorëve"],
+    ["purchase_supplier_situation_pdf", "Formate referencë", "Situacioni i furnitorëve"],
     ["purchase_supplier_situation_category_pdf", "Formate referencë", "Situacioni i furnitorëve sipas kategorive"],
     ["purchase_customs_import_register_pdf", "Formate referencë", "Regjistri i doganimit të importeve"],
     ["purchase_invoice_payment_register_pdf", "Formate referencë", "Faturime dhe pagesa"],
