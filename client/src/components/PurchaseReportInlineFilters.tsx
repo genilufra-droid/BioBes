@@ -1,0 +1,112 @@
+import type { ChangeEvent } from "react";
+import { BarChart3, Eye, FileText, Search, SlidersHorizontal, X } from "lucide-react";
+import type { ReportCatalogItem } from "../../../shared/reportCatalog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+
+type PurchaseReportInlineFiltersProps = {
+  selectedTitle: string;
+  reports: ReportCatalogItem[];
+  selectedKey: string;
+  dateFrom: string;
+  dateTo: string;
+  documentFilter: string;
+  partnerFilter: string;
+  categoryFilter: string;
+  currencyFilter: string;
+  documentTypeFilter: string;
+  warehouseFilter: string;
+  amountMin: string;
+  amountMax: string;
+  isLoading: boolean;
+  hasExecuted: boolean;
+  columns: string[];
+  rows: Record<string, unknown>[];
+  metrics: { label: string; value: number }[];
+  onOpenDocument: (row: Record<string, unknown>) => void;
+  formatCell: (value: unknown) => string;
+  onDocumentSelect: (key: string) => void;
+  onDateFromChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  onDateToChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  onDocumentFilterChange: (value: string) => void;
+  onPartnerFilterChange: (value: string) => void;
+  onCategoryFilterChange: (value: string) => void;
+  onCurrencyFilterChange: (value: string) => void;
+  onDocumentTypeFilterChange: (value: string) => void;
+  onWarehouseFilterChange: (value: string) => void;
+  onAmountMinChange: (value: string) => void;
+  onAmountMaxChange: (value: string) => void;
+  onLookup: (kind: "supplier" | "product" | "warehouse") => void;
+  onView: () => void;
+  onClear: () => void;
+  onNewPage: () => void;
+  onList: () => void;
+  onDelta: () => void;
+};
+
+export default function PurchaseReportInlineFilters({
+  selectedTitle,
+  reports,
+  selectedKey,
+  dateFrom,
+  dateTo,
+  documentFilter,
+  partnerFilter,
+  categoryFilter,
+  currencyFilter,
+  documentTypeFilter,
+  warehouseFilter,
+  amountMin,
+  amountMax,
+  isLoading,
+  hasExecuted,
+  columns,
+  rows,
+  metrics,
+  onOpenDocument,
+  formatCell,
+  onDocumentSelect,
+  onDateFromChange,
+  onDateToChange,
+  onDocumentFilterChange,
+  onPartnerFilterChange,
+  onCategoryFilterChange,
+  onCurrencyFilterChange,
+  onDocumentTypeFilterChange,
+  onWarehouseFilterChange,
+  onAmountMinChange,
+  onAmountMaxChange,
+  onLookup,
+  onView,
+  onClear,
+  onNewPage,
+  onList,
+  onDelta,
+}: PurchaseReportInlineFiltersProps) {
+  return <section data-purchase-inline-filters className="border border-[#858585] bg-[#efefef] text-[#202020] shadow-none">
+    <header className="flex min-h-11 flex-wrap items-center justify-between gap-2 border-b border-[#b8b8b8] bg-[#efefef] px-3 py-1.5">
+      <div className="flex min-w-0 items-center gap-2"><FileText className="h-4 w-4 text-[#0878c9]" /><h2 className="truncate text-sm font-semibold">Raporte Blerjeje</h2><span className="border border-[#b8b8b8] bg-white px-1.5 py-0.5 text-[10px]">Blerje</span></div>
+      <div className="flex flex-wrap items-center gap-1">
+        <Button type="button" variant="outline" size="sm" className="h-8 rounded-none border-[#777] bg-[#efefef] text-[#202020] hover:bg-white" onClick={onList}><X className="mr-1 h-4 w-4" />Mbyll</Button>
+        <Button type="button" size="sm" className="h-8 rounded-none bg-[#0878c9] text-white hover:bg-[#05659f]" onClick={onView} disabled={isLoading}><Eye className="mr-1 h-4 w-4" />{isLoading ? "Po ngarkohet..." : "Shiko"}</Button>
+        <Button type="button" variant="outline" size="sm" className="h-8 rounded-none border-[#777] bg-[#efefef] text-[#202020] hover:bg-white" onClick={onNewPage}><FileText className="mr-1 h-4 w-4" />Faqe Re</Button>
+        <Button type="button" variant="outline" size="sm" className="h-8 rounded-none border-[#777] bg-[#efefef] text-[#202020] hover:bg-white" onClick={onClear}><SlidersHorizontal className="mr-1 h-4 w-4" />Pastro</Button>
+        <Button type="button" variant="outline" size="sm" className="h-8 rounded-none border-[#777] bg-[#efefef] text-[#202020] hover:bg-white" onClick={onList}><Search className="mr-1 h-4 w-4" />Lista</Button>
+        <Button type="button" variant="outline" size="sm" className="h-8 rounded-none border-[#777] bg-[#efefef] text-[#202020] hover:bg-white" onClick={onDelta}><BarChart3 className="mr-1 h-4 w-4" />Vizualizo ne Delta</Button>
+      </div>
+    </header>
+    <div className="grid min-h-0 lg:grid-cols-[32%_minmax(0,1fr)]">
+      <aside className="min-h-0 border-r border-[#b8b8b8] bg-[#f3f3f3] p-3">
+        <div className="mb-2 flex items-center justify-between"><h3 className="text-sm font-semibold text-[#333]">Emri i Raportit</h3><span className="text-[10px] text-[#666]">{reports.length} modele</span></div>
+        <div className="max-h-[300px] overflow-y-auto border border-[#b8b8b8] bg-white">{reports.map(item => <button type="button" key={item.key} onClick={() => onDocumentSelect(item.key)} className={"block w-full border-b border-[#d6d6d6] px-2 py-1.5 text-left text-xs last:border-b-0 " + (selectedKey === item.key ? "bg-[#1296db] text-white" : "text-[#333] hover:bg-[#e8f5fd]")}>{item.title.toLocaleUpperCase("sq-AL")}</button>)}</div>
+        <fieldset className="mt-3 rounded-sm border border-[#a9a9a9] bg-[#dedede] p-2"><legend className="px-1 text-xs font-semibold text-[#555]">Shuma</legend><div className="grid grid-cols-3 gap-1 text-[11px] text-[#444]"><label className="flex items-center gap-1"><input type="radio" name="purchase-inline-amount-mode" defaultChecked={false} />Sasia</label><label className="flex items-center gap-1"><input type="radio" name="purchase-inline-amount-mode" />Cmimi</label><label className="flex items-center gap-1"><input type="radio" name="purchase-inline-amount-mode" defaultChecked />Vlefta</label></div><div className="mt-2 grid grid-cols-2 gap-2"><label className="text-[11px] text-[#555]">Min<Input aria-label="Shuma minimale" type="number" value={amountMin} onChange={event => onAmountMinChange(event.target.value)} className="mt-1 h-7 rounded-none border-[#999] bg-white px-1 text-[11px]" /></label><label className="text-[11px] text-[#555]">Max<Input aria-label="Shuma maksimale" type="number" value={amountMax} onChange={event => onAmountMaxChange(event.target.value)} className="mt-1 h-7 rounded-none border-[#999] bg-white px-1 text-[11px]" /></label></div></fieldset>
+      </aside>
+      <main className="grid gap-3 p-3 md:grid-cols-2">
+        <div className="space-y-3"><fieldset className="rounded-sm border border-[#a9a9a9] bg-[#dedede] p-2"><legend className="px-1 text-xs font-semibold text-[#555]">Numer Dokumenti</legend><div className="grid grid-cols-[1fr_auto_1fr] items-center gap-1"><Input aria-label="Numer dokumenti nga" value={documentFilter} onChange={event => onDocumentFilterChange(event.target.value)} className="h-7 rounded-none border-[#999] bg-white text-[11px]" /><span className="text-[11px] text-[#555]">deri</span><Input aria-label="Numer dokumenti deri" className="h-7 rounded-none border-[#999] bg-white text-[11px]" /></div><label className="mt-2 block text-[11px] text-[#555]">Lloj Dokumenti<select aria-label="Lloj dokumenti" value={documentTypeFilter} onChange={event => onDocumentTypeFilterChange(event.target.value)} className="mt-1 h-7 w-full border border-[#999] bg-white px-1 text-[11px]"><option value="">Të gjithë</option><option value="Faturë">Faturë</option><option value="Porosi">Porosi</option><option value="Pranim">Pranim</option><option value="Kthim">Kthim</option></select></label><label className="mt-2 block text-[11px] text-[#555]">Monedha<select aria-label="Monedha" value={currencyFilter} onChange={event => onCurrencyFilterChange(event.target.value)} className="mt-1 h-7 w-full border border-[#999] bg-white px-1 text-[11px]"><option value="">Të gjitha</option><option value="ALL">ALL</option><option value="EUR">EUR</option><option value="USD">USD</option><option value="GBP">GBP</option></select></label></fieldset><fieldset className="rounded-sm border border-[#a9a9a9] bg-[#dedede] p-2"><legend className="px-1 text-xs font-semibold text-[#555]">DATË REGJISTRIMI</legend><div className="flex gap-3 text-[11px] text-[#444]"><label className="flex items-center gap-1"><input type="radio" name="purchase-inline-date-mode" defaultChecked />Aktuale</label><label className="flex items-center gap-1"><input type="radio" name="purchase-inline-date-mode" />Viti Ushtrimor</label></div><div className="mt-2 grid grid-cols-[1fr_auto_1fr] items-center gap-1"><Input aria-label="Data nga" type="date" value={dateFrom} onChange={onDateFromChange} className="h-7 rounded-none border-[#999] bg-white text-[11px]" /><span className="text-[11px] text-[#555]">deri</span><Input aria-label="Data deri" type="date" value={dateTo} onChange={onDateToChange} className="h-7 rounded-none border-[#999] bg-white text-[11px]" /></div></fieldset></div>
+        <div className="space-y-3"><fieldset className="min-h-[178px] rounded-sm border border-[#a9a9a9] bg-[#dedede] p-2"><legend className="px-1 text-xs font-semibold text-[#555]">Identifikues</legend><label className="block text-[11px] text-[#555]">Kartela<div className="mt-1 flex gap-1"><Input aria-label="Kartela" value={categoryFilter} onChange={event => onCategoryFilterChange(event.target.value)} className="h-7 rounded-none border-[#999] bg-white text-[11px]" /><button type="button" className="flex h-7 w-7 items-center justify-center border border-[#999] bg-white text-[#0878c9]" aria-label="Kërko kartelën" onClick={() => onLookup("product")}><Search className="h-3.5 w-3.5" /></button></div></label><label className="mt-2 block text-[11px] text-[#555]">FURNITORI<div className="mt-1 flex gap-1"><Input aria-label="FURNITORI" value={partnerFilter} onChange={event => onPartnerFilterChange(event.target.value)} className="h-7 rounded-none border-[#999] bg-white text-[11px]" /><button type="button" className="flex h-7 w-7 items-center justify-center border border-[#999] bg-white text-[#0878c9]" aria-label="Kërko furnitorin" onClick={() => onLookup("supplier")}><Search className="h-3.5 w-3.5" /></button></div></label></fieldset><fieldset className="min-h-[100px] rounded-sm border border-[#a9a9a9] bg-[#dedede] p-2"><legend className="px-1 text-xs font-semibold text-[#555]">MAGAZINA</legend><div className="flex gap-1"><Input aria-label="Magazina" value={warehouseFilter} onChange={event => onWarehouseFilterChange(event.target.value)} className="h-7 rounded-none border-[#999] bg-white text-[11px]" /><button type="button" className="flex h-7 w-7 items-center justify-center border border-[#999] bg-white text-[#0878c9]" aria-label="Kërko magazinën" onClick={() => onLookup("warehouse")}><Search className="h-3.5 w-3.5" /></button></div></fieldset></div>
+      </main>
+    </div>
+    <footer className="flex justify-end gap-1 border-t border-[#b8b8b8] bg-[#efefef] px-3 py-2"><Button type="button" size="sm" className="h-8 rounded-none bg-[#0878c9] text-white hover:bg-[#05659f]" onClick={onView} disabled={isLoading}><Eye className="mr-1 h-4 w-4" />ENTER - Shiko</Button><Button type="button" variant="outline" size="sm" className="h-8 rounded-none border-[#777] bg-[#efefef] text-[#202020] hover:bg-white" onClick={onList}><X className="mr-1 h-4 w-4" />ESC - Dil</Button></footer>
+    {hasExecuted && <section data-purchase-inline-result className="border-t-2 border-[#858585] bg-white p-3"><div className="mb-2 flex items-center justify-between gap-2"><div><h3 className="text-sm font-semibold text-[#333]">{selectedTitle}</h3><p className="text-[11px] text-[#666]">Rezultati i filtruar · {rows.length} rreshta</p></div><div className="flex gap-3 text-[11px] text-[#555]">{metrics.slice(0, 3).map(metric => <span key={metric.label}><strong>{metric.label}:</strong> {formatCell(metric.value)}</span>)}</div></div><div className="overflow-x-auto border border-[#b8b8b8]"><table className="w-full min-w-[820px] border-collapse text-[11px]"><thead className="bg-[#e6e5b5] text-left"><tr>{columns.map(column => <th key={column} className="border border-[#8a8a63] px-2 py-1.5 font-semibold">{column}</th>)}</tr></thead><tbody>{rows.length === 0 ? <tr><td colSpan={Math.max(columns.length, 1)} className="p-6 text-center text-[#666]">Nuk ka të dhëna.</td></tr> : rows.map((row, rowIndex) => <tr key={rowIndex} className="even:bg-[#fffef1]"><td className="hidden" />{columns.map(column => <td key={column} className="border border-[#cfcfcf] px-2 py-1.5">{row.__documentId && (column === "Dokumenti" || column === "Nr." || column === "Nr Dok" || column === "Fatura") ? <button type="button" className="font-semibold text-[#0878c9] underline" onClick={() => onOpenDocument(row)}>{formatCell(row[column])}</button> : formatCell(row[column])}</td>)}</tr>)}</tbody></table></div></section>}
+  </section>;
+}

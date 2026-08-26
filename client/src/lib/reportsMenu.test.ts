@@ -12,7 +12,7 @@ describe("Alpha reports menu contract", () => {
 
   it("uses real catalog counts for every visible module card", () => {
     expect(getAlphaReportModuleCounts(REPORT_CATALOG)).toEqual({
-      Blerje: 29,
+      Blerje: 18,
       Shitje: 36,
       Magazina: 23,
       Kontabilitet: 20,
@@ -44,16 +44,13 @@ describe("Alpha reports menu contract", () => {
 
   it("keeps the purchase workspace isolated to its complete catalog", () => {
     const purchaseReports = REPORT_CATALOG.filter(report => report.module === "Blerje");
-    expect(purchaseReports).toHaveLength(29);
+    expect(purchaseReports).toHaveLength(18);
     expect(purchaseReports.map(report => report.key)).toEqual([
-      "purchase_invoices", "purchase_orders", "purchase_receipts", "purchase_returns", "purchase_suppliers",
-      "purchase_invoice_status", "purchase_open_invoices", "purchase_invoice_volume", "purchase_supplier_statement",
-      "purchase_top_suppliers", "purchase_orders_open", "purchase_orders_status", "purchase_receipts_by_supplier",
-      "purchase_receipts_timeline", "purchase_returns_analysis", "purchase_returns_status", "purchase_spend_trend",
-      "purchase_supplier_count", "purchase_document_register", "purchase_summary_register_pdf", "purchase_receipt_control",
-      "purchase_supplier_card_pdf", "purchase_supplier_card_format3_pdf", "purchase_supplier_maturity_pdf",
-      "purchase_supplier_maturity_summary_pdf", "purchase_supplier_situation_pdf", "purchase_supplier_situation_category_pdf",
-      "purchase_customs_import_register_pdf", "purchase_invoice_payment_register_pdf",
+      "purchase_summary_register_pdf", "purchase_invoices", "purchase_document_register",
+      "purchase_product_card_alpha", "purchase_items_detail_alpha", "purchase_items_expiry_alpha", "purchase_customs_import_register_pdf",
+      "purchase_items_alpha", "purchase_items_by_branch_alpha", "purchase_analytic_register_format2_alpha", "purchase_contract_conversion_alpha",
+      "purchase_analytic_register_format3_alpha", "purchase_analytic_alpha", "purchase_product_card_format2_alpha", "purchase_analytic_detail_alpha",
+      "purchase_monthly_ledger_alpha", "purchase_price_list_alpha", "purchase_invoice_payment_register_pdf",
     ]);
   });
 

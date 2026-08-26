@@ -76,6 +76,10 @@ export function getLegacyReportFilterVisibility(module: ReportModule, reportKey:
       "purchase_receipts_by_supplier", "purchase_receipts_timeline", "purchase_returns_analysis", "purchase_returns_status",
       "purchase_spend_trend", "purchase_document_register", "purchase_receipt_control", "purchase_summary_register_pdf",
       "purchase_customs_import_register_pdf", "purchase_invoice_payment_register_pdf",
+      "purchase_product_card_alpha", "purchase_items_detail_alpha", "purchase_items_expiry_alpha", "purchase_items_alpha",
+      "purchase_items_by_branch_alpha", "purchase_analytic_register_format2_alpha", "purchase_contract_conversion_alpha",
+      "purchase_analytic_register_format3_alpha", "purchase_analytic_alpha", "purchase_product_card_format2_alpha",
+      "purchase_analytic_detail_alpha", "purchase_monthly_ledger_alpha", "purchase_price_list_alpha",
     ]);
     const supplierReports = new Set([
       "purchase_suppliers", "purchase_supplier_statement", "purchase_top_suppliers", "purchase_supplier_count",

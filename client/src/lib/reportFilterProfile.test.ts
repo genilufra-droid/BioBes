@@ -71,6 +71,17 @@ describe("legacy report filter visibility", () => {
     }
   });
 
+  it("keeps the Alpha document filter set for every purchase workspace model", () => {
+    for (const reportKey of ["purchase_summary_register_pdf", "purchase_product_card_alpha", "purchase_items_detail_alpha", "purchase_items_expiry_alpha", "purchase_items_alpha", "purchase_items_by_branch_alpha", "purchase_analytic_register_format2_alpha", "purchase_contract_conversion_alpha", "purchase_analytic_register_format3_alpha", "purchase_analytic_alpha", "purchase_product_card_format2_alpha", "purchase_analytic_detail_alpha", "purchase_monthly_ledger_alpha", "purchase_price_list_alpha", "purchase_customs_import_register_pdf", "purchase_invoice_payment_register_pdf"]) {
+      expect(getLegacyReportFilterVisibility("Blerje", reportKey)).toEqual({
+        documentNumber: true,
+        documentType: true,
+        currency: true,
+        genericAmountSidebar: true,
+      });
+    }
+  });
+
   it("hides generic filters for accounting date-based reports and variants", () => {
     for (const reportKey of ["accounting_trial_balance", "accounting_profit_loss", "accounting_payments", "accounting_journals", "accounting_balance_sheet", "accounting_general_ledger", "accounting_journal_entries", "accounting_journal_status", "accounting_payment_inbound", "accounting_payment_outbound", "accounting_payment_status", "accounting_revenue_summary", "accounting_expense_summary", "accounting_net_result", "accounting_debit_credit"]) {
       expect(getLegacyReportFilterVisibility("Kontabilitet", reportKey)).toEqual({
