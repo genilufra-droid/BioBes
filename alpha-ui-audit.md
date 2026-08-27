@@ -15,3 +15,7 @@ Verifikimi në `/registrations` dhe `/registrations?register=stock` tregoi një 
 Në desktop, Blerje, Shitje, Magazina dhe Regjistrime shfaqin kanavacë blu-gri, header me gradient, tabstrip të sheshtë, filtra të dendur dhe tabela me kufij të hollë. Përmbledhja e Blerjeve u neutralizua në tone blu-gri dhe veprimi kryesor i faturës së Shitjeve përdor blu Alpha.
 
 Në ekran 375×812, menuja desktop zëvendësohet nga ikona hamburger pa scroll horizontal të dukshëm në katër ambientet e provuara. Tabs e Blerjeve dhe Shitjeve thyhen në dy kolona dhe filtrat vijojnë vertikalisht; Regjistrime ruan listën dhe grid-in e dokumenteve në rrjedhë të lexueshme. Magazina ruan tabelën dhe kartat pa prerë përmbajtjen, por kartat e statistikave vazhdojnë vertikalisht sipas gjerësisë së kufizuar.
+
+## Heqja e paneleve moderne të filtrave
+
+Verifikimi në desktop i `/sales-invoices` dhe `/purchase-invoices` konfirmon se seksioni i gjatë “Filtra sipas kolonave” nuk shfaqet më. Shitje hap drejtpërdrejt toolbar-in e regjistrit me kërkim dhe gjendje, ndërsa Blerje shfaq përmbledhjen Alpha dhe toolbar-in e regjistrit me kërkim plus status. Nuk u krijuan ose u ndryshuan dokumente gjatë kontrollit.

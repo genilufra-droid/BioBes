@@ -48,6 +48,15 @@ describe("active invoice line quick-create contract", () => {
     expect(totalsSource).toContain("data-alpha-sales-totals");
   });
 
+  it("does not render the legacy long column-filter panel in the sales workspace", () => {
+    const filterSource = readFileSync(new URL("../components/SalesRegisterFilterBar.tsx", import.meta.url), "utf8");
+    const registerSource = readFileSync(new URL("../components/SalesInvoiceRegister.tsx", import.meta.url), "utf8");
+    expect(filterSource).toContain("return null;");
+    expect(filterSource).not.toContain("Filtra sipas kolonave");
+    expect(registerSource).toContain("Kërko në regjistrin e Shitjeve");
+    expect(registerSource).toContain("Gjendja:");
+  });
+
   it("keeps sales reports exclusively in the top-level Reports workspace", () => {
     expect(salesSource).not.toContain('<ModuleReportMenu module="Shitje"');
     expect(salesSource).not.toContain('<TabsTrigger value="report"');

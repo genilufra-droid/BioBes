@@ -33,14 +33,12 @@ describe("Purchase invoice source-document navigation", () => {
     expect(source).toContain('setBillOpen(true);');
   });
 
-  it("keeps the purchase register column-filter panel hideable and restorable", () => {
+  it("does not render the legacy long column-filter panel in the purchase workspace", () => {
     expect(source).toContain("<PurchaseRegisterFilterBar filters={registerFilters} onChange={setRegisterFilters} />");
-    expect(filterBarSource).toContain('data-testid="purchase-register-column-filters"');
-    expect(filterBarSource).toContain('data-testid="toggle-purchase-register-filters"');
-    expect(filterBarSource).toContain('data-testid="apply-purchase-register-filters"');
-    expect(filterBarSource).toContain("Fshih filtrat");
-    expect(filterBarSource).toContain("Shfaq filtrat");
-    expect(filterBarSource).toContain("Shfaq rezultatet");
+    expect(filterBarSource).toContain("return null;");
+    expect(filterBarSource).not.toContain("Filtra sipas kolonave");
+    expect(source).toContain("Kërko faturë, furnitor ose artikull");
+    expect(source).toContain("E papaguar");
   });
 
   it("keeps reports exclusively in the top-level Reports workspace", () => {
