@@ -132,6 +132,12 @@
   [data-alpha-registration-workspace] table tbody tr:hover { background: #edf6fb !important; }
   [data-alpha-registration-workspace] input,
   [data-alpha-registration-workspace] select { border-radius: 0 !important; }
+  /* Filtrat e Regjistrimeve ruajnë një rresht kompakt me scroll horizontal në mobile; nuk hapet panel vertikal. */
+  [data-alpha-registration-workspace] section > div:nth-child(2):has(input) { display: flex !important; flex-wrap: nowrap !important; align-items: end; gap: 4px !important; overflow-x: auto; padding: 6px !important; }
+  [data-alpha-registration-workspace] section > div:nth-child(2):has(input) > label { width: 178px; min-width: 178px; flex: 0 0 178px; }
+  [data-alpha-registration-workspace] section > div:nth-child(2):has(input) > input { width: 118px; min-width: 118px; flex: 0 0 118px; }
+  [data-alpha-registration-workspace] section > div:nth-child(2):has(input) > select { width: 104px; min-width: 104px; flex: 0 0 104px; }
+  [data-alpha-registration-workspace] section > div:nth-child(2):has(input) > button { min-width: 62px; flex: 0 0 62px; }
   [data-alpha-purchase-summary] { border-color: #9eafb9 !important; border-radius: 0 !important; background: #f7fafb !important; padding: 10px !important; }
   [data-alpha-purchase-summary] .rounded-md { border-radius: 0 !important; }
   [data-alpha-purchase-summary] .bg-violet-50,

@@ -19,3 +19,5 @@ Në ekran 375×812, menuja desktop zëvendësohet nga ikona hamburger pa scroll 
 ## Heqja e paneleve moderne të filtrave
 
 Verifikimi në desktop i `/sales-invoices` dhe `/purchase-invoices` konfirmon se seksioni i gjatë “Filtra sipas kolonave” nuk shfaqet më. Shitje hap drejtpërdrejt toolbar-in e regjistrit me kërkim dhe gjendje, ndërsa Blerje shfaq përmbledhjen Alpha dhe toolbar-in e regjistrit me kërkim plus status. Nuk u krijuan ose u ndryshuan dokumente gjatë kontrollit.
+
+Regjistrime në mobile tani i mban kërkimin, datat, monedhën dhe pastrimin e filtrave në një toolbar horizontal me lëvizje anësore, përpara tabelës. Ky kontroll nuk hap më një listë të gjatë vertikale me fusha njëra nën tjetrën.

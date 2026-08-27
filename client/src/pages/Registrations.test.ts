@@ -6,6 +6,7 @@ const page = fs.readFileSync(path.resolve(process.cwd(), "client/src/pages/Regis
 const app = fs.readFileSync(path.resolve(process.cwd(), "client/src/App.tsx"), "utf8");
 const layout = fs.readFileSync(path.resolve(process.cwd(), "client/src/components/DashboardLayout.tsx"), "utf8");
 const registrationMenu = fs.readFileSync(path.resolve(process.cwd(), "client/src/components/AlphaRegistrationMenu.tsx"), "utf8");
+const styles = fs.readFileSync(path.resolve(process.cwd(), "client/src/index.css"), "utf8");
 
 describe("Registrations workspace", () => {
   it("exposes real registration entries", () => {
@@ -41,6 +42,12 @@ describe("Registrations workspace", () => {
     expect(registrationMenu).toContain("Faturat e Blerjes");
     expect(registrationMenu).toContain("Transferta");
     expect(registrationMenu).toContain("role=\"menu\"");
+  });
+
+  it("keeps the registration filters in the compact Alpha toolbar on narrow screens", () => {
+    expect(styles).toContain("section > div:nth-child(2):has(input)");
+    expect(styles).toContain("flex-wrap: nowrap !important");
+    expect(styles).toContain("overflow-x: auto");
   });
 
   it("is wired from the Alpha menu without touching payroll", () => {

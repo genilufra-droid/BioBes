@@ -2202,6 +2202,6 @@
 - [x] Verifiko në browser desktop/mobile çdo modul të standardizuar pa prishur navigimin, RBAC ose kompaninë aktive.
 
 ## Heqja e paneleve moderne të filtrave (2026-08-27)
-- [ ] Hiq panelin e gjatë vertikal “Filtra sipas kolonave” nga regjistri i Shitjeve dhe ruaj filtrimin në format kompakt Alpha.
+- [x] Hiq panelin e gjatë vertikal “Filtra sipas kolonave” nga regjistri i Shitjeve dhe ruaj filtrimin në format kompakt Alpha.
 - [ ] Hiq çdo panel të ngjashëm modern filtrash nga Blerje, Magazina dhe Regjistrime, duke ruajtur filtrat funksionalë të nevojshëm.
 - [ ] Verifiko në desktop dhe mobile që nuk shfaqet më paneli modern me fusha njëra poshtë tjetrës dhe që dokumentet e kompanisë aktive filtrohen saktë.
