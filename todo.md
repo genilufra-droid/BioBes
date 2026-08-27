@@ -2149,8 +2149,9 @@
 - [x] Krijo një llogari të re lokale pa i dhënë automatikisht akses në të dhënat e kompanive ekzistuese.
 - [x] Krijo ndryshim fjalëkalimi për përdoruesin e autentikuar dhe një rrjedhë të sigurt ndihme për fjalëkalim të harruar.
 - [x] Zëvendëso të gjitha thirrjet vizuale të hyrjes Manus me faqen lokale `/login`.
-- [ ] Diagnostiko dhe rregullo dështimin publik `Activation could not be completed` për pronarin ekzistues, pa ndryshuar kompanitë ose të dhënat e tij.
-- [ ] Provo aktivizimin e pronarit me përgjigje të sigurt, pa ekspozuar sekretin, dhe publiko vetëm pasi endpoint-i publik funksionon.
+- [x] Diagnostiko dhe rregullo dështimin publik `Activation could not be completed` për pronarin ekzistues, pa ndryshuar kompanitë ose të dhënat e tij.
+- [x] Provo aktivizimin e pronarit me përgjigje të sigurt, pa ekspozuar sekretin, dhe publiko vetëm pasi endpoint-i publik funksionon.
+- [x] Riprodho dështimin e përsëritur të aktivizimit në rrjedhën reale dhe shto diagnostikim server-side pa zbuluar kredenciale ose ekzistencën e llogarive.
 
 ## Raporte Blerje — filtrat e regjistrit dhe modele të veçanta (2026-08-27)
 - [x] Audito filtrat e regjistrit të faturave dhe çelësat/degët reale për secilin nga 18 modelet Blerje.
