@@ -2136,19 +2136,19 @@
 - [x] Verifiko Blerje, Shitje dhe Magazina në desktop/mobile, pastaj sinkronizo vetëm source-in e verifikuar.
 
 ## Autentikim — llogari e re dhe rivendosje fjalëkalimi (2026-08-27)
-- [ ] Audito hyrjen ekzistuese dhe rrugët lokale/OAuth për të përcaktuar rrjedhën e sigurt të regjistrimit dhe reset-it.
+- [x] Audito hyrjen ekzistuese dhe rrugët lokale/OAuth për të përcaktuar rrjedhën e sigurt të regjistrimit dhe reset-it.
 - [ ] Shto hapje llogarie të re dhe kërkesë të sigurt për rivendosje fjalëkalimi pa zbuluar llogari ekzistuese.
-- [ ] Shto testet e autorizimit/rate-limit dhe verifiko rrjedhën në browser përpara sinkronizimit në BioBes.
+- [x] Shto testet e autorizimit/rate-limit dhe verifiko rrjedhën në browser përpara sinkronizimit në BioBes.
 
 ## Autentikim lokal i pavarur nga Manus (2026-08-27)
-- [ ] Hiq kërkesën për hyrje Manus nga rrjedha normale e aplikacionit dhe përdor sesionin lokal për të gjithë përdoruesit.
+- [x] Hiq kërkesën për hyrje Manus nga rrjedha normale e aplikacionit dhe përdor sesionin lokal për të gjithë përdoruesit.
 - [ ] Shto regjistrim, hyrje, dalje dhe rivendosje fjalëkalimi lokale me kufizim kërkesash dhe pa zbulim të llogarive ekzistuese.
-- [ ] Ruaj kompanitë ekzistuese dhe lejo hyrjen në workspace pa krijuar një kompani të re nga browser-i.
-- [ ] Shto teste dhe verifiko në browser hyrjen lokale përpara sinkronizimit në BioBes.
-- [ ] Lejo pronarin ekzistues pa passwordHash të caktojë fjalëkalimin e parë lokal vetëm me sekretin njëpërdorimësh të serverit.
-- [ ] Krijo një llogari të re lokale pa i dhënë automatikisht akses në të dhënat e kompanive ekzistuese.
-- [ ] Krijo ndryshim fjalëkalimi për përdoruesin e autentikuar dhe një rrjedhë të sigurt ndihme për fjalëkalim të harruar.
-- [ ] Zëvendëso të gjitha thirrjet vizuale të hyrjes Manus me faqen lokale `/login`.
+- [x] Ruaj kompanitë ekzistuese dhe lejo hyrjen në workspace pa krijuar një kompani të re nga browser-i.
+- [x] Shto teste dhe verifiko në browser hyrjen lokale përpara sinkronizimit në BioBes.
+- [x] Lejo pronarin ekzistues pa passwordHash të caktojë fjalëkalimin e parë lokal vetëm me sekretin njëpërdorimësh të serverit.
+- [x] Krijo një llogari të re lokale pa i dhënë automatikisht akses në të dhënat e kompanive ekzistuese.
+- [x] Krijo ndryshim fjalëkalimi për përdoruesin e autentikuar dhe një rrjedhë të sigurt ndihme për fjalëkalim të harruar.
+- [x] Zëvendëso të gjitha thirrjet vizuale të hyrjes Manus me faqen lokale `/login`.
 
 ## Raporte Blerje — filtrat e regjistrit dhe modele të veçanta (2026-08-27)
 - [x] Audito filtrat e regjistrit të faturave dhe çelësat/degët reale për secilin nga 18 modelet Blerje.
