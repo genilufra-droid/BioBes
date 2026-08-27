@@ -2048,4 +2048,78 @@
 - [x] Përshtat katalogun e Magazina me 23 modelet reale Alpha të verifikuara live, duke hequr hyrjet e shpikura dhe duke ruajtur çelësat backend vetëm kur kanë të dhëna reale; u hoqën 4 hyrje cloud të shpikura, alias-et përdorin baseKey reale, dhe kaluan check + 24/24 testet e katalogut/menusë.
 - [x] Hiq nga katalogu i Raporteve header-in global të Analizave dhe sidebar-in vizual kur është brenda workspace-it Alpha; `/reports?module=Blerje` dhe `/reports?module=Magazina` tani hapen vetëm me dritaren e Raporteve.
 - [x] Hiq strukturat custom të ReportsCenter (header global Analiza, kartat/ndarjet jo-Alpha, datat dhe wrapper-at modernë) dhe mbaj vetëm `Raportet.aspx`/`Raport_PivotGrid` si hierarki vizuale; shell-i global u hoq vetëm nga route-i `/reports`, filtrat/eksportet u ruajtën, check dhe 49 teste kaluan.
-- [ ] Sinkronizo në BioBes shell-in vetëm-Alpha të `App.tsx`, katalogun 23-modelësh të Inventarit dhe kontratat e testeve; mos e dorëzo si të fundit pa CI green.
+- [x] Sinkronizo në BioBes shell-in vetëm-Alpha të `App.tsx`, katalogun 23-modelësh të Inventarit dhe kontratat e testeve; commit `3b8baa84431bad3546e99c592fc88b5f4a167702` u shty në `github/main`; CI green `32977573606`: https://github.com/genilufra-droid/BioBes/actions/runs/32977573606.
+- [ ] Në workspace-in e modulit të zgjedhur, hiq panelin custom `Të përgjithshme/Konfigurimi/Raporti`, veprimet Ruaj/Shto/Klono/Modifiko/Fshi dhe drag-fields; lër vetëm listën Alpha të modeleve dhe hyrjen në filtër me klik.
+- [ ] Audit pagesat në raportet e faturimeve/situacioneve: lidh pages, statusin PAID/PARTIAL dhe shumën e mbetur me faturën e së njëjtës kompani; shto test që pagesa ndryshon realisht totalet e raportit.
+
+## Reports Alpha parity — payment audit (2026-08-26)
+- [ ] Audit all sales/purchase/partner situation and billing reports against real company-scoped payment records.
+- [ ] Add payment-aware paid, remaining, and status columns/metrics where report families require them.
+- [ ] Add regression tests for partial/full payment aggregation and unmatched payment rows.
+- [ ] Remove remaining non-Alpha report workspace tabs and model-list action buttons.
+- [ ] Audit Kontabilitet and Banka report catalog against the live Alpha navigation without changing operational modules.
+- [ ] Run targeted/full tests, check, build, and sync the verified reports-only changes to BioBes.
+
+## Reports Alpha parity — inherited follow-up
+- [ ] Verify payments are reflected in every relevant invoice, situation, balance, and partner report using current company data.
+- [ ] Do not mark the reports follow-up complete until source code and tests are synced to GitHub.
+
+## Live Blerje / Purchases audit (2026-08-26)
+- [x] Audit live Alpha nga menuja kryesore te Blerje dhe nënmenutë e saj.
+- [x] Audit modelet e raporteve të Blerjeve, renditjen, accordion-et dhe numërimin e modeleve.
+- [x] Audit filtrat realë të raporteve të Blerjeve dhe rrjedhën e aplikimit të tyre.
+- [x] Audit hapjen e dokumentit të blerjes dhe pamjen e formularit/dokumentit kundrejt Alpha.
+- [x] Dokumento mospërputhjet me URL, hapa dhe screenshot-e para implementimit.
+- [x] Zbato vetëm korrigjimet e Reports/Blerje të konfirmuara nga auditimi.
+- [x] Verifiko rrjedhën Blerje end-to-end me testet, check/build dhe screenshot-e.
+
+## Alpha visual correction — Blerje (2026-08-26)
+- [x] Përshtat layout-in e workspace-it të Blerjeve me pamjen live Alpha dhe hiq hapësirat e panevojshme.
+- [x] Përshtat kartat e modeleve të Blerjeve me renditjen dhe dendësinë e Alpha-s.
+- [x] Përshtat dritaren e filtrave të faturave të blerjes me panelin e Alpha-s dhe toolbar-in e saj.
+- [x] Verifiko që rrjedha Model → Filtra → Shiko → Dokument hapet dhe mbyllet si në Alpha.
+
+## Alpha 1:1 Blerje filters — refinement (2026-08-26)
+- [x] Hiq wrapper-at dhe kontrollet e mbetura jo-Alpha nga workspace-i i Blerjeve.
+- [x] Riorganizo katalogun e Blerjeve sipas listës live Alpha dhe grupeve Kryesore/Te Tjera 2.
+- [x] Rindërto panelin e filtrave të faturave sipas seksioneve kryesorë/avancuar të Alpha-s.
+- [x] Verifiko 1:1 pamjen në desktop dhe rrjedhën e filtrave me Shiko/Pastro/Mbyll.
+
+## Inline Alpha filters — Blerje (2026-08-26)
+- [x] Hiq hapjen e modalit të filtrave kur zgjidhet një model Blerje.
+- [x] Shfaq filtrat direkt në workspace-in e Blerjeve si në Alpha.
+- [x] Apliko `Shiko`, `Pastro` dhe `Faqe Re` pa popup filtrash.
+- [x] Shfaq rezultatin në të njëjtën faqe me mundësi kthimi te filtrat dhe hapje dokumenti.
+
+## Blerje demo → Shitje inline reports (2026-08-26)
+- [x] Hape live modulin Blerje dhe kontrollo hyrjen, formularin dhe ruajtjen e blerjes demo.
+- [x] Përdor blerjen demo në raportet e Blerjeve dhe verifiko filtrat inline, totalet, pagesën dhe dokumentin.
+- [x] Audit existing Shitje report models, data contract, filters, and document links before reuse.
+- [x] Apliko workspace-in Alpha inline dhe filtrat e Blerjeve edhe te Raporte → Shitje.
+- [x] Shto regresione për model-list, filter visibility, inline result flow, and payment/status rendering for Shitje.
+- [x] Verifiko Shitje end-to-end me screenshot, tests, check, build, and checkpoint.
+
+## Blerje demo validation bug (2026-08-26)
+- [x] Rregullo humbjen e `itemId` në rreshtin e faturës kur artikulli zgjidhet nga sugjerimi dhe ndryshohet çmimi.
+- [x] Lejo ruajtjen e draftit me rresht artikulli të zgjedhur dhe pa magazinë, pa raportuar gabimisht `Please select an item in the list`.
+- [x] Verifiko se kontrolli i stokut aktivizohet vetëm kur magazina zgjidhet dhe dokumenti nuk postohet pa stok të mjaftueshëm.
+
+## Alpha filter panel geometry — Blerje + Shitje (2026-08-27)
+- [x] Hiq çdo rezultat të ndarë poshtë filtrave për rrjedhën fillestare dhe mbaje workspace-in në strukturën Alpha.
+- [x] Përshtat panelin me kolonat Lista e Raporteve majtas, filtrat qendrorë/djathtas dhe Shuma poshtë majtas.
+- [x] Përshtat seksionet Number Document, Type, Currency, Date Registration, Identifikues dhe Magazina/Klienti sipas Alpha.
+- [x] Mbaj toolbar-in Alpha në një rresht me Mbyll, Shiko, Faqe Re, Pastro, Lista dhe Vizualizo në Delta.
+- [x] Verifiko të njëjtin layout dhe filtrat për Blerje dhe Shitje në desktop dhe mobile.
+
+## Reports only in Raporte menu (2026-08-27)
+- [ ] Gjej të gjitha hyrjet dhe dritaret e raporteve të integruara në modulet operative.
+- [ ] Hiq listat/dritaret e raporteve nga Blerje, Shitje dhe Magazina pa prekur formularët e dokumenteve.
+- [ ] Ruaj aksesin e raporteve vetëm nga menuja Raporte dhe dokumentet e hapura prej saj.
+- [ ] Shto regresione që modulet operative të mos renderojnë më report workspace/modal.
+- [ ] Verifiko navigimin operacional dhe Raporte në desktop/mobile me check, test, build dhe screenshot.
+
+## Remove legacy report dialogs — Blerje, Shitje, Magazina (2026-08-27)
+- [x] Hiq dialogun legacy të raportit nga çdo kategori ku ende hapet si dritare qendrore.
+- [x] Hape filtrin e secilit raport direkt në workspace-in e Raporteve, pa overlay ose modal.
+- [x] Mbaj listën e raporteve, filtrat e kategorisë dhe komandat Alpha në të njëjtën faqe.
+- [x] Verifiko në veçanti Magazina, Blerje dhe Shitje në desktop dhe mobile.
