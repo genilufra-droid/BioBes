@@ -2049,16 +2049,16 @@
 - [x] Hiq nga katalogu i Raporteve header-in global të Analizave dhe sidebar-in vizual kur është brenda workspace-it Alpha; `/reports?module=Blerje` dhe `/reports?module=Magazina` tani hapen vetëm me dritaren e Raporteve.
 - [x] Hiq strukturat custom të ReportsCenter (header global Analiza, kartat/ndarjet jo-Alpha, datat dhe wrapper-at modernë) dhe mbaj vetëm `Raportet.aspx`/`Raport_PivotGrid` si hierarki vizuale; shell-i global u hoq vetëm nga route-i `/reports`, filtrat/eksportet u ruajtën, check dhe 49 teste kaluan.
 - [x] Sinkronizo në BioBes shell-in vetëm-Alpha të `App.tsx`, katalogun 23-modelësh të Inventarit dhe kontratat e testeve; commit `3b8baa84431bad3546e99c592fc88b5f4a167702` u shty në `github/main`; CI green `32977573606`: https://github.com/genilufra-droid/BioBes/actions/runs/32977573606.
-- [ ] Në workspace-in e modulit të zgjedhur, hiq panelin custom `Të përgjithshme/Konfigurimi/Raporti`, veprimet Ruaj/Shto/Klono/Modifiko/Fshi dhe drag-fields; lër vetëm listën Alpha të modeleve dhe hyrjen në filtër me klik.
-- [ ] Audit pagesat në raportet e faturimeve/situacioneve: lidh pages, statusin PAID/PARTIAL dhe shumën e mbetur me faturën e së njëjtës kompani; shto test që pagesa ndryshon realisht totalet e raportit.
+- [x] Në workspace-in e modulit të zgjedhur, hiq panelin custom `Të përgjithshme/Konfigurimi/Raporti`, veprimet Ruaj/Shto/Klono/Modifiko/Fshi dhe drag-fields; lër vetëm listën Alpha të modeleve dhe hyrjen në filtër me klik.
+- [x] Audit pagesat në raportet e faturimeve/situacioneve: lidh pages, statusin PAID/PARTIAL dhe shumën e mbetur me faturën e së njëjtës kompani; shto test që pagesa ndryshon realisht totalet e raportit.
 
 ## Reports Alpha parity — payment audit (2026-08-26)
 - [ ] Audit all sales/purchase/partner situation and billing reports against real company-scoped payment records.
-- [ ] Add payment-aware paid, remaining, and status columns/metrics where report families require them.
-- [ ] Add regression tests for partial/full payment aggregation and unmatched payment rows.
-- [ ] Remove remaining non-Alpha report workspace tabs and model-list action buttons.
+- [x] Add payment-aware paid, remaining, and status columns/metrics where report families require them.
+- [x] Add regression tests for partial/full payment aggregation and unmatched payment rows.
+- [x] Remove remaining non-Alpha report workspace tabs and model-list action buttons.
 - [ ] Audit Kontabilitet and Banka report catalog against the live Alpha navigation without changing operational modules.
-- [ ] Run targeted/full tests, check, build, and sync the verified reports-only changes to BioBes.
+- [x] Run targeted/full tests, check, build, and sync the verified reports-only changes to BioBes.
 
 ## Reports Alpha parity — inherited follow-up
 - [ ] Verify payments are reflected in every relevant invoice, situation, balance, and partner report using current company data.
