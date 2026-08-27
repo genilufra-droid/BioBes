@@ -54,6 +54,13 @@ describe("Alpha reports menu contract", () => {
     ]);
   });
 
+  it("keeps the sales workspace on its complete report catalog", () => {
+    const salesReports = REPORT_CATALOG.filter(report => report.module === "Shitje");
+    expect(salesReports).toHaveLength(36);
+    expect(salesReports.every(report => report.title.trim().length > 0)).toBe(true);
+    expect(salesReports.every(report => report.group.trim().length > 0)).toBe(true);
+  });
+
   it("matches Alpha's seven partner report models", () => {
     expect(REPORT_CATALOG.filter(report => report.module === "CRM").map(report => report.title)).toEqual([
       "Situacioni i klientit", "Situacioni i furnitorit", "Kartela e klientit", "Kartela e Furnitorit",

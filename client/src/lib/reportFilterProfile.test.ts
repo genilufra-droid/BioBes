@@ -60,6 +60,15 @@ describe("legacy report filter visibility", () => {
     });
   });
 
+  it("keeps the Alpha document filter set for the sales invoice workspace", () => {
+    expect(getLegacyReportFilterVisibility("Shitje", "sales_invoices")).toEqual({
+      documentNumber: true,
+      documentType: true,
+      currency: true,
+      genericAmountSidebar: true,
+    });
+  });
+
   it("keeps only real document, currency and amount filters for sales reference registers", () => {
     for (const reportKey of ["sales_summary_register_pdf", "sales_analytic_register_pdf"]) {
       expect(getLegacyReportFilterVisibility("Shitje", reportKey)).toEqual({
