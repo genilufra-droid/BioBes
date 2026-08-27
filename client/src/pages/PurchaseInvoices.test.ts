@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 
 const source = readFileSync(new URL("./PurchaseInvoices.tsx", import.meta.url), "utf8");
 const filterBarSource = readFileSync(new URL("../components/PurchaseRegisterFilterBar.tsx", import.meta.url), "utf8");
+const styleSource = readFileSync(new URL("../index.css", import.meta.url), "utf8");
 
 describe("Purchase invoice source-document navigation", () => {
   it("renders the invoice number as a clickable source-document link", () => {
@@ -48,5 +49,14 @@ describe("Purchase invoice source-document navigation", () => {
     expect(source).not.toContain("trpc.purchaseReport.summary.useQuery");
     expect(source).toContain('<TabsTrigger value="bills"');
     expect(source).toContain('<TabsTrigger value="orders"');
+  });
+
+  it("uses the compact Alpha workspace shell for the purchase register and new-invoice form", () => {
+    expect(source).toContain('data-alpha-purchase-workspace');
+    expect(source).toContain('data-alpha-purchase-register');
+    expect(source).toContain('Alpha Business / Furnitorë dhe Blerje');
+    expect(source).toContain('bg-gradient-to-b from-[#eef6fa] to-[#b9cfdb]');
+    expect(source).toContain('data-[state=active]:bg-[#3f7191]');
+    expect(styleSource).toContain('[data-alpha-purchase-workspace]');
   });
 });

@@ -110,9 +110,9 @@ function LineEditor({
   onAdd: () => void;
 }) {
   return (
-    <div className="space-y-2 rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
+    <div className="space-y-0 border border-[#9caeba] bg-[#edf2f5] p-0">
       {lines.map((line, index) => (
-        <div key={index} className="grid grid-cols-12 gap-2 border-b border-slate-100 pb-3 last:border-0 last:pb-0">
+        <div key={index} className="grid grid-cols-12 gap-2 border-b border-[#c6d2d8] bg-white p-3 last:border-0">
           <div className={showPrices ? "col-span-12 md:col-span-4" : "col-span-12 md:col-span-5"}>
             <Label className="text-xs">Artikulli</Label>
             <div className="mt-1"><ProductLiveSearch companyId={companyId} products={products} value={line} onSelect={patch => onChange(index, patch)} /></div>
@@ -139,7 +139,7 @@ function LineEditor({
           </div>
         </div>
       ))}
-      <Button type="button" variant="outline" className="w-full border-dashed" onClick={onAdd}>
+      <Button type="button" variant="outline" className="m-3 w-[calc(100%-1.5rem)] rounded-none border-dashed border-[#7892a3] bg-[#f8fbfc] text-[#234b67]" onClick={onAdd}>
         <Plus className="mr-2 h-4 w-4" /> Shto artikull
       </Button>
     </div>
@@ -349,24 +349,22 @@ export default function PurchaseInvoices({ companyId }: { companyId: number }) {
   };
 
   return (
-    <div className="space-y-6">
-      <section className="flex flex-col gap-4 overflow-hidden rounded-xl border bg-white shadow-sm lg:flex-row lg:items-center lg:justify-between">
+    <div data-alpha-purchase-workspace className="space-y-3 bg-[#dfe7ec] p-2">
+      <section className="overflow-hidden border border-[#7892a3] bg-white">
         <div>
-          <div className="border-l-4 border-[#714b67] px-5 py-4"><p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#714b67]">Blerje / Dokumente</p><h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">Faturat e blerjes</h1></div>
+          <div className="px-3 py-2"><p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#536b79]">Alpha Business / Furnitorë dhe Blerje</p><h1 className="mt-0.5 text-base font-bold text-[#234b67]">Faturat e blerjes</h1></div>
         </div>
-        <div className="grid grid-cols-3 gap-2 text-center">
-          <div className="rounded-lg bg-blue-50 px-3 py-2"><p className="text-lg font-bold text-blue-700">{activeOrders}</p><p className="text-xs text-blue-700">Porosi aktive</p></div>
-          <div className="rounded-lg bg-amber-50 px-3 py-2"><p className="text-lg font-bold text-amber-700">{pendingReceipts}</p><p className="text-xs text-amber-700">Pranime draft</p></div>
-          <div className="rounded-lg bg-emerald-50 px-3 py-2"><p className="text-lg font-bold text-emerald-700">{invoices.length}</p><p className="text-xs text-emerald-700">Fatura</p></div>
+        <div className="flex flex-wrap divide-x divide-[#9eafb9] border-t border-[#7892a3] bg-gradient-to-b from-[#eef6fa] to-[#b9cfdb] text-[11px] text-[#234b67] lg:border-l lg:border-t-0">
+          <span className="px-3 py-1">Porosi aktive: <strong>{activeOrders}</strong></span><span className="px-3 py-1">Pranime draft: <strong>{pendingReceipts}</strong></span><span className="px-3 py-1">Fatura: <strong>{invoices.length}</strong></span>
         </div>
       </section>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid h-auto w-full grid-cols-2 gap-1 bg-slate-100 p-1 md:grid-cols-4">
-          <TabsTrigger value="bills"><FileText className="mr-2 h-4 w-4" />Faturat</TabsTrigger>
-          <TabsTrigger value="orders"><ShoppingCart className="mr-2 h-4 w-4" />Porositë</TabsTrigger>
-          <TabsTrigger value="receipts"><PackageCheck className="mr-2 h-4 w-4" />Pranimet</TabsTrigger>
-          <TabsTrigger value="returns"><RotateCcw className="mr-2 h-4 w-4" />Kthimet</TabsTrigger>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-3">
+        <TabsList className="grid h-auto w-full grid-cols-2 gap-0 rounded-none border border-[#7892a3] bg-[#edf2f5] p-0 md:grid-cols-4">
+          <TabsTrigger value="bills" className="rounded-none border-r border-[#7892a3] data-[state=active]:bg-[#3f7191] data-[state=active]:text-white"><FileText className="mr-2 h-4 w-4" />Faturat</TabsTrigger>
+          <TabsTrigger value="orders" className="rounded-none border-r border-[#7892a3] data-[state=active]:bg-[#3f7191] data-[state=active]:text-white"><ShoppingCart className="mr-2 h-4 w-4" />Porositë</TabsTrigger>
+          <TabsTrigger value="receipts" className="rounded-none border-r border-[#7892a3] data-[state=active]:bg-[#3f7191] data-[state=active]:text-white"><PackageCheck className="mr-2 h-4 w-4" />Pranimet</TabsTrigger>
+          <TabsTrigger value="returns" className="rounded-none data-[state=active]:bg-[#3f7191] data-[state=active]:text-white"><RotateCcw className="mr-2 h-4 w-4" />Kthimet</TabsTrigger>
         </TabsList>
 
         <TabsContent value="bills" className="space-y-4">
@@ -374,11 +372,11 @@ export default function PurchaseInvoices({ companyId }: { companyId: number }) {
             <Button variant="outline" onClick={() => void exportPurchaseRegisterToExcel(visibleRegisterRows)}><Download className="mr-2 h-4 w-4" />Excel</Button>
             <Button variant="outline" onClick={() => exportPurchaseRegisterToPDF(visibleRegisterRows)}><Download className="mr-2 h-4 w-4" />PDF</Button>
             <Dialog open={billOpen} onOpenChange={setBillOpen}>
-              <DialogTrigger asChild><Button><FilePlus2 className="mr-2 h-4 w-4" />Faturë e re</Button></DialogTrigger>
+            <DialogTrigger asChild><Button className="rounded-none border border-[#285a7a] bg-[#3f7191] text-white hover:bg-[#285a7a]"><FilePlus2 className="mr-2 h-4 w-4" />Faturë e re</Button></DialogTrigger>
               <DialogContent className="!left-0 !top-0 !h-[100dvh] !w-screen !max-w-none !translate-x-0 !translate-y-0 rounded-none border-0 bg-[#f8f8f8] p-0">
                 <form className="flex h-full flex-col" onSubmit={submitBill}>
-                  <header className="flex min-h-[58px] shrink-0 items-center border-b border-[#d9d4da] bg-white px-4 sm:px-6"><div><p className="text-[11px] text-[#777]">Blerje <span className="mx-1">/</span><span className="text-[#714b67]">Fatura furnitori</span></p><DialogTitle className="mt-0.5 text-lg font-semibold text-[#343434]">Faturë e re e blerjes</DialogTitle></div><div className="ml-auto flex items-center gap-2"><Button type="button" size="sm" variant="outline" onClick={() => setBillOpen(false)}>Anulo</Button><Button size="sm" className="bg-[#714b67] text-white hover:bg-[#5e3d58]" disabled={createBill.isPending}>{createBill.isPending ? "Po ruhet…" : "Ruaj faturën"}</Button></div></header>
-                  <div className="flex shrink-0 justify-end border-b border-[#ded9df] bg-white px-4 sm:px-6"><span className="border-l border-r border-t border-[#d3c8d0] bg-[#f7eff5] px-5 py-2 text-xs font-semibold text-[#714b67]">DRAFT</span><span className="border-r border-[#e3dfe3] px-5 py-2 text-xs font-medium text-[#888]">POSTED</span><span className="border-r border-[#e3dfe3] px-5 py-2 text-xs font-medium text-[#888]">PAID</span></div>
+                  <header className="flex min-h-[52px] shrink-0 items-center border-b border-[#7892a3] bg-gradient-to-b from-[#eef6fa] to-[#b9cfdb] px-4 sm:px-6"><div><p className="text-[10px] font-semibold uppercase tracking-wide text-[#536b79]">Alpha Business / Blerje / Fatura furnitori</p><DialogTitle className="mt-0.5 text-base font-bold text-[#234b67]">Faturë e re e blerjes</DialogTitle></div><div className="ml-auto flex items-center gap-2"><Button type="button" size="sm" variant="outline" className="h-7 rounded-none border-[#7892a3] bg-[#f8fbfc] text-xs text-[#234b67]" onClick={() => setBillOpen(false)}>Anulo</Button><Button size="sm" className="h-7 rounded-none border border-[#285a7a] bg-[#3f7191] text-xs text-white hover:bg-[#285a7a]" disabled={createBill.isPending}>{createBill.isPending ? "Po ruhet…" : "Ruaj faturën"}</Button></div></header>
+                  <div className="flex shrink-0 justify-end border-b border-[#7892a3] bg-[#edf2f5] px-4 sm:px-6"><span className="border-l border-r border-t border-[#7892a3] bg-white px-5 py-2 text-xs font-semibold text-[#234b67]">DRAFT</span><span className="border-r border-[#b6c5cc] px-5 py-2 text-xs font-medium text-[#536b79]">POSTED</span><span className="border-r border-[#b6c5cc] px-5 py-2 text-xs font-medium text-[#536b79]">PAID</span></div>
                   <ScrollArea className="min-h-0 flex-1"><div className="mx-auto max-w-6xl space-y-5 p-4 sm:p-6"><section className="rounded-md border border-[#ddd8dd] bg-white p-5"><div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_260px]"><div><h2 className="text-2xl font-semibold tracking-[-0.02em] text-[#343434]">Faturë furnitori</h2><div className="mt-5 max-w-xl"><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">Furnitori</Label><div className="mt-1"><EntityLiveSearch idName="supplierId" nameName="supplierName" items={suppliers} placeholder="Kërko ose shkruaj furnitorin..." /></div></div></div><div className="grid content-start gap-4"><div><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">Numri i faturës</Label><Input name="docNumber" required className="mt-1 h-10" placeholder="BL-0001" /></div><div><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">Data e faturës</Label><Input name="date" required type="date" defaultValue={today()} className="mt-1 h-10" /></div></div></div></section>
                     <section className="overflow-visible rounded-md border border-[#ddd8dd] bg-white"><div className="flex items-center justify-between border-b border-[#e9e5e9] px-5 py-3"><div><h2 className="text-sm font-semibold text-[#343434]">Rreshtat e faturës</h2><p className="mt-0.5 text-xs text-[#777]">Kërko artikullin direkt në rresht ose krijoje nëse nuk ekziston.</p></div><span className="text-xs font-medium text-[#714b67]">{billLines.length} rreshta</span></div><div className="p-4"><LineEditor companyId={companyId} lines={billLines} products={productOptions} showPrices onChange={(index, patch) => mutateLine(setBillLines, index, patch)} onRemove={index => removeLine(setBillLines, index)} onAdd={() => setBillLines(lines => [...lines, blankLine()])} /></div><div className="flex justify-end border-t border-[#e9e5e9] bg-[#fbfafb] px-5 py-4"><div className="min-w-72 space-y-2 text-sm"><div className="flex justify-between text-[#777]"><span>Pa taksa</span><span>{money(billTotal)}</span></div><div className="flex justify-between border-t border-[#ddd8dd] pt-3 text-lg font-semibold text-[#343434]"><span>Totali</span><span>{money(billTotal)}</span></div></div></div></section>
                     <section className="rounded-md border border-[#ddd8dd] bg-white"><div className="border-b border-[#e9e5e9] px-5 py-3 text-sm font-semibold">Magazina, TVSH, transport dhe inventar</div><div className="grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-7"><div><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">Magazina</Label><select name="warehouseId" className="mt-1 h-10 w-full rounded-md border border-[#d3ccd3] bg-white px-3 text-sm"><option value="">Zgjidh magazinën</option>{warehouses.map(warehouse => <option key={warehouse.id} value={warehouse.id}>{warehouse.name}{warehouse.code ? ` · ${warehouse.code}` : ""}</option>)}</select></div><div><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">Monedha</Label><select name="currency" defaultValue="ALL" className="mt-1 h-10 w-full rounded-md border border-[#d3ccd3] bg-white px-3 text-sm"><option value="ALL">Lek (ALL)</option><option value="EUR">Euro (EUR)</option><option value="USD">Dollar (USD)</option><option value="GBP">Pound (GBP)</option></select></div><div><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">Kursi i këmbimit</Label><Input name="exchangeRate" min="0.000001" step="0.000001" type="number" defaultValue="1" required className="mt-1 h-10" /><span className="text-[10px] text-[#777]">ALL për 1 njësi</span></div><div><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">TVSH (qindarka)</Label><Input name="vatAmount" min="0" type="number" defaultValue="0" className="mt-1 h-10" /></div><div><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">Transportuesi</Label><Input name="carrierName" className="mt-1 h-10" placeholder="Emri i transportuesit" /></div><div><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">Targa</Label><Input name="vehiclePlate" className="mt-1 h-10" placeholder="AA 000 AA" /></div><div><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">Referenca e inventarit</Label><Input name="inventoryReference" className="mt-1 h-10" placeholder="INV-0001" /></div></div><div className="border-t border-[#e9e5e9] px-5 py-3 text-sm text-[#777]">Fatura ruhet fillimisht si draft. Mund të postohen dhe pajtohen pagesat nga moduli Kontabilitet.</div></section></div></ScrollArea>
@@ -386,10 +384,12 @@ export default function PurchaseInvoices({ companyId }: { companyId: number }) {
               </DialogContent>
             </Dialog>
           </div>
-          <PurchaseRegisterFilterBar filters={registerFilters} onChange={setRegisterFilters} />
-          <PurchaseSupplierSummary rows={visibleRegisterRows} supplierQuery={registerFilters.supplier} />
-          <PurchaseInvoiceRegisterCompact companyId={companyId} rows={visibleRegisterRows} search={registerSearch} status={registerStatus} onSearchChange={setRegisterSearch} onStatusChange={setRegisterStatus} onOpenInvoice={setSelectedInvoiceId} />
-          <PurchaseRegisterTotals rows={visibleRegisterRows} />
+          <div data-alpha-purchase-register className="space-y-3">
+            <PurchaseRegisterFilterBar filters={registerFilters} onChange={setRegisterFilters} />
+            <PurchaseSupplierSummary rows={visibleRegisterRows} supplierQuery={registerFilters.supplier} />
+            <PurchaseInvoiceRegisterCompact companyId={companyId} rows={visibleRegisterRows} search={registerSearch} status={registerStatus} onSearchChange={setRegisterSearch} onStatusChange={setRegisterStatus} onOpenInvoice={setSelectedInvoiceId} />
+            <PurchaseRegisterTotals rows={visibleRegisterRows} />
+          </div>
         </TabsContent>
 
         <TabsContent value="orders"><PurchaseOrdersWorkspace companyId={companyId} /></TabsContent>

@@ -2193,3 +2193,10 @@
 ## Përdorimi nga iPhone/iPad (2026-08-27)
 - [ ] Përshtat navigimin kryesor për ekran të ngushtë, pa prerë ose fshehur menutë e sistemit.
 - [ ] Verifiko hyrjen lokale dhe ambientin kryesor në pamje iPhone pa scroll horizontal të paqëllimshëm.
+
+## Standardi Alpha Web — të gjitha modulet (2026-08-27)
+- [ ] Inventarizo pamjet dhe komponentët e trashëguar në Blerje, Shitje, Magazina dhe Regjistrime, duke ruajtur rrjedhat dhe të dhënat aktuale.
+- [ ] Standardizo shell-in, toolbar-in, filtrat, tabelat dhe formularët e Blerjeve sipas gjuhës vizuale Alpha.
+- [ ] Standardizo shell-in, toolbar-in, filtrat, tabelat dhe formularët e Shitjeve sipas gjuhës vizuale Alpha.
+- [ ] Standardizo shell-in, toolbar-in, filtrat, tabelat dhe formularët e Magazinës dhe Regjistrimeve sipas gjuhës vizuale Alpha.
+- [ ] Verifiko në browser desktop/mobile çdo modul të standardizuar pa prishur navigimin, RBAC ose kompaninë aktive.

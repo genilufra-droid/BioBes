@@ -54,6 +54,17 @@
 
 @layer components {
   .alpha-form-tool { @apply inline-flex min-w-[54px] flex-col items-center justify-center gap-0.5 border border-transparent px-1.5 py-0.5 text-[10px] text-[#315a75] transition-colors hover:border-[#9ab2c4] hover:bg-white disabled:cursor-default disabled:opacity-45; }
+  [data-alpha-purchase-workspace] { font-family: Tahoma, "Segoe UI", Arial, sans-serif; color: #242424; }
+  [data-alpha-purchase-workspace] .rounded-xl,
+  [data-alpha-purchase-workspace] .rounded-lg,
+  [data-alpha-purchase-workspace] .rounded-md { border-radius: 0 !important; }
+  [data-alpha-purchase-workspace] .shadow-sm { box-shadow: none !important; }
+  [data-alpha-purchase-workspace] [class*="bg-\[\#714b67\]"] { background-color: #3f7191 !important; }
+  [data-alpha-purchase-workspace] [class*="text-\[\#714b67\]"] { color: #234b67 !important; }
+  [data-alpha-purchase-workspace] [class*="border-\[\#714b67\]"] { border-color: #7892a3 !important; }
+  [data-alpha-purchase-workspace] [class*="bg-\[\#c9aba7\]"] { background-color: #b9cfdb !important; color: #234b67 !important; }
+  [data-alpha-purchase-workspace] [class*="border-\[\#8f746f\]"] { border-color: #7892a3 !important; }
+  [data-alpha-purchase-workspace] [class*="border-\[\#d4cdce\]"] { border-color: #c6d2d8 !important; }
 }
 
 @layer base {
@@ -855,48 +866,69 @@ body:has(.reference-report-dialog) {
 
 /* Supplier card — simple reference document from the AnyDesk/PDF screenshot. */
 .supplier-card-simple-sheet {
-  width: min(1079px, calc(100vw - 24px));
-  min-height: 308px;
+  width: min(1018px, calc(100vw - 24px));
+  min-height: 463px;
   box-sizing: border-box;
-  padding: 24px 36px 32px;
+  padding: 10px;
   overflow: hidden;
-  font-family: Arial, Helvetica, sans-serif !important;
-  font-size: 10px;
-  line-height: 1.2;
+  font-family: Calibri, Arial, sans-serif !important;
+  font-size: 12px;
+  line-height: 1.15;
   background: #fff !important;
-  color: #191919 !important;
+  color: #008000 !important;
 }
 .supplier-card-simple-header {
   position: relative;
-  height: 82px;
+  height: 118px;
   text-align: center;
   white-space: nowrap;
 }
 .supplier-card-simple-year {
   position: absolute;
   top: 4px;
-  left: -8px;
-  font-size: 10px;
+  left: 0;
+  font-size: 12px;
   font-weight: 700;
 }
 .supplier-card-simple-header h2 {
-  margin: 37px 0 8px;
-  font-size: 10px;
+  margin: 26px 0 8px;
+  color: #008000;
+  font-size: 30px;
+  line-height: 1.1;
   font-weight: 700;
-  letter-spacing: .06em;
+  letter-spacing: 0;
 }
 .supplier-card-simple-header p {
   margin: 0;
-  font-size: 10px;
+  color: #008000;
+  font-size: 13px;
   font-weight: 700;
+}
+.supplier-card-simple-report-filters {
+  display: grid;
+  grid-template-columns: 1.25fr 1.25fr 1.35fr;
+  gap: 18px;
+  min-height: 30px;
+  align-items: start;
+  padding: 0 2px 4px;
+  color: #808080;
+  font-family: "Times New Roman", serif;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.supplier-card-simple-report-filters strong {
+  font-weight: 400;
 }
 .supplier-card-simple-identification {
   display: grid;
-  grid-template-columns: 2.15fr 1.55fr .65fr 1.15fr 1.05fr;
+  grid-template-columns: 1.55fr .9fr 1.55fr 1fr;
   align-items: center;
-  gap: 14px;
+  gap: 20px;
   min-height: 30px;
   padding: 0 2px 7px;
+  color: #6b8e23;
+  font-family: "Times New Roman", serif;
+  font-size: 13px;
   white-space: nowrap;
 }
 .supplier-card-simple-identification strong {
@@ -919,21 +951,22 @@ body:has(.reference-report-dialog) {
   width: 100%;
   table-layout: fixed;
   border-collapse: collapse;
-  background: #fffedc;
-  color: #191919;
-  font-size: 9px;
+  background: #f0fff0;
+  color: #008000;
+  font-family: Calibri, Arial, sans-serif !important;
+  font-size: 12px;
 }
 .supplier-card-simple-table th,
 .supplier-card-simple-table td {
-  border: 1px solid #151515;
-  padding: 3px 4px;
+  border: 1px solid #808080;
+  padding: 2px 3px;
   vertical-align: middle;
   overflow: hidden;
   text-overflow: clip;
 }
 .supplier-card-simple-table th {
-  height: 22px;
-  background: #fffedc;
+  height: 32px;
+  background: #f0fff0;
   text-align: center;
   font-weight: 700;
 }
@@ -957,23 +990,26 @@ body:has(.reference-report-dialog) {
 .supplier-card-simple-table th:nth-child(8),
 .supplier-card-simple-table th:nth-child(9) { width: 9.33%; }
 .supplier-card-simple-table thead tr:first-child th[colspan="3"] {
-  height: 22px;
+  height: 32px;
 }
 .supplier-card-simple-table tbody td {
-  height: 20px;
-  background: #fffef1;
+  height: 24px;
+  background: #fff;
+  color: #000;
 }
 .supplier-card-simple-table tbody tr.supplier-card-simple-balance td {
-  height: 21px;
-  background: #fffedc;
+  height: 24px;
+  background: #f0fff0;
+  color: #6b8e23;
   font-weight: 400;
 }
 .supplier-card-simple-table tbody tr.supplier-card-simple-balance td:nth-child(6) {
   text-align: left;
 }
 .supplier-card-simple-table tfoot td {
-  height: 43px;
-  background: #fffedc;
+  height: 26px;
+  background: #fff;
+  color: #6b8e23;
   font-weight: 700;
 }
 .supplier-card-simple-table tfoot td:last-child {
