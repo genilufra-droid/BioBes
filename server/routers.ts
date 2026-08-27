@@ -747,7 +747,7 @@ export const appRouter = router({
         date: z.date(),
         supplierId: z.number().optional(),
         supplierName: z.string().optional(),
-        warehouseId: z.number().int().positive(),
+        warehouseId: z.number().int().positive().optional(),
         currency: z.string().min(3).max(10).default("ALL"),
         exchangeRate: z.union([z.number(), z.string()]).optional(),
         vatAmount: z.number().int().min(0).optional(),
@@ -756,7 +756,8 @@ export const appRouter = router({
         inventoryReference: z.string().max(100).optional(),
         items: z.array(purchaseLineSchema).default([]),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        await assertCompanyWriteAccess(ctx.user, input.companyId);
         const currency = normalizeInvoiceCurrency(input.currency, input.exchangeRate);
         const totalAmount = input.items.length > 0 ? calculatePurchaseTotal(input.items) : 0;
         return db.createPurchaseInvoice({

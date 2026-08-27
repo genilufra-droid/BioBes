@@ -26,4 +26,18 @@ describe("ID-only route company isolation", () => {
     expect(invoice).not.toHaveBeenCalled();
     expect(items).not.toHaveBeenCalled();
   });
+
+  it("rejects creating a purchase invoice in another company before writing to the database", async () => {
+    vi.spyOn(db, "getUserCompanies").mockResolvedValue([{ companyId: 1, role: "viewer" }] as never);
+    const create = vi.spyOn(db, "createPurchaseInvoice").mockResolvedValue({ id: 11 } as never);
+
+    await expect(appRouter.createCaller(ctx()).purchaseInvoice.create({
+      companyId: 2,
+      docNumber: "BL-CROSS-TENANT",
+      date: new Date("2026-08-27T00:00:00.000Z"),
+      items: [],
+    })).rejects.toMatchObject({ code: "FORBIDDEN" });
+
+    expect(create).not.toHaveBeenCalled();
+  });
 });
