@@ -25,10 +25,12 @@ describe("local auth first-run bootstrap validation", () => {
   });
 
   it("requires the configured setup secret and compares it without plaintext equality", () => {
-    expect(hasValidSetupSecret("setup-secret", "setup-secret")).toBe(true);
-    expect(hasValidSetupSecret("wrong-secret", "setup-secret")).toBe(false);
-    expect(hasValidSetupSecret(undefined, "setup-secret")).toBe(false);
+    const setupSecret = "setup-secret-with-at-least-32-characters";
+    expect(hasValidSetupSecret(setupSecret, setupSecret)).toBe(true);
+    expect(hasValidSetupSecret("wrong-secret", setupSecret)).toBe(false);
+    expect(hasValidSetupSecret(undefined, setupSecret)).toBe(false);
     expect(hasValidSetupSecret("setup-secret", "")).toBe(false);
+    expect(hasValidSetupSecret("setup-secret", "too-short-secret")).toBe(false);
   });
 
   it("limits repeated attempts and resets after the window", () => {
