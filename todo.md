@@ -2130,3 +2130,7 @@
 
 ## Pastrim i workspace-it legacy të Raporteve (2026-08-27)
 - [x] Hiq importet e panevojshme të mbetura nga komponentët e hequr të workspace-it legacy, pa prekur dokumentin e raportit ose lookup-un.
+
+## Korrigjim — pa wrapper dritare për filtrat e Raporteve (2026-08-27)
+- [x] Hiq kornizën dhe titullin e mbetur të dritares nga workspace-i inline, që klikimi i raportit të shfaqë vetëm filtrat Alpha në vetë faqen.
+- [x] Verifiko Blerje, Shitje dhe Magazina në desktop/mobile, pastaj sinkronizo vetëm source-in e verifikuar.
