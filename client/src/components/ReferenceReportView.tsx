@@ -669,75 +669,51 @@ function PurchaseSummaryRegisterReferenceView({ props }: { props: Props }) {
   </section>;
 }
 
-export function ReferenceReportView({ reportKey, module, alphaFormat = false, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }: Props) {
-  if (reportKey === "inventory_product_card_pdf") return <ProductCardReferenceView props={{ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }} />;
-  if (reportKey === "purchase_supplier_card_pdf" || reportKey === "purchase_supplier_card_format3_pdf") return <SupplierCardSimpleReferenceView props={{ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }} />;
-  if (reportKey === "sales_customer_statement") return <SupplierCardSimpleReferenceView entity="customer" props={{ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }} />;
-  if (reportKey === "sales_summary_register_pdf") return <SalesSummaryRegisterReferenceView props={{ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }} />;
-  if (reportKey === "purchase_summary_register_pdf") return <PurchaseSummaryRegisterReferenceView props={{ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }} />;
-  if (reportKey === "sales_quantity_total_pdf") return <SalesQuantityTotalReferenceView props={{ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }} />;
-  if (reportKey === "sales_quantity_pdf") return <SalesQuantityReferenceView props={{ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }} />;
+export function ReferenceReportView({ reportKey, module: _module, alphaFormat: _alphaFormat = true, title, period, columns, rows, metrics: _metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }: Props) {
   const displayGroups = getReferenceGroups(reportKey, columns);
   const displayColumns = displayGroups.length > 0 ? displayGroups.flatMap(group => group.columns) : columns;
   const hasDisplayGroups = displayGroups.length > 0;
-  const isPdfStyle = alphaFormat || reportKey.endsWith("_pdf");
+  const isPdfStyle = true;
   const displayTitle = getReferenceTitle(reportKey, title);
   const columnFor = (column: string) => columns.find(actual => normalize(actual) === normalize(column)) ?? column;
   const metaValue = (label: string) => meta?.[label] ?? (label === "Periudha" || label === "Periudha e maturimit" || label === "Data e raportimit" ? period : "—");
   const totalFor = (column: string) => sumNumericColumn(rows, columnFor(column));
-  const isSupplierCard = reportKey === "purchase_supplier_card_pdf";
-  const supplierDebit = isSupplierCard ? totalFor("Debi") ?? 0 : 0;
-  const supplierCredit = isSupplierCard ? totalFor("Kredi") ?? 0 : 0;
-  const supplierEndingProgressive = isSupplierCard ? Number(rows[rows.length - 1]?.[columnFor("Progresivi")] ?? supplierDebit - supplierCredit) : 0;
-  const supplierBalance = resolveSupplierBalanceStatus(supplierDebit, supplierCredit);
-
   return (
-    <div className={`reference-report-sheet mx-auto max-w-[1480px] bg-white shadow-sm ring-1 ring-slate-200 ${isPdfStyle ? "p-5 lg:p-7" : "p-4 lg:p-7"}`}>
-      {isPdfStyle ? <header className="border-b border-[#4a4a36] pb-3">
-        <div className="flex items-start justify-between text-[10px] text-[#25251f]"><span>{new Date().getFullYear()}</span><span>{period}</span></div>
-        <h2 className="mt-1 text-center text-base font-bold uppercase text-[#25251f]">{displayTitle}</h2>
-      </header> : <header className="border-b-2 border-[#714b67] pb-4 text-center">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#714b67]">{module} · Raport reference</p>
-        <h2 className="mt-1 text-xl font-bold text-slate-900">{title}</h2>
-        <p className="mt-1 text-xs text-slate-500">Periudha: {period}</p>
-      </header>}
+    <div data-alpha-report-sheet className="reference-report-sheet mx-auto max-w-[1480px] bg-white p-5 font-serif shadow-sm ring-1 ring-[#808080] lg:p-7">
+      <header className="border-b border-black pb-3">
+        <div className="flex items-start justify-between text-[10px] text-[#808080]"><span>{new Date().getFullYear()}</span><span>{period}</span></div>
+        <h2 className="mt-1 text-center text-[30px] font-bold uppercase leading-tight text-[#008000]">{displayTitle}</h2>
+      </header>
 
-      {(REPORT_REFERENCE_META[reportKey] ?? []).length > 0 && <div className={`my-3 flex flex-wrap gap-x-8 gap-y-1 border-b pb-3 text-[10px] ${isPdfStyle ? "border-[#8a8a63] text-[#25251f]" : "border-slate-200 text-slate-500"}`}>
+      {(REPORT_REFERENCE_META[reportKey] ?? []).length > 0 && <div className="my-3 flex flex-wrap gap-x-8 gap-y-1 border-b border-[#808080] pb-3 text-[10px] text-[#808080]">
         {(REPORT_REFERENCE_META[reportKey] ?? []).map(label => <span key={label}><strong>{label}:</strong> {metaValue(label)}</span>)}
       </div>}
 
-      {!isPdfStyle && metrics.length > 0 && <div className="my-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {metrics.map(metric => <div key={metric.label} className="border border-[#d8c5d2] bg-[#fcf8fb] p-3">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">{metric.label}</p>
-          <p className="mt-1 text-lg font-bold text-[#714b67]">{reportMetricValue(metric.label, metric.value, rows, columns).toLocaleString("sq-AL")}</p>
-        </div>)}
-      </div>}
-
       <div className="overflow-x-auto">
-        <table className={`w-full min-w-[850px] border-collapse text-[11px] ${isPdfStyle ? "bg-[#fffef1]" : ""}`}>
+        <table className="w-full min-w-[850px] border-collapse bg-[#F0FFF0] text-[11px] text-[#008000]">
           <thead>
-            {hasDisplayGroups && <tr className={`${isPdfStyle ? "bg-[#f1f0c8] text-[#25251f]" : "bg-[#e9dce7] text-[#55394f]"} text-[10px] uppercase tracking-wide`}>
-              {displayGroups.map(group => <th key={group.label} colSpan={group.columns.length} className={`border px-2 py-1.5 text-center font-bold ${isPdfStyle ? "border-[#8a8a63]" : "border-[#cbb8c8]"}`}>{group.label}</th>)}
+            {hasDisplayGroups && <tr className="bg-[#F0FFF0] text-[10px] uppercase tracking-wide text-[#008000]">
+              {displayGroups.map(group => <th key={group.label} colSpan={group.columns.length} className="border border-[#808080] px-2 py-1.5 text-center font-bold">{group.label}</th>)}
             </tr>}
-            <tr className={isPdfStyle ? "bg-[#e6e5b5] text-[#25251f]" : "bg-[#714b67] text-white"}>
-              {displayColumns.map(column => <th key={column} className={`border px-2 py-2 text-left font-semibold ${isPdfStyle ? "border-[#8a8a63]" : "border-[#87617d]"}`}><button type="button" className="inline-flex items-center gap-1 font-semibold" onClick={() => onSort(column)}>{getReferenceColumnLabel(reportKey, column)}<span aria-hidden="true">{sort?.column === column ? (sort.direction === "asc" ? "↑" : "↓") : "↕"}</span></button></th>)}
+            <tr className="bg-[#F0FFF0] text-[#008000]">
+              {displayColumns.map(column => <th key={column} className="border border-[#808080] px-2 py-2 text-left font-semibold"><button type="button" className="inline-flex items-center gap-1 font-semibold" onClick={() => onSort(column)}>{getReferenceColumnLabel(reportKey, column)}<span aria-hidden="true">{sort?.column === column ? (sort.direction === "asc" ? "↑" : "↓") : "↕"}</span></button></th>)}
             </tr>
           </thead>
           <tbody>
-            {isLoading ? <tr><td colSpan={Math.max(columns.length, 1)} className="p-10 text-center text-slate-500">Po ngarkohet...</td></tr> : rows.length === 0 ? <tr><td colSpan={Math.max(columns.length, 1)} className="p-10 text-center text-slate-500">Nuk ka të dhëna.</td></tr> : rows.map((row, index) => <tr key={index} className={`border-b border-slate-200 odd:bg-white even:bg-[#faf8fb] hover:bg-[#f3ebf2] ${isSupplierCard && index === rows.length - 1 ? "supplier-card-simple-last-row" : ""}`}>
+            {isLoading ? <tr><td colSpan={Math.max(columns.length, 1)} className="p-10 text-center text-[#808080]">Po ngarkohet...</td></tr> : rows.length === 0 ? <tr><td colSpan={Math.max(columns.length, 1)} className="p-10 text-center text-[#808080]">Nuk ka të dhëna.</td></tr> : rows.map((row, index) => <tr key={index} className="border-b border-[#808080] odd:bg-white even:bg-[#F7FFF7] hover:bg-[#E6FFE6]">
               {displayGroups.flatMap(group => group.columns).map(column => {
                 const actual = columnFor(column);
-                return <td key={column} className="border-x border-slate-100 px-2 py-2 align-middle">{isLinkedDocument(row, actual) ? <SourceDocumentLink label={cellValue(row[actual])} onOpen={() => onOpenDocument(row)} /> : cellValue(row[actual])}</td>;
+                return <td key={column} className="border-x border-[#808080] px-2 py-2 align-middle">{isLinkedDocument(row, actual) ? <SourceDocumentLink label={cellValue(row[actual])} onOpen={() => onOpenDocument(row)} /> : cellValue(row[actual])}</td>;
               })}
             </tr>)}
           </tbody>
-                      {!isLoading && <tfoot>{isSupplierCard ? <><tr className={`supplier-card-simple-balance-summary supplier-card-simple-${supplierBalance.status === "DEBITOR" ? "debitor" : supplierBalance.status === "KREDITOR" ? "kreditor" : "balanc"}`}><td colSpan={Math.max(displayColumns.length - 3, 1)}>Gjendja përfundimtare: <strong>{supplierBalance.status}</strong></td><td colSpan={2}>{cellValue(supplierBalance.amount)}</td><td>{cellValue(supplierEndingProgressive)}</td></tr><tr className="supplier-card-simple-total-row">{displayColumns.map((column, index) => { const total = totalFor(column); return <td key={column} className="border-x border-slate-200 px-2 py-2">{index === 0 ? "TOTALI I RAPORTIT" : column === "Progresivi" || column === "Progresivi llogari" ? cellValue(supplierEndingProgressive) : total === null ? "" : cellValue(total)}</td>; })}</tr></> : <tr className={`border-t-2 font-bold ${isPdfStyle ? "border-[#4a4a36] bg-[#f1f0c8] text-[#25251f]" : "border-[#714b67] bg-[#fcf8fb] text-[#714b67]"}`}>{displayColumns.map((column, index) => { const total = totalFor(column); return <td key={column} className="border-x border-slate-200 px-2 py-2">{index === 0 ? getReferenceTotalLabel(reportKey) : total === null ? "" : cellValue(total)}</td>; })}</tr>}</tfoot>}
+          {!isLoading && <tfoot><tr className="border-t-2 border-black bg-[#F0FFF0] font-bold text-[#008000]">{displayColumns.map((column, index) => { const total = totalFor(column); return <td key={column} className="border-x border-[#808080] px-2 py-2">{index === 0 ? getReferenceTotalLabel(reportKey) : total === null ? "" : cellValue(total)}</td>; })}</tr></tfoot>}
 
         </table>
       </div>
 
-      <footer className={`mt-5 flex flex-wrap justify-between gap-2 border-t pt-2 text-[9px] tracking-wide ${isPdfStyle ? "border-[#4a4a36] text-[#25251f]" : "border-slate-300 uppercase text-slate-500"}`}>
-        <span>{isPdfStyle ? `Printuar nga Sistemi Genit Cloud · ${new Date().toLocaleDateString("sq-AL")}` : `Sistemi Genit Cloud · ${new Date().toLocaleDateString("sq-AL")}`}</span>
+      <footer className="mt-5 flex flex-wrap justify-between gap-2 border-t border-black pt-2 text-[9px] italic tracking-wide text-[#008000]">
+        <span>Printuar nga Sistemi Genit Cloud · {new Date().toLocaleDateString("sq-AL")}</span>
         <span aria-hidden="true">{getReferenceStaticPageLabel()}</span>
       </footer>
     </div>

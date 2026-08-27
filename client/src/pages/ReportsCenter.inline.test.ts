@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 
 const reportsCenterSource = readFileSync(new URL("./ReportsCenter.tsx", import.meta.url), "utf8");
 const inlineFiltersSource = readFileSync(new URL("../components/AlphaReportInlineFilters.tsx", import.meta.url), "utf8");
+const referenceViewSource = readFileSync(new URL("../components/ReferenceReportView.tsx", import.meta.url), "utf8");
 
 describe("ReportsCenter inline Alpha workspace", () => {
   it("does not retain report filter or result dialogs", () => {
@@ -43,5 +44,11 @@ describe("ReportsCenter inline Alpha workspace", () => {
     expect(reportsCenterSource).toContain('resolveReportModuleForRoute(isModule(requestedModule) ? requestedModule : undefined, requestedReport)');
     expect(reportsCenterSource).toContain('const isReferenceReport = selectedPresentation?.resultFormat === "alpha-reference";');
     expect(reportsCenterSource).toContain('alphaFormat');
+  });
+
+  it("does not retain the legacy special-sheet preview branch for report results", () => {
+    expect(reportsCenterSource).not.toContain('purchase_supplier_card_format3_pdf") {');
+    expect(referenceViewSource).not.toContain('return <ProductCardReferenceView');
+    expect(referenceViewSource).toContain('data-alpha-report-sheet');
   });
 });

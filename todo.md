@@ -2182,6 +2182,11 @@
 - [x] Standardizo formatin e rezultateve Blerje, Shitje dhe Magazina në komponentin e dedikuar sipas modelit Alpha.
 - [x] Shto regresione për të provuar që një çelës raporti nuk merr modul ose model pamjeje të gabuar.
 
+## Raportet — eliminimi i pamjeve të vjetra (2026-08-27)
+- [ ] Inventarizo të gjitha degët e renderimit të Raporteve që ende përdorin shell, tabelë ose print-preview të trashëguar.
+- [ ] Hiq fallback-et e pamjes së vjetër dhe përdor formatin e unifikuar Alpha për ekran, print dhe eksport.
+- [ ] Shto teste që ndalojnë rikthimin e klasave dhe markup-ut të pamjeve të vjetra në rrjedhën e Raporteve.
+
 ## Stabiliteti i preview — Vite WebSocket (2026-08-27)
 - [ ] Audito dhe rregullo shkëputjen `failed to connect to websocket` në preview, pa prekur sesionin lokal ose të dhënat e kompanisë.
 
