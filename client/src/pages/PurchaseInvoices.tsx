@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useLocation, useSearch } from "wouter";
-import { getPurchaseDocumentTarget, type PurchaseDocumentType } from "@/lib/purchaseDocumentTargets";
 import { buildReferenceInvoicePrintHtml } from "@/lib/invoiceReference";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
@@ -14,7 +13,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Download, FilePlus2, FileText, PackageCheck, Plus, Printer, RotateCcw, Search, ShoppingCart, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { exportPurchaseInvoiceDocumentToExcel, exportPurchaseInvoiceDocumentToPDF, exportPurchaseRegisterToExcel, exportPurchaseRegisterToPDF, printPurchaseInvoiceDocument } from "@/lib/export";
-import ModuleReportMenu from "@/components/ModuleReportMenu";
 import ProductLiveSearch from "@/components/ProductLiveSearch";
 import EntityLiveSearch from "@/components/EntityLiveSearch";
 import { emptyPurchaseRegisterFilters, PurchaseRegisterFilterBar, type PurchaseRegisterFilters } from "@/components/PurchaseRegisterFilterBar";
@@ -167,7 +165,6 @@ export default function PurchaseInvoices({ companyId }: { companyId: number }) {
   const [orderLines, setOrderLines] = useState<LineDraft[]>([blankLine()]);
   const [receiptLines, setReceiptLines] = useState<LineDraft[]>([blankLine()]);
   const [returnLines, setReturnLines] = useState<LineDraft[]>([blankLine()]);
-  const [reportFilters, setReportFilters] = useState({ dateFrom: "", dateTo: "", supplierId: "" });
   const [registerSearch, setRegisterSearch] = useState("");
   const [registerStatus, setRegisterStatus] = useState("ALL");
   const [registerFilters, setRegisterFilters] = useState<PurchaseRegisterFilters>(() => ({ ...emptyPurchaseRegisterFilters }));
@@ -205,15 +202,6 @@ export default function PurchaseInvoices({ companyId }: { companyId: number }) {
       })));
     }
   }, [selectedReceiptOrder]);
-
-  const purchaseReportInput = useMemo(() => {
-    const input: { companyId: number; dateFrom?: Date; dateTo?: Date; supplierId?: number } = { companyId };
-    if (reportFilters.dateFrom) input.dateFrom = new Date(reportFilters.dateFrom);
-    if (reportFilters.dateTo) input.dateTo = new Date(reportFilters.dateTo);
-    if (reportFilters.supplierId) input.supplierId = Number(reportFilters.supplierId);
-    return input;
-  }, [companyId, reportFilters]);
-  const { data: purchaseReport, isLoading: purchaseReportLoading } = trpc.purchaseReport.summary.useQuery(purchaseReportInput);
 
   const createBill = trpc.purchaseInvoice.create.useMutation({
     onSuccess: async () => { await Promise.all([utils.purchaseInvoice.list.invalidate({ companyId }), utils.purchaseInvoice.register.invalidate({ companyId })]); setBillOpen(false); setBillLines([blankLine()]); toast.success("Fatura e blerjes u krijua dhe u shtua në regjistër."); },
@@ -283,21 +271,25 @@ export default function PurchaseInvoices({ companyId }: { companyId: number }) {
   const submitBill = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    if (billLines.some(line => !line.productName.trim())) return toast.error("Plotësoni artikullin në çdo rresht.");
+    const normalizedItems = billLines.map(line => ({
+      ...line,
+      productId: line.productId ?? products.find(product => product.name.trim().toLocaleLowerCase("sq-AL") === line.productName.trim().toLocaleLowerCase("sq-AL"))?.id,
+    }));
+    if (normalizedItems.some(line => !line.productName.trim() || !line.productId)) return toast.error("Zgjidhni artikullin nga lista në çdo rresht.");
     createBill.mutate({
       companyId,
       docNumber: String(form.get("docNumber") || "").trim(),
       date: new Date(String(form.get("date") || today())),
       supplierId: form.get("supplierId") ? Number(form.get("supplierId")) : undefined,
       supplierName: String(form.get("supplierName") || "").trim() || undefined,
-      warehouseId: Number(form.get("warehouseId")),
+      warehouseId: form.get("warehouseId") ? Number(form.get("warehouseId")) : undefined,
       currency: String(form.get("currency") || "ALL"),
       exchangeRate: Number(form.get("exchangeRate") || 1),
       vatAmount: Math.max(0, Number(form.get("vatAmount")) || 0),
       carrierName: String(form.get("carrierName") || "").trim() || undefined,
       vehiclePlate: String(form.get("vehiclePlate") || "").trim().toUpperCase() || undefined,
       inventoryReference: String(form.get("inventoryReference") || "").trim() || undefined,
-      items: billLines.map(line => ({ ...line, productName: line.productName.trim() })),
+      items: normalizedItems.map(line => ({ ...line, productName: line.productName.trim() })),
     });
   };
 
@@ -363,15 +355,12 @@ export default function PurchaseInvoices({ companyId }: { companyId: number }) {
         </div>
       </section>
 
-      <ModuleReportMenu module="Blerje" />
-
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid h-auto w-full grid-cols-2 gap-1 bg-slate-100 p-1 md:grid-cols-5">
+        <TabsList className="grid h-auto w-full grid-cols-2 gap-1 bg-slate-100 p-1 md:grid-cols-4">
           <TabsTrigger value="bills"><FileText className="mr-2 h-4 w-4" />Faturat</TabsTrigger>
           <TabsTrigger value="orders"><ShoppingCart className="mr-2 h-4 w-4" />Porositë</TabsTrigger>
           <TabsTrigger value="receipts"><PackageCheck className="mr-2 h-4 w-4" />Pranimet</TabsTrigger>
           <TabsTrigger value="returns"><RotateCcw className="mr-2 h-4 w-4" />Kthimet</TabsTrigger>
-          <TabsTrigger value="report"><FileText className="mr-2 h-4 w-4" />Raporti</TabsTrigger>
         </TabsList>
 
         <TabsContent value="bills" className="space-y-4">
@@ -386,7 +375,7 @@ export default function PurchaseInvoices({ companyId }: { companyId: number }) {
                   <div className="flex shrink-0 justify-end border-b border-[#ded9df] bg-white px-4 sm:px-6"><span className="border-l border-r border-t border-[#d3c8d0] bg-[#f7eff5] px-5 py-2 text-xs font-semibold text-[#714b67]">DRAFT</span><span className="border-r border-[#e3dfe3] px-5 py-2 text-xs font-medium text-[#888]">POSTED</span><span className="border-r border-[#e3dfe3] px-5 py-2 text-xs font-medium text-[#888]">PAID</span></div>
                   <ScrollArea className="min-h-0 flex-1"><div className="mx-auto max-w-6xl space-y-5 p-4 sm:p-6"><section className="rounded-md border border-[#ddd8dd] bg-white p-5"><div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_260px]"><div><h2 className="text-2xl font-semibold tracking-[-0.02em] text-[#343434]">Faturë furnitori</h2><div className="mt-5 max-w-xl"><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">Furnitori</Label><div className="mt-1"><EntityLiveSearch idName="supplierId" nameName="supplierName" items={suppliers} placeholder="Kërko ose shkruaj furnitorin..." /></div></div></div><div className="grid content-start gap-4"><div><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">Numri i faturës</Label><Input name="docNumber" required className="mt-1 h-10" placeholder="BL-0001" /></div><div><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">Data e faturës</Label><Input name="date" required type="date" defaultValue={today()} className="mt-1 h-10" /></div></div></div></section>
                     <section className="overflow-visible rounded-md border border-[#ddd8dd] bg-white"><div className="flex items-center justify-between border-b border-[#e9e5e9] px-5 py-3"><div><h2 className="text-sm font-semibold text-[#343434]">Rreshtat e faturës</h2><p className="mt-0.5 text-xs text-[#777]">Kërko artikullin direkt në rresht ose krijoje nëse nuk ekziston.</p></div><span className="text-xs font-medium text-[#714b67]">{billLines.length} rreshta</span></div><div className="p-4"><LineEditor companyId={companyId} lines={billLines} products={productOptions} showPrices onChange={(index, patch) => mutateLine(setBillLines, index, patch)} onRemove={index => removeLine(setBillLines, index)} onAdd={() => setBillLines(lines => [...lines, blankLine()])} /></div><div className="flex justify-end border-t border-[#e9e5e9] bg-[#fbfafb] px-5 py-4"><div className="min-w-72 space-y-2 text-sm"><div className="flex justify-between text-[#777]"><span>Pa taksa</span><span>{money(billTotal)}</span></div><div className="flex justify-between border-t border-[#ddd8dd] pt-3 text-lg font-semibold text-[#343434]"><span>Totali</span><span>{money(billTotal)}</span></div></div></div></section>
-                    <section className="rounded-md border border-[#ddd8dd] bg-white"><div className="border-b border-[#e9e5e9] px-5 py-3 text-sm font-semibold">Magazina, TVSH, transport dhe inventar</div><div className="grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-7"><div><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">Magazina</Label><select name="warehouseId" required className="mt-1 h-10 w-full rounded-md border border-[#d3ccd3] bg-white px-3 text-sm"><option value="">Zgjidh magazinën</option>{warehouses.map(warehouse => <option key={warehouse.id} value={warehouse.id}>{warehouse.name}{warehouse.code ? ` · ${warehouse.code}` : ""}</option>)}</select></div><div><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">Monedha</Label><select name="currency" defaultValue="ALL" className="mt-1 h-10 w-full rounded-md border border-[#d3ccd3] bg-white px-3 text-sm"><option value="ALL">Lek (ALL)</option><option value="EUR">Euro (EUR)</option><option value="USD">Dollar (USD)</option><option value="GBP">Pound (GBP)</option></select></div><div><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">Kursi i këmbimit</Label><Input name="exchangeRate" min="0.000001" step="0.000001" type="number" defaultValue="1" required className="mt-1 h-10" /><span className="text-[10px] text-[#777]">ALL për 1 njësi</span></div><div><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">TVSH (qindarka)</Label><Input name="vatAmount" min="0" type="number" defaultValue="0" className="mt-1 h-10" /></div><div><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">Transportuesi</Label><Input name="carrierName" className="mt-1 h-10" placeholder="Emri i transportuesit" /></div><div><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">Targa</Label><Input name="vehiclePlate" className="mt-1 h-10" placeholder="AA 000 AA" /></div><div><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">Referenca e inventarit</Label><Input name="inventoryReference" className="mt-1 h-10" placeholder="INV-0001" /></div></div><div className="border-t border-[#e9e5e9] px-5 py-3 text-sm text-[#777]">Fatura ruhet fillimisht si draft. Mund të postohen dhe pajtohen pagesat nga moduli Kontabilitet.</div></section></div></ScrollArea>
+                    <section className="rounded-md border border-[#ddd8dd] bg-white"><div className="border-b border-[#e9e5e9] px-5 py-3 text-sm font-semibold">Magazina, TVSH, transport dhe inventar</div><div className="grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-7"><div><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">Magazina</Label><select name="warehouseId" className="mt-1 h-10 w-full rounded-md border border-[#d3ccd3] bg-white px-3 text-sm"><option value="">Zgjidh magazinën</option>{warehouses.map(warehouse => <option key={warehouse.id} value={warehouse.id}>{warehouse.name}{warehouse.code ? ` · ${warehouse.code}` : ""}</option>)}</select></div><div><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">Monedha</Label><select name="currency" defaultValue="ALL" className="mt-1 h-10 w-full rounded-md border border-[#d3ccd3] bg-white px-3 text-sm"><option value="ALL">Lek (ALL)</option><option value="EUR">Euro (EUR)</option><option value="USD">Dollar (USD)</option><option value="GBP">Pound (GBP)</option></select></div><div><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">Kursi i këmbimit</Label><Input name="exchangeRate" min="0.000001" step="0.000001" type="number" defaultValue="1" required className="mt-1 h-10" /><span className="text-[10px] text-[#777]">ALL për 1 njësi</span></div><div><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">TVSH (qindarka)</Label><Input name="vatAmount" min="0" type="number" defaultValue="0" className="mt-1 h-10" /></div><div><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">Transportuesi</Label><Input name="carrierName" className="mt-1 h-10" placeholder="Emri i transportuesit" /></div><div><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">Targa</Label><Input name="vehiclePlate" className="mt-1 h-10" placeholder="AA 000 AA" /></div><div><Label className="text-[11px] font-semibold uppercase tracking-wide text-[#777]">Referenca e inventarit</Label><Input name="inventoryReference" className="mt-1 h-10" placeholder="INV-0001" /></div></div><div className="border-t border-[#e9e5e9] px-5 py-3 text-sm text-[#777]">Fatura ruhet fillimisht si draft. Mund të postohen dhe pajtohen pagesat nga moduli Kontabilitet.</div></section></div></ScrollArea>
                 </form>
               </DialogContent>
             </Dialog>
@@ -409,29 +398,6 @@ export default function PurchaseInvoices({ companyId }: { companyId: number }) {
           <DataCard title={`Kthimet e blerjes (${returns.length})`}><table className="w-full min-w-[680px] text-sm"><thead><tr className="border-b text-left text-xs uppercase tracking-wide text-slate-500"><th className="p-3">Nr.</th><th className="p-3">Furnitori</th><th className="p-3">Data</th><th className="p-3">Arsyeja</th><th className="p-3">Statusi</th><th className="p-3 text-right">Veprime</th></tr></thead><tbody>{returns.length === 0 ? <EmptyRow columns={6} message="Nuk ka kthime të regjistruara." /> : returns.map(item => <tr key={item.id} className="border-b last:border-0 hover:bg-slate-50"><td className="p-3 font-medium"><SourceDocumentLink label={item.docNumber} onOpen={() => setSelectedReturnId(item.id)} ariaLabel={`Hap kthimin ${item.docNumber}`} /></td><td className="p-3">{item.supplierName || "—"}</td><td className="p-3">{dateText(item.returnDate)}</td><td className="p-3">{item.reason || "—"}</td><td className="p-3"><PurchaseStatus status={item.status} /></td><td className="p-3 text-right">{item.status === "DRAFT" && <Button size="sm" variant="outline" disabled={validateReturn.isPending} onClick={() => validateReturn.mutate({ id: item.id })}>Valido dhe zbrit stokun</Button>}</td></tr>)}</tbody></table></DataCard>
         </TabsContent>
 
-        <TabsContent value="report" className="space-y-4">
-          <Card className="border-slate-200 shadow-sm">
-            <CardHeader className="pb-3"><CardTitle className="text-base">Filtrat e raportit të blerjeve</CardTitle></CardHeader>
-            <CardContent className="grid grid-cols-1 gap-3 md:grid-cols-3">
-              <div><Label>Nga data</Label><Input type="date" value={reportFilters.dateFrom} onChange={event => setReportFilters(filters => ({ ...filters, dateFrom: event.target.value }))} /></div>
-              <div><Label>Deri në datë</Label><Input type="date" value={reportFilters.dateTo} onChange={event => setReportFilters(filters => ({ ...filters, dateTo: event.target.value }))} /></div>
-              <div><Label>Furnitori</Label><select className="mt-1 h-10 w-full rounded-md border px-3 text-sm" value={reportFilters.supplierId} onChange={event => setReportFilters(filters => ({ ...filters, supplierId: event.target.value }))}><option value="">Të gjithë furnitorët</option>{suppliers.map(supplier => <option key={supplier.id} value={supplier.id}>{supplier.name}</option>)}</select></div>
-            </CardContent>
-          </Card>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-            <SummaryMetric label="Vlera e faturuar" value={money(purchaseReport?.metrics?.invoiceTotal)} tone="violet" />
-            <SummaryMetric label="Porosi aktive" value={String(purchaseReport?.metrics?.openOrdersCount ?? 0)} tone="blue" />
-            <SummaryMetric label="Pranime" value={String(purchaseReport?.metrics?.receiptsCount ?? 0)} tone="emerald" />
-            <SummaryMetric label="Kthime" value={String(purchaseReport?.metrics?.returnsCount ?? 0)} tone="amber" />
-          </div>
-          <Card className="border-slate-200 shadow-sm"><CardHeader className="pb-3"><CardTitle className="text-base">Statusi i dokumenteve</CardTitle></CardHeader><CardContent className="grid grid-cols-1 gap-3 md:grid-cols-4"><StatusSummary title="Faturat" data={purchaseReport?.byStatus?.invoices} /><StatusSummary title="Porositë" data={purchaseReport?.byStatus?.orders} /><StatusSummary title="Pranimet" data={purchaseReport?.byStatus?.receipts} /><StatusSummary title="Kthimet" data={purchaseReport?.byStatus?.returns} /></CardContent></Card>
-          <DataCard title="Dokumentet e blerjes sipas filtrave">
-            <table className="w-full min-w-[760px] text-sm"><thead><tr className="border-b text-left text-xs uppercase tracking-wide text-slate-500"><th className="p-3">Lloji</th><th className="p-3">Dokumenti</th><th className="p-3">Furnitori</th><th className="p-3">Data</th><th className="p-3">Statusi</th><th className="p-3 text-right">Vlera</th></tr></thead><tbody>{purchaseReportLoading ? <EmptyRow columns={6} message="Po ngarkohet raporti…" /> : <PurchaseReportRows data={purchaseReport} onOpenDocument={(type, id) => { const target = getPurchaseDocumentTarget(type, id); if (type === "Faturë") { setActiveTab(target.tab); setLocation(`/purchase-invoices?tab=${target.tab}&openInvoice=${id}`); } else { setActiveTab(target.tab); const openOrder = "openOrder" in target.query ? `&openOrder=${target.query.openOrder}` : ""; setLocation(`/purchase-invoices?tab=${target.tab}${openOrder}`); } }} />}</tbody></table>
-          </DataCard>
-          <DataCard title="Përmbledhje sipas furnitorit">
-            <table className="w-full min-w-[620px] text-sm"><thead><tr className="border-b text-left text-xs uppercase tracking-wide text-slate-500"><th className="p-3">Furnitori</th><th className="p-3 text-right">Vlera e porositur</th><th className="p-3 text-right">Vlera e faturuar</th><th className="p-3 text-right">Pranime</th><th className="p-3 text-right">Kthime</th></tr></thead><tbody>{(purchaseReport?.bySupplier ?? []).length === 0 ? <EmptyRow columns={5} message="Nuk ka të dhëna për filtrat e zgjedhur." /> : purchaseReport?.bySupplier?.map(item => <tr key={`${item.supplierId}-${item.supplierName}`} className="border-b last:border-0 hover:bg-slate-50"><td className="p-3 font-medium">{item.supplierName}</td><td className="p-3 text-right">{money(item.orderTotal)}</td><td className="p-3 text-right">{money(item.invoiceTotal)}</td><td className="p-3 text-right">{item.receipts}</td><td className="p-3 text-right">{item.returns}</td></tr>)}</tbody></table>
-          </DataCard>
-        </TabsContent>
       </Tabs>
       <PurchaseInvoiceDetailDialog companyId={companyId} invoiceId={selectedInvoiceId} onOpenChange={open => { if (!open) setSelectedInvoiceId(undefined); }} />
       {selectedReceipt && <PurchaseReceiptDetailDialog receipt={selectedReceipt} onOpenChange={open => { if (!open) setSelectedReceiptId(undefined); }} />}
@@ -512,25 +478,4 @@ function DetailField({ label, value }: { label: string; value: string }) {
 
 function EmptyRow({ columns, message }: { columns: number; message: string }) {
   return <tr><td colSpan={columns} className="p-10 text-center text-slate-500">{message}</td></tr>;
-}
-
-function SummaryMetric({ label, value, tone }: { label: string; value: string; tone: "violet" | "blue" | "emerald" | "amber" }) {
-  const classes = { violet: "border-violet-200 bg-violet-50 text-violet-800", blue: "border-blue-200 bg-blue-50 text-blue-800", emerald: "border-emerald-200 bg-emerald-50 text-emerald-800", amber: "border-amber-200 bg-amber-50 text-amber-800" };
-  return <Card className={classes[tone]}><CardContent className="p-4"><p className="text-xs font-semibold uppercase tracking-wide opacity-75">{label}</p><p className="mt-2 text-2xl font-bold">{value}</p></CardContent></Card>;
-}
-
-function StatusSummary({ title, data }: { title: string; data: Record<string, { count: number; totalAmount: number }> | undefined }) {
-  const statuses = Object.entries(data ?? {});
-  return <div className="rounded-lg border bg-slate-50 p-3"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{title}</p>{statuses.length === 0 ? <p className="mt-2 text-sm text-slate-500">Pa dokumente</p> : <div className="mt-2 space-y-1.5">{statuses.map(([status, item]) => <div key={status} className="flex items-center justify-between text-sm"><PurchaseStatus status={status} /><span className="font-semibold text-slate-700">{item.count}</span></div>)}</div>}</div>;
-}
-
-function PurchaseReportRows({ data, onOpenDocument }: { data: { invoices: Array<any>; orders: Array<any>; receipts: Array<any>; returns: Array<any> } | undefined; onOpenDocument: (type: PurchaseDocumentType, id: number) => void }) {
-  const rows = [
-    ...(data?.invoices ?? []).map(item => ({ type: "Faturë", id: Number(item.id ?? item.invoiceId), docNumber: item.docNumber, supplier: item.supplierName, date: item.date, status: item.status, total: item.totalAmount })),
-    ...(data?.orders ?? []).map(item => ({ type: "Porosi", id: Number(item.id ?? item.orderId), docNumber: item.docNumber, supplier: item.supplierName, date: item.orderDate, status: item.status, total: item.totalAmount })),
-    ...(data?.receipts ?? []).map(item => ({ type: "Pranim", id: Number(item.id ?? item.receiptId), docNumber: item.docNumber, supplier: item.supplierName, date: item.receiptDate, status: item.status, total: null })),
-    ...(data?.returns ?? []).map(item => ({ type: "Kthim", id: Number(item.id ?? item.returnId), docNumber: item.docNumber, supplier: item.supplierName, date: item.returnDate, status: item.status, total: null })),
-  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  if (rows.length === 0) return <EmptyRow columns={6} message="Nuk ka dokumente për filtrat e zgjedhur." />;
-  return <>{rows.map((item, index) => <tr key={`${item.type}-${item.docNumber}-${index}`} className="border-b last:border-0 hover:bg-slate-50"><td className="p-3">{item.type}</td><td className="p-3 font-medium">{Number.isInteger(item.id) && item.id > 0 ? <SourceDocumentLink label={item.docNumber} onOpen={() => onOpenDocument(item.type as PurchaseDocumentType, item.id)} ariaLabel={`Hap ${item.type.toLocaleLowerCase("sq-AL")} ${item.docNumber}`} /> : item.docNumber}</td><td className="p-3">{item.supplier || "—"}</td><td className="p-3">{dateText(item.date)}</td><td className="p-3"><PurchaseStatus status={item.status} /></td><td className="p-3 text-right font-medium">{item.total === null ? "—" : money(item.total)}</td></tr>)}</>;
 }

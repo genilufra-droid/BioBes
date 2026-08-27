@@ -36,4 +36,11 @@ describe("active invoice line quick-create contract", () => {
     expect(salesSource).toContain("<SalesInvoiceFormView invoice={invoice}");
     expect(salesSource).not.toContain("<iframe title={`Pamja reference e faturës");
   });
+
+  it("keeps sales reports exclusively in the top-level Reports workspace", () => {
+    expect(salesSource).not.toContain('<ModuleReportMenu module="Shitje"');
+    expect(salesSource).not.toContain('<TabsTrigger value="report"');
+    expect(salesSource).not.toContain("trpc.salesReport.summary.useQuery");
+    expect(salesSource).toContain('<TabsTrigger value="invoices"');
+  });
 });

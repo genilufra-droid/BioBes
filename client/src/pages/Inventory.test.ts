@@ -11,19 +11,13 @@ describe("inventory module document navigation contract", () => {
     expect(source).toContain("Hap transferin");
   });
 
-  it("keeps inventory tabs and filtered report exports", () => {
-    expect(source).toContain('value="stock-report"');
+  it("keeps inventory operational tabs while reports remain top-level", () => {
+    expect(source).not.toContain('<ModuleReportMenu module="Magazina"');
+    expect(source).not.toContain('value="stock-report"');
+    expect(source).not.toContain("trpc.stockReport.get.useQuery");
     expect(source).toContain('value="locations"');
     expect(source).toContain('value="transfers"');
     expect(source).toContain('value="adjustments"');
     expect(source).toContain('value="movements"');
-    expect(source).toContain('>Excel</Button>');
-    expect(source).toContain('>PDF</Button>');
-  });
-
-  it("passes warehouse and product filters to the real stock report query", () => {
-    expect(source).toContain("warehouseId: reportWarehouseId ? Number(reportWarehouseId) : undefined");
-    expect(source).toContain("productId: reportProductId ? Number(reportProductId) : undefined");
-    expect(source).toContain("trpc.stockReport.get.useQuery(reportInput)");
   });
 });

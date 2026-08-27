@@ -11,11 +11,11 @@ describe("Purchase invoice source-document navigation", () => {
     );
   });
 
-  it("routes report invoice links through the deep-link that opens the source invoice", () => {
-    expect(source).toContain("setLocation(`/purchase-invoices?tab=${target.tab}&openInvoice=${id}`)");
+  it("does not retain the legacy embedded report deep-link route", () => {
+    expect(source).not.toContain("setLocation(`/purchase-invoices?tab=${target.tab}&openInvoice=${id}`)");
   });
 
-  it("mounts the invoice detail dialog outside Tabs so report links work from every tab", () => {
+  it("mounts the invoice detail dialog outside Tabs for the operational register", () => {
     const tabsClose = source.lastIndexOf("      </Tabs>");
     const detailDialog = source.lastIndexOf("      <PurchaseInvoiceDetailDialog");
     const billsTabClose = source.indexOf("        </TabsContent>", source.indexOf('<TabsContent value="bills"'));
@@ -33,5 +33,13 @@ describe("Purchase invoice source-document navigation", () => {
     expect(filterBarSource).toContain("Fshih filtrat");
     expect(filterBarSource).toContain("Shfaq filtrat");
     expect(filterBarSource).toContain("Shfaq rezultatet");
+  });
+
+  it("keeps reports exclusively in the top-level Reports workspace", () => {
+    expect(source).not.toContain('<ModuleReportMenu module="Blerje"');
+    expect(source).not.toContain('<TabsTrigger value="report"');
+    expect(source).not.toContain("trpc.purchaseReport.summary.useQuery");
+    expect(source).toContain('<TabsTrigger value="bills"');
+    expect(source).toContain('<TabsTrigger value="orders"');
   });
 });
