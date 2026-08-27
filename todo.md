@@ -2127,3 +2127,6 @@
 ## Refaktorim i komponentit inline të Raporteve (2026-08-27)
 - [x] Riemërto komponentin e përbashkët të filtrave nga emër specifik Blerje në emër neutral Alpha dhe ruaj parametrat sipas kategorisë.
 - [x] Verifiko regresionet dhe sinkronizo source-in e refaktorizuar në BioBes.
+
+## Pastrim i workspace-it legacy të Raporteve (2026-08-27)
+- [x] Hiq importet e panevojshme të mbetura nga komponentët e hequr të workspace-it legacy, pa prekur dokumentin e raportit ose lookup-un.
