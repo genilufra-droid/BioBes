@@ -37,15 +37,22 @@ import ReferenceCatalog from "./pages/ReferenceCatalog";
 import ConfigPricingCatalog from "./pages/ConfigPricingCatalog";
 import PostingWindow from "./pages/PostingWindow";
 import { getPartnerTabFromSearch } from "./lib/partnerRoute";
+import { useAuth } from "./_core/hooks/useAuth";
 
-function Workspace({ children }: { children: (companyId: number) => ReactNode }) {
+function Workspace({ children, bare = false }: { children: (companyId: number) => ReactNode; bare?: boolean }) {
+  const { user, loading: authLoading } = useAuth();
   const { companyId, companies, selectCompany, isLoading } = useCompany();
-  return <DashboardLayout>{isLoading ? <div className="grid min-h-[420px] place-items-center text-sm text-[#777]">Po hapet workspace-i...</div> : !companies.length ? <FirstRunSetup onCreated={selectCompany} /> : !companyId ? <div className="grid min-h-[420px] place-items-center text-sm text-[#777]">Po përgatitet workspace-i...</div> : children(companyId)}</DashboardLayout>;
+  const content = authLoading ? <div className="grid min-h-[420px] place-items-center text-sm text-[#777]">Po kontrollohet hyrja...</div> : !user ? <LocalLogin /> : isLoading ? <div className="grid min-h-[420px] place-items-center text-sm text-[#777]">Po hapet workspace-i...</div> : !companies.length ? <FirstRunSetup onCreated={selectCompany} /> : !companyId ? <div className="grid min-h-[420px] place-items-center text-sm text-[#777]">Po përgatitet workspace-i...</div> : children(companyId);
+  return bare ? <div className="min-h-screen bg-[#e7ecef]">{content}</div> : <DashboardLayout>{content}</DashboardLayout>;
 }
 
 function Router() {
   return <Switch>
-    <Route path="/login" component={LocalLogin} />
+    <Route path="/login" component={() => <LocalLogin />} />
+    <Route path="/register" component={() => <LocalLogin initialMode="register" />} />
+    <Route path="/activate-local-account" component={() => <LocalLogin initialMode="activate" />} />
+    <Route path="/forgot-password" component={() => <LocalLogin initialMode="help" />} />
+    <Route path="/change-password" component={() => <LocalLogin initialMode="change" />} />
     <Route path="/" component={() => <Workspace>{companyId => <Home companyId={companyId} />}</Workspace>} />
     <Route path="/partners" component={() => <Workspace>{companyId => <Partners companyId={companyId} defaultTab={getPartnerTabFromSearch(window.location.search)} />}</Workspace>} />
     <Route path="/suppliers" component={() => <Workspace>{companyId => <Partners companyId={companyId} defaultTab="suppliers" />}</Workspace>} />
@@ -55,7 +62,7 @@ function Router() {
     <Route path="/accounting" component={() => <Workspace>{companyId => <Accounting companyId={companyId} />}</Workspace>} />
     <Route path="/crm" component={() => <Workspace>{companyId => <CRM companyId={companyId} />}</Workspace>} />
     <Route path="/banks" component={() => <Workspace>{companyId => <Banks companyId={companyId} />}</Workspace>} />
-    <Route path="/reports" component={() => <Workspace>{companyId => <ReportsCenter companyId={companyId} />}</Workspace>} />
+    <Route path="/reports" component={() => <Workspace bare>{companyId => <ReportsCenter companyId={companyId} />}</Workspace>} />
     <Route path="/registrations" component={() => <Workspace>{companyId => <Registrations companyId={companyId} />}</Workspace>} />
     <Route path="/settings" component={() => <Workspace>{companyId => <Settings companyId={companyId} />}</Workspace>} />
     <Route path="/administrative-units" component={() => <Workspace>{companyId => <AdministrativeUnits companyId={companyId} />}</Workspace>} />

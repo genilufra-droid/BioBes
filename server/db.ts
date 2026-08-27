@@ -1,4 +1,4 @@
-import { eq, and, desc, count, inArray, like, or, sql } from "drizzle-orm";
+import { eq, and, desc, count, inArray, isNull, like, or, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, users, companies, userCompanies, suppliers, customers, 
@@ -231,6 +231,54 @@ export async function bootstrapLocalOwner(data: { email: string; name: string; p
     await tx.insert(userCompanies).values({ userId, companyId, role: "owner" });
     return { userId, companyId, openId };
   });
+}
+
+export type LocalAccountIdentity = { id: number; openId: string; email: string; name: string | null; role: "admin" | "user" };
+
+/** Assigns a first local password to an already provisioned company owner. */
+export async function activateExistingLocalOwner(data: { email: string; passwordHash: string }): Promise<LocalAccountIdentity | null> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const email = data.email.trim().toLowerCase();
+  return db.transaction(async tx => {
+    const [account] = await tx.select({ id: users.id, openId: users.openId, email: users.email, name: users.name, role: users.role, passwordHash: users.passwordHash }).from(users).where(eq(users.email, email)).limit(1);
+    if (!account || !account.email || account.passwordHash) return null;
+    const memberships = await tx.select({ role: userCompanies.role }).from(userCompanies).where(eq(userCompanies.userId, account.id));
+    if (!memberships.some(membership => membership.role === "owner")) return null;
+    const result = await tx.update(users).set({ passwordHash: data.passwordHash, loginMethod: "local", lastSignedIn: new Date() }).where(and(eq(users.id, account.id), isNull(users.passwordHash)));
+    const affectedRows = Number((result as unknown as { affectedRows?: number }).affectedRows ?? 0);
+    if (affectedRows !== 1) return null;
+    return { id: account.id, openId: account.openId, email: account.email, name: account.name, role: account.role };
+  });
+}
+
+/** Creates an isolated company tenant for a deliberately registered local account. */
+export async function registerLocalAccount(data: { email: string; name: string; passwordHash: string; companyName: string; nipt?: string }): Promise<LocalAccountIdentity | null> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const email = data.email.trim().toLowerCase();
+  return db.transaction(async tx => {
+    const existing = await tx.select({ id: users.id }).from(users).where(eq(users.email, email)).limit(1);
+    if (existing.length > 0) return null;
+    const openId = `local:${email}`;
+    try {
+      const [userResult] = await tx.insert(users).values({ openId, email, name: data.name, loginMethod: "local", role: "admin", passwordHash: data.passwordHash });
+      const userId = Number(userResult.insertId);
+      const [companyResult] = await tx.insert(companies).values({ name: data.companyName, nipt: data.nipt || null });
+      const companyId = Number(companyResult.insertId);
+      await tx.insert(userCompanies).values({ userId, companyId, role: "owner" });
+      return { id: userId, openId, email, name: data.name, role: "admin" };
+    } catch (error) {
+      if ((error as { code?: string }).code === "ER_DUP_ENTRY") return null;
+      throw error;
+    }
+  });
+}
+
+export async function updateLocalPassword(userId: number, passwordHash: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(users).set({ passwordHash, loginMethod: "local", lastSignedIn: new Date() }).where(eq(users.id, userId));
 }
 
 export async function updateCompany(companyId: number, data: any) {

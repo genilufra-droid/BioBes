@@ -9,7 +9,9 @@ export const ENV = {
   forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
   storageProvider: process.env.STORAGE_PROVIDER ?? "manus",
   localStorageDir: process.env.LOCAL_STORAGE_DIR ?? "./storage-data",
-  authProvider: process.env.AUTH_PROVIDER ?? "manus",
+  // Local accounts are the normal authentication path. Set AUTH_PROVIDER=manus
+  // only when deliberately enabling the legacy OAuth compatibility adapter.
+  authProvider: process.env.AUTH_PROVIDER ?? "local",
   localAuthUsersJson: process.env.LOCAL_AUTH_USERS_JSON ?? "[]",
   localAuthSetupSecret: process.env.LOCAL_AUTH_SETUP_SECRET ?? "",
   s3Endpoint: process.env.S3_ENDPOINT ?? undefined,

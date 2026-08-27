@@ -2140,6 +2140,16 @@
 - [ ] Shto hapje llogarie të re dhe kërkesë të sigurt për rivendosje fjalëkalimi pa zbuluar llogari ekzistuese.
 - [ ] Shto testet e autorizimit/rate-limit dhe verifiko rrjedhën në browser përpara sinkronizimit në BioBes.
 
+## Autentikim lokal i pavarur nga Manus (2026-08-27)
+- [ ] Hiq kërkesën për hyrje Manus nga rrjedha normale e aplikacionit dhe përdor sesionin lokal për të gjithë përdoruesit.
+- [ ] Shto regjistrim, hyrje, dalje dhe rivendosje fjalëkalimi lokale me kufizim kërkesash dhe pa zbulim të llogarive ekzistuese.
+- [ ] Ruaj kompanitë ekzistuese dhe lejo hyrjen në workspace pa krijuar një kompani të re nga browser-i.
+- [ ] Shto teste dhe verifiko në browser hyrjen lokale përpara sinkronizimit në BioBes.
+- [ ] Lejo pronarin ekzistues pa passwordHash të caktojë fjalëkalimin e parë lokal vetëm me sekretin njëpërdorimësh të serverit.
+- [ ] Krijo një llogari të re lokale pa i dhënë automatikisht akses në të dhënat e kompanive ekzistuese.
+- [ ] Krijo ndryshim fjalëkalimi për përdoruesin e autentikuar dhe një rrjedhë të sigurt ndihme për fjalëkalim të harruar.
+- [ ] Zëvendëso të gjitha thirrjet vizuale të hyrjes Manus me faqen lokale `/login`.
+
 ## Raporte Blerje — filtrat e regjistrit dhe modele të veçanta (2026-08-27)
 - [x] Audito filtrat e regjistrit të faturave dhe çelësat/degët reale për secilin nga 18 modelet Blerje.
 - [x] Shto filtrat specifikë të regjistrit të faturave vetëm te raportet që marrin fatura, pa shtuar fusha të parëndësishme te kartelat ose listat.

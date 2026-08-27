@@ -2,8 +2,8 @@ import { OAUTH_STATE_COOKIE, encodeOAuthState } from "@shared/const";
 
 export { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 
-// Start the Manus OAuth login. Call this from an event handler or effect at the
-// moment you want to navigate, e.g. `onClick={() => startLogin()}`.
+// Start login through the local account portal. The legacy OAuth path remains
+// opt-in only for installations that explicitly set VITE_AUTH_PROVIDER=manus.
 //
 // It has SIDE EFFECTS — it mints a one-time nonce, writes the __Host- state
 // cookie, and navigates immediately — so the cookie nonce always matches the
@@ -13,7 +13,7 @@ export { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 // with "invalid oauth state". It returns void by design, so there is no URL to
 // stash across renders.
 export const startLogin = () => {
-  if (import.meta.env.VITE_AUTH_PROVIDER === "local") {
+  if (import.meta.env.VITE_AUTH_PROVIDER !== "manus") {
     window.location.href = "/login";
     return;
   }
