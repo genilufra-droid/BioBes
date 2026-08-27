@@ -2157,6 +2157,7 @@
 - [x] Riprodho nga menuja Regjistrime hapjen e Faturës së Blerjes dhe Faturës së Shitjes për përdoruesin dhe kompaninë aktive.
 - [x] Korrigjo targetet e menusë ose parametrat e route-it që pengojnë hapjen e formularëve, pa prekur Pagat.
 - [ ] Verifiko ruajtjen e draftit në Blerje dhe Shitje me kompani të autorizuar, pa krijuar të dhëna testimi të panevojshme.
+- [x] Verifiko që domaini publik shërben bundle-in e korrigjuar të Regjistrimeve para provës së përdoruesit.
 
 ## Raporte Blerje — filtrat e regjistrit dhe modele të veçanta (2026-08-27)
 - [x] Audito filtrat e regjistrit të faturave dhe çelësat/degët reale për secilin nga 18 modelet Blerje.
