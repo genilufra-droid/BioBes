@@ -69,7 +69,7 @@ export function PurchaseSupplierSummary({ rows, supplierQuery }: { rows: Purchas
   const quantityText = quantityByUnit.length ? quantityByUnit.map(([unit, quantity]) => `${quantity.toLocaleString("sq-AL")} ${unit}`).join(" · ") : "0";
   const title = supplierQuery.trim() ? `Përmbledhje për furnitorin “${supplierQuery.trim()}”` : "Përmbledhje sipas furnitorit";
 
-  return <section className="space-y-4 rounded-md border border-[#d8d0d2] bg-white p-4" aria-label="Përmbledhje sipas furnitorit">
+  return <section data-alpha-purchase-summary className="space-y-4 border border-[#9eafb9] bg-[#f7fafb] p-3" aria-label="Përmbledhje sipas furnitorit">
     <div className="flex flex-wrap items-start justify-between gap-3">
       <div><h2 className="text-sm font-semibold text-[#343434]">{title}</h2><p className="mt-1 text-xs text-[#777]">Përmbledhja ndjek filtrat aktivë të regjistrit dhe llogarit çdo faturë vetëm një herë.</p></div>
       <div className="text-right text-xs text-[#777]"><span className="font-semibold text-[#343434]">{summary.supplierCount}</span> furnitorë · <span className="font-semibold text-[#343434]">{summary.invoiceCount}</span> fatura</div>

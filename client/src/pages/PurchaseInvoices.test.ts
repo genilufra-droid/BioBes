@@ -59,4 +59,10 @@ describe("Purchase invoice source-document navigation", () => {
     expect(source).toContain('data-[state=active]:bg-[#3f7191]');
     expect(styleSource).toContain('[data-alpha-purchase-workspace]');
   });
+
+  it("keeps the active supplier summary in the Alpha visual scope", () => {
+    const summarySource = readFileSync(new URL("../components/PurchaseSupplierSummary.tsx", import.meta.url), "utf8");
+    expect(summarySource).toContain("data-alpha-purchase-summary");
+    expect(summarySource).toContain("Përmbledhje sipas furnitorit");
+  });
 });

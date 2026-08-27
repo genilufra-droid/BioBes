@@ -87,6 +87,7 @@
   .alpha-sales-page [role="tablist"] { border-color: #8fa5b2 !important; background: #dfe8ed !important; border-radius: 0 !important; }
   .alpha-sales-page [role="tab"] { min-height: 31px; border-radius: 0 !important; color: #315a75; font-size: 11px; }
   .alpha-sales-page [role="tab"][data-state="active"] { border-color: #7796a9 !important; background: linear-gradient(#f8fbfc, #c7dbe6) !important; color: #183f5d !important; box-shadow: inset 0 2px 0 #5f94b5 !important; }
+  .alpha-sales-page button:has([data-lucide="file-plus-2"]) { border-color: #2d6e9b !important; background: linear-gradient(#5d9ccc, #286991) !important; color: #fff !important; }
   [data-alpha-sales-totals] { border-color: #9eafb9 !important; border-radius: 0 !important; background: #e8eef2 !important; color: #334d60 !important; font-size: 11px !important; }
   [data-alpha-sales-totals] > div + div { border-left: 1px solid #bdcbd2; padding-left: 12px; }
   [data-alpha-sales-totals] strong { color: #234b67 !important; }
@@ -131,6 +132,21 @@
   [data-alpha-registration-workspace] table tbody tr:hover { background: #edf6fb !important; }
   [data-alpha-registration-workspace] input,
   [data-alpha-registration-workspace] select { border-radius: 0 !important; }
+  [data-alpha-purchase-summary] { border-color: #9eafb9 !important; border-radius: 0 !important; background: #f7fafb !important; padding: 10px !important; }
+  [data-alpha-purchase-summary] .rounded-md { border-radius: 0 !important; }
+  [data-alpha-purchase-summary] .bg-violet-50,
+  [data-alpha-purchase-summary] .bg-slate-50,
+  [data-alpha-purchase-summary] .bg-emerald-50,
+  [data-alpha-purchase-summary] .bg-amber-50,
+  [data-alpha-purchase-summary] .bg-blue-50 { border-color: #afc0ca !important; background: linear-gradient(#fff, #e7eef2) !important; }
+  [data-alpha-purchase-summary] .text-violet-700,
+  [data-alpha-purchase-summary] .text-violet-900,
+  [data-alpha-purchase-summary] .text-emerald-700,
+  [data-alpha-purchase-summary] .text-emerald-800,
+  [data-alpha-purchase-summary] .text-amber-700,
+  [data-alpha-purchase-summary] .text-amber-800,
+  [data-alpha-purchase-summary] .text-blue-700,
+  [data-alpha-purchase-summary] .text-blue-800 { color: #234b67 !important; }
 }
 
 @layer base {
