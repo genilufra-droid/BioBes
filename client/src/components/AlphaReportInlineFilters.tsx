@@ -112,7 +112,7 @@ export default function AlphaReportInlineFilters({
   const resolvedPartnerLookupKind = partnerLookupKind ?? (moduleLabel === "Shitje" ? "customer" : "supplier");
   const visible = { amount: true, documentNumber: true, documentType: true, currency: true, partner: true, product: true, warehouse: true, status: false, ...filterVisibility };
 
-  return <section data-alpha-inline-filters data-report-module={moduleLabel} className={`bg-[#f7f7f7] text-[#202020]${referenceResult ? " [&_[data-purchase-inline-result]]:hidden" : ""}`}>
+  return <section data-alpha-inline-filters data-report-module={moduleLabel} data-alpha-report-result-format={referenceResult ? "reference" : "grid"} className={`bg-[#f7f7f7] text-[#202020]${referenceResult ? " [&_[data-purchase-inline-result]]:hidden" : ""}`}>
     <div data-report-exit-toolbar className="sticky top-0 z-40 flex min-h-11 flex-wrap items-center justify-between gap-2 border-y border-[#b8b8b8] bg-white px-3 py-1.5 shadow-[0_2px_5px_rgba(0,0,0,0.12)]">
       <div className="min-w-0"><p className="text-[10px] text-[#666]">Raporte / {moduleLabel}</p><h1 className="truncate text-sm font-semibold">{selectedTitle}</h1></div>
       <div className="flex flex-wrap items-center gap-1">

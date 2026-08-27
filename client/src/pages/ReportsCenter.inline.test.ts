@@ -34,6 +34,8 @@ describe("ReportsCenter inline Alpha workspace", () => {
     expect(reportsCenterSource).toContain('referenceResult={isReferenceReport ? <ReferenceReportView');
     expect(reportsCenterSource).toContain('onSort={toggleTableSort}');
     expect(inlineFiltersSource).toContain('data-alpha-reference-result');
+    expect(inlineFiltersSource).toContain('data-alpha-report-result-format={referenceResult ? "reference" : "grid"}');
     expect(inlineFiltersSource).toContain('[&_[data-purchase-inline-result]]:hidden');
+    expect(reportsCenterSource).toContain('const referencePeriod = `${dateFrom || "Fillimi"} — ${dateTo || "Sot"}`;');
   });
 });

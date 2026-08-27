@@ -2172,8 +2172,8 @@
 - [ ] Verifiko në browser kthimin nga Blerje, Shitje dhe Magazina te katalogu dhe faqja kryesore.
 
 ## Raportet — përputhja e formatit Alpha (2026-08-27)
-- [ ] Krahaso katalogun, filtrat, komandat dhe grid-in e rezultateve me rrjedhën reale të Alpha Web.
-- [ ] Zbato ndryshimet prioritare të formatit pa rikthyer modalin dhe pa ndryshuar të dhënat reale të raporteve.
+- [x] Krahaso katalogun, filtrat, komandat dhe grid-in e rezultateve me rrjedhën reale të Alpha Web.
+- [x] Zbato ndryshimet prioritare të formatit pa rikthyer modalin dhe pa ndryshuar të dhënat reale të raporteve.
 - [ ] Verifiko në browser formatin e Blerje, Shitje dhe Magazina kundrejt referencës Alpha.
 
 ## Stabiliteti i preview — Vite WebSocket (2026-08-27)
