@@ -4,7 +4,7 @@ import type { ReportCatalogItem, ReportModule } from "../../../shared/reportCata
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-type PurchaseReportInlineFiltersProps = {
+type AlphaReportInlineFiltersProps = {
   selectedTitle: string;
   moduleLabel?: ReportModule;
   workspaceTitle?: string;
@@ -49,7 +49,7 @@ type PurchaseReportInlineFiltersProps = {
   onDelta: () => void;
 };
 
-export default function PurchaseReportInlineFilters({
+export default function AlphaReportInlineFilters({
   selectedTitle,
   moduleLabel = "Blerje",
   workspaceTitle,
@@ -92,7 +92,7 @@ export default function PurchaseReportInlineFilters({
   onNewPage,
   onList,
   onDelta,
-}: PurchaseReportInlineFiltersProps) {
+}: AlphaReportInlineFiltersProps) {
   const title = workspaceTitle ?? `Raporte ${moduleLabel}`;
   const resolvedPartnerLookupKind = partnerLookupKind ?? (moduleLabel === "Shitje" ? "customer" : "supplier");
   return <section data-alpha-inline-filters data-report-module={moduleLabel} className="border border-[#858585] bg-[#efefef] text-[#202020] shadow-none">

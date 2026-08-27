@@ -11,7 +11,7 @@ describe("ReportsCenter inline Alpha workspace", () => {
   });
 
   it("renders the report form directly in the report workspace", () => {
-    expect(reportsCenterSource).toContain("{isReportOpen && <PurchaseReportInlineFilters");
+    expect(reportsCenterSource).toContain("{isReportOpen && <AlphaReportInlineFilters");
     expect(reportsCenterSource).toContain("moduleLabel={selected.module}");
     expect(reportsCenterSource).toContain("partnerLookupKind={inlinePartnerLookupKind}");
   });
