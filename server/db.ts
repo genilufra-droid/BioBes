@@ -31,6 +31,11 @@ let _db: ReturnType<typeof drizzle> | null = null;
 
 export const normalizeDocumentNumber = (value: string) => String(value ?? "").trim().toLocaleLowerCase("sq-AL");
 
+export function getAffectedRowCount(result: unknown): number {
+  const updateResult = result as { affectedRows?: number; rowsAffected?: number; 0?: { affectedRows?: number; rowsAffected?: number } };
+  return Number(updateResult.affectedRows ?? updateResult.rowsAffected ?? updateResult[0]?.affectedRows ?? updateResult[0]?.rowsAffected ?? 0);
+}
+
 async function assertUniqueDocumentNumber(db: any, table: any, companyId: number, rawNumber: string, label: string, excludeId?: number) {
   const normalized = normalizeDocumentNumber(rawNumber);
   if (!normalized) throw new Error(`${label} kërkon numër dokumenti.`);
@@ -246,7 +251,8 @@ export async function activateExistingLocalOwner(data: { email: string; password
     const memberships = await tx.select({ role: userCompanies.role }).from(userCompanies).where(eq(userCompanies.userId, account.id));
     if (!memberships.some(membership => membership.role === "owner")) return null;
     const result = await tx.update(users).set({ passwordHash: data.passwordHash, loginMethod: "local", lastSignedIn: new Date() }).where(and(eq(users.id, account.id), isNull(users.passwordHash)));
-    const affectedRows = Number((result as unknown as { affectedRows?: number }).affectedRows ?? 0);
+    // mysql2 may return a ResultSetHeader directly or as the first tuple item.
+    const affectedRows = getAffectedRowCount(result);
     if (affectedRows !== 1) return null;
     return { id: account.id, openId: account.openId, email: account.email, name: account.name, role: account.role };
   });

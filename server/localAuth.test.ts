@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { consumeLocalAuthRateLimit, hashLocalPassword, hasValidSetupSecret, isValidLocalBootstrapInput, verifyLocalPassword } from "./_core/localAuth";
 import { ENV } from "./_core/env";
+import { getAffectedRowCount } from "./db";
 
 describe("local auth password adapter", () => {
   it("hashes and verifies the correct password without storing plaintext", async () => {
@@ -9,6 +10,15 @@ describe("local auth password adapter", () => {
     expect(hash).not.toContain("test-password");
     await expect(verifyLocalPassword("test-password", hash)).resolves.toBe(true);
     await expect(verifyLocalPassword("wrong-password", hash)).resolves.toBe(false);
+  });
+});
+
+describe("local owner activation database result", () => {
+  it("accepts both mysql result header shapes", () => {
+    expect(getAffectedRowCount({ affectedRows: 1 })).toBe(1);
+    expect(getAffectedRowCount([{ affectedRows: 1 }])).toBe(1);
+    expect(getAffectedRowCount({ rowsAffected: 1 })).toBe(1);
+    expect(getAffectedRowCount([])).toBe(0);
   });
 });
 
