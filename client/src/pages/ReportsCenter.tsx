@@ -4,9 +4,7 @@ import { ArrowUpRight, BarChart3, Bookmark, CircleHelp, Eye, FileSpreadsheet, Fi
 import { trpc } from "@/lib/trpc";
 import { buildSourceDocumentUrl, exportToExcel, exportToPDF } from "@/lib/export";
 import { REPORT_CATALOG, type ReportCatalogItem, type ReportModule } from "../../../shared/reportCatalog";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
