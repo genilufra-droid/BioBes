@@ -2134,3 +2134,15 @@
 ## Korrigjim — pa wrapper dritare për filtrat e Raporteve (2026-08-27)
 - [x] Hiq kornizën dhe titullin e mbetur të dritares nga workspace-i inline, që klikimi i raportit të shfaqë vetëm filtrat Alpha në vetë faqen.
 - [x] Verifiko Blerje, Shitje dhe Magazina në desktop/mobile, pastaj sinkronizo vetëm source-in e verifikuar.
+
+## Autentikim — llogari e re dhe rivendosje fjalëkalimi (2026-08-27)
+- [ ] Audito hyrjen ekzistuese dhe rrugët lokale/OAuth për të përcaktuar rrjedhën e sigurt të regjistrimit dhe reset-it.
+- [ ] Shto hapje llogarie të re dhe kërkesë të sigurt për rivendosje fjalëkalimi pa zbuluar llogari ekzistuese.
+- [ ] Shto testet e autorizimit/rate-limit dhe verifiko rrjedhën në browser përpara sinkronizimit në BioBes.
+
+## Raporte Blerje — filtrat e regjistrit dhe modele të veçanta (2026-08-27)
+- [x] Audito filtrat e regjistrit të faturave dhe çelësat/degët reale për secilin nga 18 modelet Blerje.
+- [x] Shto filtrat specifikë të regjistrit të faturave vetëm te raportet që marrin fatura, pa shtuar fusha të parëndësishme te kartelat ose listat.
+- [x] Ndaj modelet që kthejnë të njëjtin dataset në raport me kolonat, grupimet dhe burimin real përkatës.
+- [ ] Shto regresione dhe verifiko Blerje në browser me të dhënat reale të kompanisë aktive para sinkronizimit.
+- [x] Hape regjistrin e faturave me historikun e plotë të kompanisë aktive; kufizoje vetëm kur përdoruesi vendos interval date.
