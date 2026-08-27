@@ -54,6 +54,20 @@ describe("report invoice payment aggregation", () => {
     expect(getReportPaymentStatus(source, resolved.remaining)).toBe("Pjesërisht");
   });
 
+  it("does not allocate an unmatched payment to an invoice report row", () => {
+    const source = invoice({ totalAmount: 20_000, vatAmount: 0 });
+    const totals = buildReportInvoicePaymentTotals(
+      [source],
+      [payment({ reference: "BL-OTHER", amount: 20_000 })],
+      "OUTBOUND",
+      "SUPPLIER",
+    );
+    const resolved = resolveReportInvoicePayment(source, totals);
+
+    expect(resolved).toMatchObject({ billed: 20_000, paid: 0, remaining: 20_000 });
+    expect(getReportPaymentStatus(source, resolved.remaining)).toBe("E papaguar");
+  });
+
   it("converts a payment to the invoice currency while retaining the base amount", () => {
     const source = invoice({ currency: "EUR", exchangeRate: 100 });
     const totals = buildReportInvoicePaymentTotals([source], [payment({ amount: 5_000, exchangeRate: 1 })], "OUTBOUND", "SUPPLIER");
