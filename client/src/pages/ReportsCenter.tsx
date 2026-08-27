@@ -53,6 +53,7 @@ type SavedReportFilter = {
   dateFrom: string;
   dateTo: string;
   documentFilter: string;
+  documentFilterEnd?: string;
   partnerFilter: string;
   categoryFilter: string;
   statusFilter: string;
@@ -80,6 +81,7 @@ export default function ReportsCenter({ companyId }: { companyId: number }) {
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [documentFilter, setDocumentFilter] = useState("");
+  const [documentFilterEnd, setDocumentFilterEnd] = useState("");
   const [partnerFilter, setPartnerFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -128,6 +130,7 @@ export default function ReportsCenter({ companyId }: { companyId: number }) {
     dateFrom: dateFrom ? new Date(dateFrom) : undefined,
     dateTo: dateTo ? new Date(dateTo) : undefined,
     documentFilter: effectiveDocumentFilter || undefined,
+    documentFilterEnd: showLegacyDocumentNumberFilter ? documentFilterEnd || undefined : undefined,
     partnerFilter: partnerFilter || undefined,
     categoryFilter: categoryFilter || undefined,
     statusFilter: statusFilter || undefined,
@@ -137,7 +140,7 @@ export default function ReportsCenter({ companyId }: { companyId: number }) {
     unitFilter: unitFilter || undefined,
     amountMin: amountMin || undefined,
     amountMax: amountMax || undefined,
-  }), [companyId, selectedKey, dateFrom, dateTo, effectiveDocumentFilter, partnerFilter, categoryFilter, statusFilter, currencyFilter, documentTypeFilter, warehouseFilter, unitFilter, amountMin, amountMax]);
+  }), [companyId, selectedKey, dateFrom, dateTo, effectiveDocumentFilter, documentFilterEnd, showLegacyDocumentNumberFilter, partnerFilter, categoryFilter, statusFilter, currencyFilter, documentTypeFilter, warehouseFilter, unitFilter, amountMin, amountMax]);
   const reportQuery = trpc.reportCenter.get.useQuery(reportInput, { enabled: hasExecutedReport });
   const lookupQuery = trpc.globalSearch.query.useQuery({ companyId, term: lookupTerm }, { enabled: Boolean(lookupKind && lookupKind !== "customer" && lookupTerm.trim().length >= 2) });
   const customerLookupQuery = trpc.customer.list.useQuery({ companyId }, { enabled: lookupKind === "customer" });
@@ -197,7 +200,7 @@ export default function ReportsCenter({ companyId }: { companyId: number }) {
   const report = reportQuery.data;
   const rawRows = (report?.rows ?? []) as Record<string, unknown>[];
   const columns = report?.columns ?? [];
-  const filteredRows = useMemo(() => searchReportRows(filterReportRows(rawRows, { documentFilter: effectiveDocumentFilter, partnerFilter, categoryFilter, statusFilter, currencyFilter, documentTypeFilter, warehouseFilter, unitFilter, amountMin, amountMax }), tableSearch), [rawRows, effectiveDocumentFilter, partnerFilter, categoryFilter, statusFilter, currencyFilter, documentTypeFilter, warehouseFilter, unitFilter, amountMin, amountMax, tableSearch]);
+  const filteredRows = useMemo(() => searchReportRows(filterReportRows(rawRows, { documentFilter: effectiveDocumentFilter, documentFilterEnd: showLegacyDocumentNumberFilter ? documentFilterEnd : "", partnerFilter, categoryFilter, statusFilter, currencyFilter, documentTypeFilter, warehouseFilter, unitFilter, amountMin, amountMax }), tableSearch), [rawRows, effectiveDocumentFilter, documentFilterEnd, showLegacyDocumentNumberFilter, partnerFilter, categoryFilter, statusFilter, currencyFilter, documentTypeFilter, warehouseFilter, unitFilter, amountMin, amountMax, tableSearch]);
   const columnFilteredRows = useMemo(() => filterReportRowsByColumns(filteredRows, columnFilters), [filteredRows, columnFilters]);
   const rows = useMemo(() => sortReportRows(columnFilteredRows, tableSort), [columnFilteredRows, tableSort]);
   const activeFilterEntries = useMemo(() => activeReportFilters({ [selected.key === "inventory_product_card_pdf" ? "Dokumenti burimor" : "Furnitor / Klient"]: partnerFilter, "Nr. dokumenti": effectiveDocumentFilter, [selected.key === "inventory_product_card_pdf" ? "Artikull" : "Kategori / Artikull"]: categoryFilter, Status: statusFilter, Monedha: currencyFilter, "Lloj dokumenti": documentTypeFilter, [selected.key === "inventory_product_card_pdf" ? "Magazinë" : "Magazina"]: warehouseFilter, Njësia: unitFilter, "Shuma minimale": amountMin, "Shuma maksimale": amountMax, "Data nga": dateFrom, "Data deri": dateTo, "Kërkimi në tabelë": tableSearch }), [selected.key, partnerFilter, documentFilter, categoryFilter, statusFilter, currencyFilter, documentTypeFilter, warehouseFilter, unitFilter, amountMin, amountMax, dateFrom, dateTo, tableSearch]);
@@ -208,7 +211,7 @@ export default function ReportsCenter({ companyId }: { companyId: number }) {
   const isReportLoading = reportQuery.isFetching || isViewing;
 
   const currentFilterSnapshot = (): Omit<SavedReportFilter, "id" | "companyId" | "reportKey" | "name"> => ({
-    dateFrom, dateTo, documentFilter, partnerFilter, categoryFilter, statusFilter, currencyFilter, documentTypeFilter, warehouseFilter, unitFilter, amountMin, amountMax,
+    dateFrom, dateTo, documentFilter, documentFilterEnd, partnerFilter, categoryFilter, statusFilter, currencyFilter, documentTypeFilter, warehouseFilter, unitFilter, amountMin, amountMax,
   });
   const saveFavorite = () => {
     const name = favoriteName.trim();
@@ -221,7 +224,7 @@ export default function ReportsCenter({ companyId }: { companyId: number }) {
     toast.success("Filtri i preferuar u ruajt.");
   };
   const applyFavorite = (filter: SavedReportFilter) => {
-    setDateFrom(filter.dateFrom); setDateTo(filter.dateTo); setDocumentFilter(filter.documentFilter); setPartnerFilter(filter.partnerFilter);
+    setDateFrom(filter.dateFrom); setDateTo(filter.dateTo); setDocumentFilter(filter.documentFilter); setDocumentFilterEnd(filter.documentFilterEnd ?? ""); setPartnerFilter(filter.partnerFilter);
     setCategoryFilter(filter.categoryFilter); setStatusFilter(filter.statusFilter); setCurrencyFilter(filter.currencyFilter ?? ""); setDocumentTypeFilter(filter.documentTypeFilter ?? ""); setWarehouseFilter(filter.warehouseFilter ?? ""); setUnitFilter(filter.unitFilter ?? ""); setAmountMin(filter.amountMin); setAmountMax(filter.amountMax);
     toast.success(`U aplikua filtri: ${filter.name}`);
   };
@@ -279,6 +282,7 @@ export default function ReportsCenter({ companyId }: { companyId: number }) {
     setDateFrom("");
     setDateTo("");
     setDocumentFilter("");
+    setDocumentFilterEnd("");
     setPartnerFilter("");
     setCategoryFilter("");
     setStatusFilter("");
@@ -297,7 +301,17 @@ export default function ReportsCenter({ companyId }: { companyId: number }) {
   const isProductCardReport = selected.key === "inventory_product_card_pdf";
   const usesArticleFilters = isInventoryModule || isSalesModule || isPurchaseModule;
   const referenceTitle = isReferenceReport ? getReferenceTitle(selected.key, selected.title) : selected.title;
-  const reportWindowTitle = selected.module === "Shitje" ? "Raporte Shitjeje" : selected.module === "Blerje" ? "Raporte Blerjeje" : selected.module === "Magazina" ? "Raporte Magazine" : selected.module === "CRM" ? "Raporte Klientë dhe furnitorë" : `Raporte ${selected.module}`;
+  const purchaseInvoiceRegisterKeys = new Set(["purchase_summary_register_pdf", "purchase_invoices", "purchase_document_register", "purchase_analytic_register_format2_alpha", "purchase_analytic_register_format3_alpha", "purchase_analytic_detail_alpha", "purchase_invoice_payment_register_pdf", "purchase_customs_import_register_pdf"]);
+  const inlineFilterVisibility = {
+    amount: legacyFilterVisibility.genericAmountSidebar,
+    documentNumber: legacyFilterVisibility.documentNumber,
+    documentType: legacyFilterVisibility.documentType,
+    currency: legacyFilterVisibility.currency,
+    partner: isPurchaseModule || isSalesModule || selected.module === "CRM",
+    product: usesArticleFilters,
+    warehouse: isPurchaseModule || isSalesModule || isInventoryModule,
+    status: isPurchaseModule && purchaseInvoiceRegisterKeys.has(selected.key),
+  };
   const reportMeta = { ...(report?.meta ?? {}), ...activeFilterMeta };
   const exportExcel = () => exportToExcel(rows.map(row => Object.fromEntries(Object.entries(row).filter(([key]) => !key.startsWith("__")))), `${selected.key}_${new Date().toISOString().slice(0, 10)}`, referenceTitle, isReferenceReport ? columns.map(column => ({ key: column, label: getReferenceColumnLabel(selected.key, column) })) : columns, { title: referenceTitle, period: `${dateFrom || "Fillimi"} — ${dateTo || "Sot"}`, landscape: columns.length > 8, reference: isReferenceReport, includeTotals: true, headerColor: isReferenceReport ? "FF714B67" : undefined, titleColor: isReferenceReport ? "FF714B67" : undefined, referenceKey: isReferenceReport ? selected.key : undefined });
   const exportPdf = () => exportToPDF(rows, `${selected.key}_${new Date().toISOString().slice(0, 10)}`, referenceTitle, columns.map(column => ({ key: column, label: isReferenceReport ? getReferenceColumnLabel(selected.key, column) : column })) as { key: keyof Record<string, unknown>; label: string }[], { landscape: columns.length > 8, reference: isReferenceReport, includeTotals: true, referenceKey: isReferenceReport ? selected.key : undefined, period: `${dateFrom || "Fillimi"} — ${dateTo || "Sot"}`, meta: reportMeta, headerColor: [230, 229, 181], headerTextColor: [37, 37, 31], titleColor: [37, 37, 31], fontSize: columns.length > 10 ? 6 : 8 });
@@ -377,7 +391,7 @@ export default function ReportsCenter({ companyId }: { companyId: number }) {
       </div>}
     </section></>}
 
-    {isReportOpen && <AlphaReportInlineFilters moduleLabel={selected.module} partnerLabel={inlinePartnerLabel} partnerLookupKind={inlinePartnerLookupKind} showPartner={isPurchaseModule || isSalesModule || selected.module === "CRM"} selectedTitle={selected.title} dateFrom={dateFrom} dateTo={dateTo} documentFilter={documentFilter} partnerFilter={partnerFilter} categoryFilter={categoryFilter} currencyFilter={currencyFilter} documentTypeFilter={documentTypeFilter} warehouseFilter={warehouseFilter} amountMin={amountMin} amountMax={amountMax} isLoading={isReportLoading} hasExecuted={hasExecutedReport} columns={columns} rows={rows} metrics={report?.metrics ?? []} onOpenDocument={openDocument} formatCell={cellValue} onDateFromChange={event => setDateFrom(event.target.value)} onDateToChange={event => setDateTo(event.target.value)} onDocumentFilterChange={setDocumentFilter} onPartnerFilterChange={setPartnerFilter} onCategoryFilterChange={setCategoryFilter} onCurrencyFilterChange={setCurrencyFilter} onDocumentTypeFilterChange={setDocumentTypeFilter} onWarehouseFilterChange={setWarehouseFilter} onAmountMinChange={setAmountMin} onAmountMaxChange={setAmountMax} onLookup={openLookup} onView={viewReport} onClear={clearReportFilters} onNewPage={() => { clearReportFilters(); setIsReportOpen(true); }} onList={() => { clearReportFilters(); setIsReportOpen(false); setLocation(alphaReportWorkspaceUrl(selected.module)); }} onDelta={() => toast.info(`Vizualizo ne Delta për ${selected.module} do të përdoret pasi të aktivizohet raporti Delta.`)} />}
+    {isReportOpen && <AlphaReportInlineFilters moduleLabel={selected.module} filterVisibility={inlineFilterVisibility} partnerLabel={inlinePartnerLabel} partnerLookupKind={inlinePartnerLookupKind} showPartner={isPurchaseModule || isSalesModule || selected.module === "CRM"} selectedTitle={selected.title} dateFrom={dateFrom} dateTo={dateTo} documentFilter={documentFilter} documentFilterEnd={documentFilterEnd} partnerFilter={partnerFilter} categoryFilter={categoryFilter} statusFilter={statusFilter} currencyFilter={currencyFilter} documentTypeFilter={documentTypeFilter} warehouseFilter={warehouseFilter} amountMin={amountMin} amountMax={amountMax} isLoading={isReportLoading} hasExecuted={hasExecutedReport} columns={columns} rows={rows} metrics={report?.metrics ?? []} onOpenDocument={openDocument} formatCell={cellValue} onDateFromChange={event => setDateFrom(event.target.value)} onDateToChange={event => setDateTo(event.target.value)} onDocumentFilterChange={setDocumentFilter} onDocumentFilterEndChange={setDocumentFilterEnd} onPartnerFilterChange={setPartnerFilter} onCategoryFilterChange={setCategoryFilter} onStatusFilterChange={setStatusFilter} onCurrencyFilterChange={setCurrencyFilter} onDocumentTypeFilterChange={setDocumentTypeFilter} onWarehouseFilterChange={setWarehouseFilter} onAmountMinChange={setAmountMin} onAmountMaxChange={setAmountMax} onLookup={openLookup} onView={viewReport} onClear={clearReportFilters} onNewPage={() => { clearReportFilters(); setIsReportOpen(true); }} onList={() => { clearReportFilters(); setIsReportOpen(false); setLocation(alphaReportWorkspaceUrl(selected.module)); }} onDelta={() => toast.info(`Vizualizo ne Delta për ${selected.module} do të përdoret pasi të aktivizohet raporti Delta.`)} />}
     <Dialog open={Boolean(lookupKind)} onOpenChange={open => { if (!open) { setLookupKind(null); setLookupTerm(""); } }}><DialogContent className="max-w-lg"><DialogTitle>Kërko {lookupKind === "supplier" ? "furnitorin" : lookupKind === "customer" ? "klientin" : lookupKind === "product" ? "artikullin" : lookupKind === "warehouse" ? "magazinën" : "dokumentin"}</DialogTitle><Input autoFocus value={lookupTerm} onChange={event => setLookupTerm(event.target.value)} placeholder="Shkruaj të paktën 2 karaktere" />{lookupTerm.trim().length < 2 ? <p className="text-sm text-muted-foreground">Shkruani emrin, kodin ose numrin për të kërkuar në kompaninë aktive.</p> : lookupIsFetching ? <p className="text-sm text-muted-foreground">Po kërkohet...</p> : lookupResults.length === 0 ? <p className="text-sm text-muted-foreground">Nuk u gjetën rezultate.</p> : <div className="max-h-64 space-y-1 overflow-y-auto">{lookupResults.map((item, index) => <button type="button" key={`${item.type}-${item.title}-${index}`} className="block w-full rounded border border-slate-200 px-3 py-2 text-left hover:bg-slate-50" onClick={() => chooseLookup(item)}><span className="block text-sm font-medium">{item.title}</span><span className="block text-xs text-muted-foreground">{item.type} · {item.subtitle}</span></button>)}</div>}</DialogContent></Dialog>
 
     <ReportDocumentDialog document={openedReportDocument} onOpenChange={open => { if (!open) setOpenedReportDocument(null); }} onOpenDocument={openDocument} />

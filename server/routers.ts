@@ -1966,7 +1966,7 @@ export const appRouter = router({
   reportCenter: router({
     get: protectedProcedure.input(z.object({
       companyId: z.number().int().positive(), reportKey: z.string().min(1).max(100), dateFrom: z.coerce.date().optional(), dateTo: z.coerce.date().optional(),
-      documentFilter: z.string().max(255).optional(), partnerFilter: z.string().max(255).optional(), categoryFilter: z.string().max(255).optional(), statusFilter: z.string().max(100).optional(), currencyFilter: z.string().max(20).optional(), documentTypeFilter: z.string().max(100).optional(), warehouseFilter: z.string().max(255).optional(), unitFilter: z.string().max(100).optional(), amountMin: z.string().max(50).optional(), amountMax: z.string().max(50).optional(),
+      documentFilter: z.string().max(255).optional(), documentFilterEnd: z.string().max(255).optional(), partnerFilter: z.string().max(255).optional(), categoryFilter: z.string().max(255).optional(), statusFilter: z.string().max(100).optional(), currencyFilter: z.string().max(20).optional(), documentTypeFilter: z.string().max(100).optional(), warehouseFilter: z.string().max(255).optional(), unitFilter: z.string().max(100).optional(), amountMin: z.string().max(50).optional(), amountMax: z.string().max(50).optional(),
     })).query(async ({ ctx, input }) => {
       await assertCompanyAccess(ctx.user.id, input.companyId);
       return db.getOdooReport(input.companyId, input.reportKey, input);

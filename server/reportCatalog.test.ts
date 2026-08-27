@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { REPORT_BASE_KEYS, REPORT_CATALOG } from "../shared/reportCatalog";
-import { applyInventoryValuePercent, applyOdooReportFilters, applyReportVariant, calculateSupplierSituationAmounts, getInventoryRunningKey, getSupplierMaturityBucket, mapPurchaseCustomsFields, normalizePurchasePaymentAmount, shapeReferenceReport } from "./db";
+import { applyInventoryValuePercent, applyOdooReportFilters, applyReportVariant, calculateSupplierSituationAmounts, getInventoryRunningKey, getSupplierMaturityBucket, mapPurchaseCustomsFields, normalizePurchasePaymentAmount, resolveOdooBaseReportKey, shapeReferenceReport } from "./db";
 
 describe("Odoo-style report catalog", () => {
   it("keeps inventory progressive balances isolated by warehouse and product", () => {
@@ -142,6 +142,18 @@ describe("Odoo-style report catalog", () => {
     }, { warehouseFilter: "Qendrore" });
     expect(output.rows).toHaveLength(1);
     expect(output.rows[0]).toMatchObject({ "Kartelë": "A-01", __warehouse: "Magazina Qendrore" });
+  });
+
+  it("keeps all purchase models on dedicated real-data branches instead of a shared generic alias", () => {
+    const purchaseKeys = REPORT_CATALOG.filter(report => report.module === "Blerje").map(report => report.key);
+    expect(purchaseKeys).toHaveLength(18);
+    expect(purchaseKeys.map(resolveOdooBaseReportKey)).toEqual(purchaseKeys);
+  });
+
+  it("filters the invoice-number range while retaining all historical rows when the range is blank", () => {
+    const source = { columns: ["Dokumenti", "Vlefta"], rows: [{ Dokumenti: "BL-01", Vlefta: 10 }, { Dokumenti: "BL-02", Vlefta: 20 }, { Dokumenti: "BL-03", Vlefta: 30 }], metrics: [{ label: "Rreshta", value: 3 }] };
+    expect(applyOdooReportFilters(source, { documentFilter: "BL-02", documentFilterEnd: "BL-03" }).rows.map(row => row.Dokumenti)).toEqual(["BL-02", "BL-03"]);
+    expect(applyOdooReportFilters(source, {}).rows).toEqual(source.rows);
   });
 
   it("returns a valid report structure for every catalog key", () => {

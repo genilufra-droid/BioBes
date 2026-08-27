@@ -1,5 +1,6 @@
 export type ReportFilterValues = {
   documentFilter: string;
+  documentFilterEnd?: string;
   partnerFilter: string;
   categoryFilter: string;
   statusFilter: string;
@@ -81,6 +82,7 @@ function matchesReportField(row: Record<string, unknown>, fields: readonly strin
 
 export function filterReportRows(rows: Record<string, unknown>[], filters: ReportFilterValues) {
   const documentFilter = filters.documentFilter.trim().toLocaleLowerCase("sq-AL");
+  const documentFilterEnd = (filters.documentFilterEnd ?? "").trim().toLocaleLowerCase("sq-AL");
   const partnerFilter = filters.partnerFilter.trim().toLocaleLowerCase("sq-AL");
   const categoryFilter = filters.categoryFilter.trim().toLocaleLowerCase("sq-AL");
   const statusFilter = filters.statusFilter.trim().toLocaleLowerCase("sq-AL");
@@ -95,11 +97,25 @@ export function filterReportRows(rows: Record<string, unknown>[], filters: Repor
     "Detyrim", "Detyrimi", "Detyrimi bazë", "Bilanci", "Debi", "Kredi", "Vlera e Shitjes", "Vlera e pritur",
   ];
 
+  const documentNumber = (row: Record<string, unknown>) => String(REPORT_FILTER_FIELDS.document.map(field => row[field]).find(value => value !== undefined && value !== null) ?? "").trim();
+  const documentRangeMatch = (row: Record<string, unknown>) => {
+    if (!documentFilterEnd) return matchesReportField(row, REPORT_FILTER_FIELDS.document, documentFilter, Object.values(row).map(searchableValue).join(" ").toLocaleLowerCase("sq-AL"));
+    const value = documentNumber(row).toLocaleLowerCase("sq-AL");
+    const trailingNumber = (item: string) => item.match(/(\d+)(?!.*\d)/)?.[1];
+    const valueNumber = trailingNumber(value);
+    const startNumber = trailingNumber(documentFilter);
+    const endNumber = trailingNumber(documentFilterEnd);
+    if (valueNumber && endNumber && (!documentFilter || startNumber)) {
+      const number = Number(valueNumber);
+      return (!startNumber || number >= Number(startNumber)) && number <= Number(endNumber);
+    }
+    return (!documentFilter || value >= documentFilter) && value <= documentFilterEnd;
+  };
   return rows.filter(row => {
     const text = Object.values(row).map(searchableValue).join(" ").toLocaleLowerCase("sq-AL");
     const amountValue = amountColumnPriority.map(column => row[column]).find(value => typeof value === "number");
     const amount = Number(amountValue);
-    return matchesReportField(row, REPORT_FILTER_FIELDS.document, documentFilter, text)
+    return documentRangeMatch(row)
       && matchesReportField(row, REPORT_FILTER_FIELDS.partner, partnerFilter, text)
       && matchesReportField(row, REPORT_FILTER_FIELDS.category, categoryFilter, text)
       && matchesReportField(row, REPORT_FILTER_FIELDS.status, statusFilter, text)

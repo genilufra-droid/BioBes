@@ -86,6 +86,17 @@ describe("filterReportRows", () => {
     expect(filtered).toHaveLength(1);
     expect(filtered[0]).toEqual(rows[1]);
   });
+
+  it("filtron intervalin e numrave të faturave pa kufizuar historikun kur intervali mungon", () => {
+    expect(filterReportRows(rows, {
+      documentFilter: "BL-02", documentFilterEnd: "BL-03", partnerFilter: "", categoryFilter: "", statusFilter: "",
+      amountMin: "", amountMax: "",
+    })).toEqual([rows[1], rows[2]]);
+    expect(filterReportRows(rows, {
+      documentFilter: "", documentFilterEnd: "", partnerFilter: "", categoryFilter: "", statusFilter: "",
+      amountMin: "", amountMax: "",
+    })).toEqual(rows);
+  });
 });
 
 describe("reportMetricValue", () => {
