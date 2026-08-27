@@ -2177,10 +2177,10 @@
 - [ ] Verifiko në browser formatin e Blerje, Shitje dhe Magazina kundrejt referencës Alpha.
 
 ## Raportet — uniformiteti modul/model (2026-08-27)
-- [ ] Inventarizo çdo raport me modulin e katalogut, burimin e të dhënave dhe komponentin e pamjes së rezultatit.
-- [ ] Hiq hartëzimet e pasakta ndërmjet moduleve dhe çdo fallback të pamjes së vjetër për raportet e standardizuara.
-- [ ] Standardizo formatin e rezultateve Blerje, Shitje dhe Magazina në komponentin e dedikuar sipas modelit Alpha.
-- [ ] Shto regresione për të provuar që një çelës raporti nuk merr modul ose model pamjeje të gabuar.
+- [x] Inventarizo çdo raport me modulin e katalogut, burimin e të dhënave dhe komponentin e pamjes së rezultatit.
+- [x] Hiq hartëzimet e pasakta ndërmjet moduleve dhe çdo fallback të pamjes së vjetër për raportet e standardizuara.
+- [x] Standardizo formatin e rezultateve Blerje, Shitje dhe Magazina në komponentin e dedikuar sipas modelit Alpha.
+- [x] Shto regresione për të provuar që një çelës raporti nuk merr modul ose model pamjeje të gabuar.
 
 ## Stabiliteti i preview — Vite WebSocket (2026-08-27)
 - [ ] Audito dhe rregullo shkëputjen `failed to connect to websocket` në preview, pa prekur sesionin lokal ose të dhënat e kompanisë.
