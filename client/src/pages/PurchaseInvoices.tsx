@@ -156,7 +156,7 @@ export default function PurchaseInvoices({ companyId }: { companyId: number }) {
   const requestedReceiptId = Number(new URLSearchParams(locationSearch).get("openReceipt"));
   const requestedReturnId = Number(new URLSearchParams(locationSearch).get("openReturn"));
   const utils = trpc.useUtils();
-  const [billOpen, setBillOpen] = useState(false);
+  const [billOpen, setBillOpen] = useState(() => new URLSearchParams(locationSearch).get("newInvoice") === "1");
   const [orderOpen, setOrderOpen] = useState(false);
   const [receiptOpen, setReceiptOpen] = useState(false);
   const [returnOpen, setReturnOpen] = useState(false);
@@ -172,6 +172,12 @@ export default function PurchaseInvoices({ companyId }: { companyId: number }) {
   const [selectedReceiptId, setSelectedReceiptId] = useState<number | undefined>();
   const [selectedReturnId, setSelectedReturnId] = useState<number | undefined>();
   useEffect(() => { setActiveTab(initialTab); }, [initialTab]);
+  useEffect(() => {
+    if (new URLSearchParams(locationSearch).get("newInvoice") === "1") {
+      setActiveTab("bills");
+      setBillOpen(true);
+    }
+  }, [locationSearch]);
   useEffect(() => { const id = Number(new URLSearchParams(locationSearch).get("openInvoice")); if (Number.isInteger(id) && id > 0) setSelectedInvoiceId(id); }, [locationSearch]);
   useEffect(() => { if (initialTab === "receipts" && Number.isInteger(requestedReceiptOrderId) && requestedReceiptOrderId > 0) { setReceiptOrderId(requestedReceiptOrderId); setReceiptOpen(true); } }, [initialTab, requestedReceiptOrderId]);
   useEffect(() => { setSelectedReceiptId(Number.isInteger(requestedReceiptId) && requestedReceiptId > 0 ? requestedReceiptId : undefined); setSelectedReturnId(Number.isInteger(requestedReturnId) && requestedReturnId > 0 ? requestedReturnId : undefined); }, [requestedReceiptId, requestedReturnId]);

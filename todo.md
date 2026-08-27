@@ -2153,6 +2153,11 @@
 - [x] Provo aktivizimin e pronarit me përgjigje të sigurt, pa ekspozuar sekretin, dhe publiko vetëm pasi endpoint-i publik funksionon.
 - [x] Riprodho dështimin e përsëritur të aktivizimit në rrjedhën reale dhe shto diagnostikim server-side pa zbuluar kredenciale ose ekzistencën e llogarive.
 
+## Bllokues — faturat nga Regjistrime (2026-08-27)
+- [ ] Riprodho nga menuja Regjistrime hapjen e Faturës së Blerjes dhe Faturës së Shitjes për përdoruesin dhe kompaninë aktive.
+- [ ] Korrigjo targetet e menusë ose parametrat e route-it që pengojnë hapjen e formularëve, pa prekur Pagat.
+- [ ] Verifiko ruajtjen e draftit në Blerje dhe Shitje me kompani të autorizuar, pa krijuar të dhëna testimi të panevojshme.
+
 ## Raporte Blerje — filtrat e regjistrit dhe modele të veçanta (2026-08-27)
 - [x] Audito filtrat e regjistrit të faturave dhe çelësat/degët reale për secilin nga 18 modelet Blerje.
 - [x] Shto filtrat specifikë të regjistrit të faturave vetëm te raportet që marrin fatura, pa shtuar fusha të parëndësishme te kartelat ose listat.

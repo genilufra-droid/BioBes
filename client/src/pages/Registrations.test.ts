@@ -26,6 +26,12 @@ describe("Registrations workspace", () => {
     expect(page).toContain('if (item.key === "sales") { setLocation("/sales-invoices?tab=invoices&newInvoice=1"); return; }');
   });
 
+  it("routes both invoice menu entries directly to new document forms", () => {
+    expect(registrationMenu).toContain('path: "/sales-invoices?tab=invoices&newInvoice=1"');
+    expect(registrationMenu).toContain('path: "/purchase-invoices?tab=bills&newInvoice=1"');
+    expect(page).toContain('if (item.key === "purchases") { setLocation("/purchase-invoices?tab=bills&newInvoice=1"); return; }');
+  });
+
   it("uses an Alpha list/dropdown model instead of a sales workflow", () => {
     expect(page).toContain("Zgjidh regjistrin që dëshiron të hapësh");
     expect(page).not.toContain("Procesi i punës");

@@ -25,6 +25,13 @@ describe("Purchase invoice source-document navigation", () => {
     expect(detailDialog).toBeGreaterThan(tabsClose);
   });
 
+  it("opens a new purchase invoice when the registrations route asks for one", () => {
+    expect(source).toContain('useState(() => new URLSearchParams(locationSearch).get("newInvoice") === "1")');
+    expect(source).toContain('if (new URLSearchParams(locationSearch).get("newInvoice") === "1")');
+    expect(source).toContain('setActiveTab("bills");');
+    expect(source).toContain('setBillOpen(true);');
+  });
+
   it("keeps the purchase register column-filter panel hideable and restorable", () => {
     expect(source).toContain("<PurchaseRegisterFilterBar filters={registerFilters} onChange={setRegisterFilters} />");
     expect(filterBarSource).toContain('data-testid="purchase-register-column-filters"');

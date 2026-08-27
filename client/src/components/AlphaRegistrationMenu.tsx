@@ -8,13 +8,13 @@ type RegistrationGroup = { label: string; icon: ComponentType<{ className?: stri
 
 const groups: RegistrationGroup[] = [
   { label: "Shitje", icon: ReceiptText, children: [
-    { label: "Faturat e Shitjes", icon: FileText, path: "/registrations?register=sales" },
+    { label: "Faturat e Shitjes", icon: FileText, path: "/sales-invoices?tab=invoices&newInvoice=1" },
     { label: "Kthime Shitje", icon: RotateCcw, path: "/sales-invoices?tab=returns" },
     { label: "Dërgesa", icon: Package, path: "/sales-invoices?tab=deliveries" },
     { label: "Arkëtime", icon: WalletCards, path: "/accounting?tab=payments" },
   ] },
   { label: "Blerje", icon: ShoppingCart, children: [
-    { label: "Faturat e Blerjes", icon: FileText, path: "/registrations?register=purchases" },
+    { label: "Faturat e Blerjes", icon: FileText, path: "/purchase-invoices?tab=bills&newInvoice=1" },
     { label: "Kthime Blerje", icon: RotateCcw, path: "/purchase-invoices?tab=returns" },
     { label: "Pagesa", icon: WalletCards, path: "/accounting?tab=payments" },
   ] },
