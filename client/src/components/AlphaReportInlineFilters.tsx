@@ -1,5 +1,5 @@
 import type { ChangeEvent } from "react";
-import { BarChart3, Eye, FileText, Search, SlidersHorizontal, X } from "lucide-react";
+import { ArrowLeft, BarChart3, Eye, FileText, Home, Search, SlidersHorizontal, X } from "lucide-react";
 import type { ReportModule } from "../../../shared/reportCatalog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -56,6 +56,7 @@ type AlphaReportInlineFiltersProps = {
   onClear: () => void;
   onNewPage: () => void;
   onList: () => void;
+  onHome: () => void;
   onDelta: () => void;
 };
 
@@ -102,15 +103,18 @@ export default function AlphaReportInlineFilters({
   onClear,
   onNewPage,
   onList,
+  onHome,
   onDelta,
 }: AlphaReportInlineFiltersProps) {
   const resolvedPartnerLookupKind = partnerLookupKind ?? (moduleLabel === "Shitje" ? "customer" : "supplier");
   const visible = { amount: true, documentNumber: true, documentType: true, currency: true, partner: true, product: true, warehouse: true, status: false, ...filterVisibility };
 
   return <section data-alpha-inline-filters data-report-module={moduleLabel} className="bg-[#f7f7f7] text-[#202020]">
-    <div className="flex min-h-11 flex-wrap items-center justify-between gap-2 border-y border-[#b8b8b8] bg-white px-3 py-1.5">
+    <div data-report-exit-toolbar className="sticky top-0 z-40 flex min-h-11 flex-wrap items-center justify-between gap-2 border-y border-[#b8b8b8] bg-white px-3 py-1.5 shadow-[0_2px_5px_rgba(0,0,0,0.12)]">
       <div className="min-w-0"><p className="text-[10px] text-[#666]">Raporte / {moduleLabel}</p><h1 className="truncate text-sm font-semibold">{selectedTitle}</h1></div>
       <div className="flex flex-wrap items-center gap-1">
+        <Button type="button" variant="outline" size="sm" className="h-8 rounded-none border-[#777] bg-[#efefef] text-[#202020] hover:bg-white" onClick={onList} aria-label="Kthehu te Raportet"><ArrowLeft className="mr-1 h-4 w-4" />Raportet</Button>
+        <Button type="button" variant="outline" size="sm" className="h-8 rounded-none border-[#777] bg-[#efefef] text-[#202020] hover:bg-white" onClick={onHome} aria-label="Shko në faqen kryesore"><Home className="mr-1 h-4 w-4" />Faqja kryesore</Button>
         <Button type="button" variant="outline" size="sm" className="h-8 rounded-none border-[#777] bg-[#efefef] text-[#202020] hover:bg-white" onClick={onList}><X className="mr-1 h-4 w-4" />Mbyll</Button>
         <Button type="button" size="sm" className="h-8 rounded-none bg-[#0878c9] text-white hover:bg-[#05659f]" onClick={onView} disabled={isLoading}><Eye className="mr-1 h-4 w-4" />{isLoading ? "Po ngarkohet..." : "Shiko"}</Button>
         <Button type="button" variant="outline" size="sm" className="h-8 rounded-none border-[#777] bg-[#efefef] text-[#202020] hover:bg-white" onClick={onNewPage}><FileText className="mr-1 h-4 w-4" />Faqe Re</Button>

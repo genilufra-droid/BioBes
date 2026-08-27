@@ -2165,3 +2165,8 @@
 - [x] Ndaj modelet që kthejnë të njëjtin dataset në raport me kolonat, grupimet dhe burimin real përkatës.
 - [ ] Shto regresione dhe verifiko Blerje në browser me të dhënat reale të kompanisë aktive para sinkronizimit.
 - [x] Hape regjistrin e faturave me historikun e plotë të kompanisë aktive; kufizoje vetëm kur përdoruesi vendos interval date.
+
+## Bllokues — dalja nga Raportet (2026-08-27)
+- [ ] Riprodho ekranin e filtrave/rezultateve të raportit që ngec pa dalje për përdoruesin.
+- [ ] Shto komandë të qartë për kthim te katalogu i Raporteve dhe komandë për faqe kryesore, pa rikthyer modalin e vjetër.
+- [ ] Verifiko në browser kthimin nga Blerje, Shitje dhe Magazina te katalogu dhe faqja kryesore.

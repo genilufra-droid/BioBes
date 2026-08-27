@@ -20,4 +20,13 @@ describe("ReportsCenter inline Alpha workspace", () => {
     expect(inlineFiltersSource).not.toContain("Emri i Raportit");
     expect(inlineFiltersSource).not.toContain("reports:");
   });
+
+  it("keeps report exits visible without restoring a modal", () => {
+    expect(inlineFiltersSource).toContain('data-report-exit-toolbar');
+    expect(inlineFiltersSource).toContain('sticky top-0');
+    expect(inlineFiltersSource).toContain('aria-label="Kthehu te Raportet"');
+    expect(inlineFiltersSource).toContain('aria-label="Shko në faqen kryesore"');
+    expect(reportsCenterSource).toContain('onHome={() => setLocation("/")}');
+    expect(reportsCenterSource).toContain('onList={() => { clearReportFilters(); setIsReportOpen(false); setLocation(alphaReportWorkspaceUrl(selected.module)); }}');
+  });
 });
