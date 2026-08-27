@@ -2171,6 +2171,11 @@
 - [x] Shto komandë të qartë për kthim te katalogu i Raporteve dhe komandë për faqe kryesore, pa rikthyer modalin e vjetër.
 - [ ] Verifiko në browser kthimin nga Blerje, Shitje dhe Magazina te katalogu dhe faqja kryesore.
 
+## Raportet — përputhja e formatit Alpha (2026-08-27)
+- [ ] Krahaso katalogun, filtrat, komandat dhe grid-in e rezultateve me rrjedhën reale të Alpha Web.
+- [ ] Zbato ndryshimet prioritare të formatit pa rikthyer modalin dhe pa ndryshuar të dhënat reale të raporteve.
+- [ ] Verifiko në browser formatin e Blerje, Shitje dhe Magazina kundrejt referencës Alpha.
+
 ## Stabiliteti i preview — Vite WebSocket (2026-08-27)
 - [ ] Audito dhe rregullo shkëputjen `failed to connect to websocket` në preview, pa prekur sesionin lokal ose të dhënat e kompanisë.
 

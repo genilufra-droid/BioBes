@@ -29,4 +29,11 @@ describe("ReportsCenter inline Alpha workspace", () => {
     expect(reportsCenterSource).toContain('onHome={() => setLocation("/")}');
     expect(reportsCenterSource).toContain('onList={() => { clearReportFilters(); setIsReportOpen(false); setLocation(alphaReportWorkspaceUrl(selected.module)); }}');
   });
+
+  it("renders a report-specific Alpha reference sheet for PDF report results", () => {
+    expect(reportsCenterSource).toContain('referenceResult={isReferenceReport ? <ReferenceReportView');
+    expect(reportsCenterSource).toContain('onSort={toggleTableSort}');
+    expect(inlineFiltersSource).toContain('data-alpha-reference-result');
+    expect(inlineFiltersSource).toContain('[&_[data-purchase-inline-result]]:hidden');
+  });
 });
