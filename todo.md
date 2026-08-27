@@ -2170,3 +2170,10 @@
 - [x] Riprodho ekranin e filtrave/rezultateve të raportit që ngec pa dalje për përdoruesin.
 - [x] Shto komandë të qartë për kthim te katalogu i Raporteve dhe komandë për faqe kryesore, pa rikthyer modalin e vjetër.
 - [ ] Verifiko në browser kthimin nga Blerje, Shitje dhe Magazina te katalogu dhe faqja kryesore.
+
+## Stabiliteti i preview — Vite WebSocket (2026-08-27)
+- [ ] Audito dhe rregullo shkëputjen `failed to connect to websocket` në preview, pa prekur sesionin lokal ose të dhënat e kompanisë.
+
+## Përdorimi nga iPhone/iPad (2026-08-27)
+- [ ] Përshtat navigimin kryesor për ekran të ngushtë, pa prerë ose fshehur menutë e sistemit.
+- [ ] Verifiko hyrjen lokale dhe ambientin kryesor në pamje iPhone pa scroll horizontal të paqëllimshëm.
