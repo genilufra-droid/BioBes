@@ -2154,8 +2154,8 @@
 - [x] Riprodho dështimin e përsëritur të aktivizimit në rrjedhën reale dhe shto diagnostikim server-side pa zbuluar kredenciale ose ekzistencën e llogarive.
 
 ## Bllokues — faturat nga Regjistrime (2026-08-27)
-- [ ] Riprodho nga menuja Regjistrime hapjen e Faturës së Blerjes dhe Faturës së Shitjes për përdoruesin dhe kompaninë aktive.
-- [ ] Korrigjo targetet e menusë ose parametrat e route-it që pengojnë hapjen e formularëve, pa prekur Pagat.
+- [x] Riprodho nga menuja Regjistrime hapjen e Faturës së Blerjes dhe Faturës së Shitjes për përdoruesin dhe kompaninë aktive.
+- [x] Korrigjo targetet e menusë ose parametrat e route-it që pengojnë hapjen e formularëve, pa prekur Pagat.
 - [ ] Verifiko ruajtjen e draftit në Blerje dhe Shitje me kompani të autorizuar, pa krijuar të dhëna testimi të panevojshme.
 
 ## Raporte Blerje — filtrat e regjistrit dhe modele të veçanta (2026-08-27)
