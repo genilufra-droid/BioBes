@@ -2112,11 +2112,11 @@
 - [x] Verifiko të njëjtin layout dhe filtrat për Blerje dhe Shitje në desktop dhe mobile.
 
 ## Reports only in Raporte menu (2026-08-27)
-- [ ] Gjej të gjitha hyrjet dhe dritaret e raporteve të integruara në modulet operative.
-- [ ] Hiq listat/dritaret e raporteve nga Blerje, Shitje dhe Magazina pa prekur formularët e dokumenteve.
-- [ ] Ruaj aksesin e raporteve vetëm nga menuja Raporte dhe dokumentet e hapura prej saj.
-- [ ] Shto regresione që modulet operative të mos renderojnë më report workspace/modal.
-- [ ] Verifiko navigimin operacional dhe Raporte në desktop/mobile me check, test, build dhe screenshot.
+- [x] Gjej të gjitha hyrjet dhe dritaret e raporteve të integruara në modulet operative.
+- [x] Hiq listat/dritaret e raporteve nga Blerje, Shitje dhe Magazina pa prekur formularët e dokumenteve.
+- [x] Ruaj aksesin e raporteve vetëm nga menuja Raporte dhe dokumentet e hapura prej saj.
+- [x] Shto regresione që modulet operative të mos renderojnë më report workspace/modal.
+- [x] Verifiko navigimin operacional dhe Raporte në desktop/mobile me check, test, build dhe screenshot.
 
 ## Remove legacy report dialogs — Blerje, Shitje, Magazina (2026-08-27)
 - [x] Hiq dialogun legacy të raportit nga çdo kategori ku ende hapet si dritare qendrore.
