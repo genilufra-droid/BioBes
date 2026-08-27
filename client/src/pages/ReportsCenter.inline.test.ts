@@ -38,4 +38,10 @@ describe("ReportsCenter inline Alpha workspace", () => {
     expect(inlineFiltersSource).toContain('[&_[data-purchase-inline-result]]:hidden');
     expect(reportsCenterSource).toContain('const referencePeriod = `${dateFrom || "Fillimi"} — ${dateTo || "Sot"}`;');
   });
+
+  it("uses the catalog presentation policy so a report cannot inherit a conflicting module or legacy result view", () => {
+    expect(reportsCenterSource).toContain('resolveReportModuleForRoute(isModule(requestedModule) ? requestedModule : undefined, requestedReport)');
+    expect(reportsCenterSource).toContain('const isReferenceReport = selectedPresentation?.resultFormat === "alpha-reference";');
+    expect(reportsCenterSource).toContain('alphaFormat');
+  });
 });

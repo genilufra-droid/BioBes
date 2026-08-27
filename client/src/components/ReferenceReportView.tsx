@@ -7,6 +7,7 @@ type Row = Record<string, unknown>;
 type Props = {
   reportKey: string;
   module: string;
+  alphaFormat?: boolean;
   title: string;
   period: string;
   columns: string[];
@@ -668,7 +669,7 @@ function PurchaseSummaryRegisterReferenceView({ props }: { props: Props }) {
   </section>;
 }
 
-export function ReferenceReportView({ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }: Props) {
+export function ReferenceReportView({ reportKey, module, alphaFormat = false, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }: Props) {
   if (reportKey === "inventory_product_card_pdf") return <ProductCardReferenceView props={{ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }} />;
   if (reportKey === "purchase_supplier_card_pdf" || reportKey === "purchase_supplier_card_format3_pdf") return <SupplierCardSimpleReferenceView props={{ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }} />;
   if (reportKey === "sales_customer_statement") return <SupplierCardSimpleReferenceView entity="customer" props={{ reportKey, module, title, period, columns, rows, metrics, meta, isLoading, cellValue, isLinkedDocument, onOpenDocument, sort, onSort }} />;
@@ -679,7 +680,7 @@ export function ReferenceReportView({ reportKey, module, title, period, columns,
   const displayGroups = getReferenceGroups(reportKey, columns);
   const displayColumns = displayGroups.length > 0 ? displayGroups.flatMap(group => group.columns) : columns;
   const hasDisplayGroups = displayGroups.length > 0;
-  const isPdfStyle = reportKey.endsWith("_pdf");
+  const isPdfStyle = alphaFormat || reportKey.endsWith("_pdf");
   const displayTitle = getReferenceTitle(reportKey, title);
   const columnFor = (column: string) => columns.find(actual => normalize(actual) === normalize(column)) ?? column;
   const metaValue = (label: string) => meta?.[label] ?? (label === "Periudha" || label === "Periudha e maturimit" || label === "Data e raportimit" ? period : "—");
