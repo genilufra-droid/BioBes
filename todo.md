@@ -2199,4 +2199,4 @@
 - [x] Standardizo shell-in, toolbar-in, filtrat, tabelat dhe formularët e Blerjeve sipas gjuhës vizuale Alpha.
 - [x] Standardizo shell-in, toolbar-in, filtrat, tabelat dhe formularët e Shitjeve sipas gjuhës vizuale Alpha.
 - [x] Standardizo shell-in, toolbar-in, filtrat, tabelat dhe formularët e Magazinës dhe Regjistrimeve sipas gjuhës vizuale Alpha.
-- [ ] Verifiko në browser desktop/mobile çdo modul të standardizuar pa prishur navigimin, RBAC ose kompaninë aktive.
+- [x] Verifiko në browser desktop/mobile çdo modul të standardizuar pa prishur navigimin, RBAC ose kompaninë aktive.
