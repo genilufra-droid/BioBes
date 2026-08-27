@@ -101,3 +101,45 @@ export function getLegacyReportFilterVisibility(module: ReportModule, reportKey:
     genericAmountSidebar: false,
   };
 }
+
+export type AlphaReportFilterVisibility = {
+  amount: boolean;
+  documentNumber: boolean;
+  documentType: boolean;
+  currency: boolean;
+  partner: boolean;
+  product: boolean;
+  warehouse: boolean;
+  status: boolean;
+};
+
+const purchaseInvoiceRegisterKeys = new Set([
+  "purchase_summary_register_pdf", "purchase_invoices", "purchase_document_register", "purchase_analytic_register_format2_alpha",
+  "purchase_analytic_register_format3_alpha", "purchase_customs_import_register_pdf", "purchase_invoice_payment_register_pdf",
+]);
+
+const purchaseItemKeys = new Set([
+  "purchase_product_card_alpha", "purchase_items_detail_alpha", "purchase_items_expiry_alpha", "purchase_items_alpha",
+  "purchase_items_by_branch_alpha", "purchase_product_card_format2_alpha", "purchase_analytic_detail_alpha", "purchase_price_list_alpha",
+]);
+
+export function getAlphaReportFilterVisibility(module: ReportModule, reportKey: string): AlphaReportFilterVisibility {
+  const legacy = getLegacyReportFilterVisibility(module, reportKey);
+  if (module === "Blerje") {
+    if (purchaseInvoiceRegisterKeys.has(reportKey)) return { amount: true, documentNumber: true, documentType: true, currency: true, partner: true, product: true, warehouse: true, status: true };
+    if (purchaseItemKeys.has(reportKey)) return { amount: true, documentNumber: false, documentType: false, currency: true, partner: true, product: true, warehouse: true, status: false };
+    if (reportKey === "purchase_contract_conversion_alpha") return { amount: true, documentNumber: true, documentType: false, currency: false, partner: true, product: false, warehouse: false, status: true };
+    if (reportKey === "purchase_analytic_alpha") return { amount: true, documentNumber: false, documentType: false, currency: true, partner: true, product: false, warehouse: false, status: false };
+    if (reportKey === "purchase_monthly_ledger_alpha") return { amount: true, documentNumber: false, documentType: false, currency: true, partner: false, product: false, warehouse: false, status: false };
+  }
+  return {
+    amount: legacy.genericAmountSidebar,
+    documentNumber: legacy.documentNumber,
+    documentType: legacy.documentType,
+    currency: legacy.currency,
+    partner: module === "Blerje" || module === "Shitje" || module === "CRM",
+    product: module === "Blerje" || module === "Shitje" || module === "Magazina",
+    warehouse: module === "Blerje" || module === "Shitje" || module === "Magazina",
+    status: false,
+  };
+}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getLegacyReportFilterVisibility } from "./reportFilterProfile";
+import { getAlphaReportFilterVisibility, getLegacyReportFilterVisibility } from "./reportFilterProfile";
 
 describe("legacy report filter visibility", () => {
   it("keeps only warehouse/product/date filters for stock-by-product", () => {
@@ -129,5 +129,11 @@ describe("legacy report filter visibility", () => {
       currency: true,
       genericAmountSidebar: true,
     });
+  });
+
+  it("shows the complete invoice-register filters only for purchase invoice models", () => {
+    expect(getAlphaReportFilterVisibility("Blerje", "purchase_summary_register_pdf")).toMatchObject({ documentNumber: true, documentType: true, status: true, partner: true, product: true, warehouse: true });
+    expect(getAlphaReportFilterVisibility("Blerje", "purchase_price_list_alpha")).toMatchObject({ documentNumber: false, documentType: false, status: false, partner: true, product: true, warehouse: true });
+    expect(getAlphaReportFilterVisibility("Blerje", "purchase_monthly_ledger_alpha")).toMatchObject({ documentNumber: false, partner: false, product: false, warehouse: false });
   });
 });
