@@ -2123,3 +2123,7 @@
 - [x] Hape filtrin e secilit raport direkt në workspace-in e Raporteve, pa overlay ose modal.
 - [x] Mbaj listën e raporteve, filtrat e kategorisë dhe komandat Alpha në të njëjtën faqe.
 - [x] Verifiko në veçanti Magazina, Blerje dhe Shitje në desktop dhe mobile.
+
+## Refaktorim i komponentit inline të Raporteve (2026-08-27)
+- [x] Riemërto komponentin e përbashkët të filtrave nga emër specifik Blerje në emër neutral Alpha dhe ruaj parametrat sipas kategorisë.
+- [x] Verifiko regresionet dhe sinkronizo source-in e refaktorizuar në BioBes.
