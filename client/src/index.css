@@ -65,6 +65,31 @@
   [data-alpha-purchase-workspace] [class*="bg-\[\#c9aba7\]"] { background-color: #b9cfdb !important; color: #234b67 !important; }
   [data-alpha-purchase-workspace] [class*="border-\[\#8f746f\]"] { border-color: #7892a3 !important; }
   [data-alpha-purchase-workspace] [class*="border-\[\#d4cdce\]"] { border-color: #c6d2d8 !important; }
+  .alpha-sales-page,
+  [data-alpha-sales-register],
+  [data-testid="sales-invoice-registration-form"],
+  #sales-invoice-create-form { font-family: Tahoma, "Segoe UI", Arial, sans-serif; color: #242424; }
+  .alpha-sales-page .rounded-xl,
+  .alpha-sales-page .rounded-lg,
+  .alpha-sales-page .rounded-md,
+  [data-alpha-sales-register] .rounded-md,
+  [data-testid="sales-invoice-registration-form"] .rounded-md,
+  #sales-invoice-create-form .rounded-lg,
+  #sales-invoice-create-form .rounded-md { border-radius: 0 !important; }
+  .alpha-sales-page .shadow-sm,
+  [data-alpha-sales-register] .shadow-sm,
+  [data-testid="sales-invoice-registration-form"] .shadow-sm { box-shadow: none !important; }
+  .alpha-sales-page [class*="bg-\[\#714b67\]"],
+  [data-alpha-sales-register] [class*="bg-\[\#6d4b64\]"] { background-color: #3f7191 !important; }
+  .alpha-sales-page [class*="text-\[\#714b67\]"],
+  [data-alpha-sales-register] [class*="text-\[\#625c62\]"] { color: #234b67 !important; }
+  [data-alpha-sales-register] [class*="border-\[\#9a7772\]"] { border-color: #7892a3 !important; }
+  .alpha-sales-page [role="tablist"] { border-color: #8fa5b2 !important; background: #dfe8ed !important; border-radius: 0 !important; }
+  .alpha-sales-page [role="tab"] { min-height: 31px; border-radius: 0 !important; color: #315a75; font-size: 11px; }
+  .alpha-sales-page [role="tab"][data-state="active"] { border-color: #7796a9 !important; background: linear-gradient(#f8fbfc, #c7dbe6) !important; color: #183f5d !important; box-shadow: inset 0 2px 0 #5f94b5 !important; }
+  [data-alpha-sales-totals] { border-color: #9eafb9 !important; border-radius: 0 !important; background: #e8eef2 !important; color: #334d60 !important; font-size: 11px !important; }
+  [data-alpha-sales-totals] > div + div { border-left: 1px solid #bdcbd2; padding-left: 12px; }
+  [data-alpha-sales-totals] strong { color: #234b67 !important; }
 }
 
 @layer base {

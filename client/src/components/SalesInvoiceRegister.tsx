@@ -32,7 +32,7 @@ export default function SalesInvoiceRegister({
   const headers = ["Data", "Nr. dokumentit", "Veprime", "Statusi", "Pagesa", "Kodi klientit", "Klienti", "Formati", "Monedha", "Kursi", "Kodi artikullit", "Artikulli", "Sasia / Njësia", "Çmimi", "Pa TVSH", "TVSH", "Me TVSH", "Në Lek", "Magazina", "Porosia", "Fletë-dalja"];
   const itemCounts = rows.reduce<Record<number, number>>((counts, row) => ({ ...counts, [row.invoiceId]: (counts[row.invoiceId] ?? 0) + 1 }), {});
 
-  return <section className="overflow-hidden border border-[#879eac] bg-[#eef3f6] shadow-[1px_2px_5px_rgba(37,62,80,0.2)]" data-testid="sales-invoice-register">
+  return <section className="overflow-hidden border border-[#879eac] bg-[#eef3f6]" data-alpha-sales-register data-testid="sales-invoice-register">
     <div className="flex items-center justify-between border-b border-[#7f98a8] bg-gradient-to-b from-[#e8f2f7] to-[#c5d8e3] px-3 py-1.5">
       <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-sm border border-[#56788b] bg-[#759caf]" /><p className="text-[12px] font-bold text-[#234b67]">Regjistri i faturave të shitjes</p></div>
       <span className="text-[11px] text-[#526b79]">{rows.length} rreshta · të dhëna reale të kompanisë</span>

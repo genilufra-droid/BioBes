@@ -33,8 +33,19 @@ describe("active invoice line quick-create contract", () => {
 
   it("opens the Alpha sales registration form for an existing invoice", () => {
     expect(salesSource).toContain("data-testid=\"sales-invoice-registration-form\"");
+    expect(salesSource).toContain("alpha-sales-page");
+    expect(salesSource).toContain("Faturat e shitjes");
     expect(salesSource).toContain("<SalesInvoiceFormView invoice={invoice}");
     expect(salesSource).not.toContain("<iframe title={`Pamja reference e faturës");
+  });
+
+  it("keeps the active sales register in the Alpha visual scope", () => {
+    const registerSource = readFileSync(new URL("../components/SalesInvoiceRegister.tsx", import.meta.url), "utf8");
+    const totalsSource = readFileSync(new URL("../components/SalesRegisterTotals.tsx", import.meta.url), "utf8");
+    expect(registerSource).toContain("data-alpha-sales-register");
+    expect(registerSource).toContain("Regjistri i faturave të shitjes");
+    expect(registerSource).toContain("Nr. dokumentit është lidhja e hapjes");
+    expect(totalsSource).toContain("data-alpha-sales-totals");
   });
 
   it("keeps sales reports exclusively in the top-level Reports workspace", () => {
