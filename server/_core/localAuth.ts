@@ -21,7 +21,7 @@ export function consumeLocalAuthRateLimit(key: string, now = Date.now()): boolea
 }
 export function clearLocalAuthRateLimit(key: string) { rateBuckets.delete(key); }
 export function hasValidSetupSecret(provided: string | undefined, configured: string): boolean {
-  if (!provided || !configured) return false;
+  if (!provided || configured.length < 32) return false;
   const providedDigest = createHash("sha256").update(provided).digest();
   const configuredDigest = createHash("sha256").update(configured).digest();
   return timingSafeEqual(providedDigest, configuredDigest);

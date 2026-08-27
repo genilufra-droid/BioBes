@@ -26,7 +26,7 @@ jobs:
       DATABASE_URL: mysql://genit:genit@127.0.0.1:3306/genit_ci
       AUTH_PROVIDER: local
       JWT_SECRET: ci-only-jwt-secret-change-me
-      LOCAL_AUTH_SETUP_SECRET: ci-only-setup-secret-change-me
+      LOCAL_AUTH_SETUP_SECRET: ci-only-setup-secret-change-me-2026
       VITE_AUTH_PROVIDER: local
     steps:
       - uses: actions/checkout@v4
