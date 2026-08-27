@@ -33,6 +33,8 @@ describe("Registrations workspace", () => {
   });
 
   it("uses an Alpha list/dropdown model instead of a sales workflow", () => {
+    expect(page).toContain("data-alpha-registration-workspace");
+    expect(page).toContain("alpha-admin-window");
     expect(page).toContain("Zgjidh regjistrin që dëshiron të hapësh");
     expect(page).not.toContain("Procesi i punës");
     expect(registrationMenu).toContain("Faturat e Shitjes");

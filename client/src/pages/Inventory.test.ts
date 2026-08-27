@@ -20,4 +20,12 @@ describe("inventory module document navigation contract", () => {
     expect(source).toContain('value="adjustments"');
     expect(source).toContain('value="movements"');
   });
+
+  it("uses the Alpha window, compact grids and document-line editor in the active inventory workspace", () => {
+    expect(source).toContain("data-alpha-inventory-workspace");
+    expect(source).toContain("data-alpha-inventory-dialog");
+    expect(source).toContain("data-alpha-inventory-lines");
+    expect(source).toContain("Gjendja e stokut");
+    expect(source).toContain("Regjistri i lëvizjeve të stokut");
+  });
 });
