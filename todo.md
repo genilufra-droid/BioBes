@@ -2167,6 +2167,6 @@
 - [x] Hape regjistrin e faturave me historikun e plotë të kompanisë aktive; kufizoje vetëm kur përdoruesi vendos interval date.
 
 ## Bllokues — dalja nga Raportet (2026-08-27)
-- [ ] Riprodho ekranin e filtrave/rezultateve të raportit që ngec pa dalje për përdoruesin.
-- [ ] Shto komandë të qartë për kthim te katalogu i Raporteve dhe komandë për faqe kryesore, pa rikthyer modalin e vjetër.
+- [x] Riprodho ekranin e filtrave/rezultateve të raportit që ngec pa dalje për përdoruesin.
+- [x] Shto komandë të qartë për kthim te katalogu i Raporteve dhe komandë për faqe kryesore, pa rikthyer modalin e vjetër.
 - [ ] Verifiko në browser kthimin nga Blerje, Shitje dhe Magazina te katalogu dhe faqja kryesore.
